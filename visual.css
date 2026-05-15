@@ -107,6 +107,16 @@
   text-box-edge: cap alphabetic;
 }
 
+.visual-section__subtitle {
+  color: var(--ink);
+  font-size: 44px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0;
+  text-box-trim: trim-both;
+  text-box-edge: cap alphabetic;
+}
+
 .visual-section__search {
   width: calc(var(--site-grid-size) * 18);
   left: auto;
@@ -178,4 +188,14 @@
   display: block;
   width: 24px;
   height: 24px;
+}
+
+.visual-section__block-title {
+  color: var(--ink);
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0;
+  text-box-trim: trim-both;
+  text-box-edge: cap alphabetic;
 }
