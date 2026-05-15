@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Визуальный блок</title>
+  <link rel="stylesheet" href="hero.css">
+  <link rel="stylesheet" href="visual.css">
+</head>
+<body>
+  <div id="allrecords" class="site-page">
+    <main class="visual-section" aria-label="Визуальный блок">
+      <nav class="visual-section__nav" aria-label="Навигация визуального блока">
+        <ul class="hero__ticks visual-section__dots snap" style="--y: 8;">
+          <li>
+            <a class="hero__nav-dot" href="index.html">
+              <span class="hero__tooltip">Главная</span>
+            </a>
+          </li>
+          <li>
+            <a class="hero__nav-dot" href="#strategy">
+              <span class="hero__tooltip">Стратегия</span>
+            </a>
+          </li>
+          <li>
+            <a class="hero__nav-dot is-active" href="visual.html" aria-current="page">
+              <span class="hero__tooltip">Визуальный блок</span>
+            </a>
+          </li>
+          <li>
+            <a class="hero__nav-dot" href="#channels">
+              <span class="hero__tooltip">Каналы</span>
+            </a>
+          </li>
+          <li>
+            <a class="hero__nav-dot" href="#processes">
+              <span class="hero__tooltip">Процессы</span>
+            </a>
+          </li>
+          <li>
+            <a class="hero__nav-dot" href="#materials">
+              <span class="hero__tooltip">Материалы</span>
+            </a>
+          </li>
+        </ul>
+
+        <ul class="visual-section__subnav snap" style="--y: 8;">
+          <li class="is-current">Логотип</li>
+          <li>Цвета</li>
+          <li>Типографика</li>
+          <li>текст</li>
+          <li>текст</li>
+          <li>текст</li>
+        </ul>
+      </nav>
+
+      <section class="visual-section__work" aria-label="Рабочая зона">
+        <h1 class="visual-section__title snap" style="--x: 0; --y: 3;">Визуальный блок</h1>
+
+        <p class="visual-section__lead snap" style="--x: 0; --y: 7;">Lorem ipsum dolor sit amet consectetur. Fringilla diam ac a mauris eu ullamcorper. Ut egestas nunc rhoncus nisi elit tempus tincidunt ornare. Ut vel feugiat at massa feugiat tellus platea volutpat pellentesque.</p>
+
+        <label class="hero__search visual-section__search snap" style="--y: 3;">
+          <img class="hero__search-icon" src="heropage/img/sertch.svg" alt="" aria-hidden="true">
+          <input type="search" placeholder="Найдите раздел, канал, шаблон, шрифт">
+        </label>
+
+        <div class="visual-section__text-demo snap" style="--x: 0; --y: 11;">
+          <div class="visual-section__text-stage">
+            <img class="visual-section__grid-image" src="visual/img/setka.svg" alt="" aria-hidden="true">
+            <img class="visual-section__text-image" src="visual/img/text.svg" alt="УниВенд. Твой мерч - автоматом">
+          </div>
+          <button class="visual-section__eye-button" type="button" aria-label="Показать сетку" aria-pressed="false">
+            <img src="visual/img/eyes.svg" alt="" aria-hidden="true">
+          </button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    (function () {
+      let grid = document.getElementById('grid-32-underlay');
+
+      if (!grid) {
+        grid = document.createElement('div');
+        grid.id = 'grid-32-underlay';
+        document.body.insertBefore(grid, document.body.firstChild);
+      }
+
+      function updateGridHeight() {
+        const allRecords = document.getElementById('allrecords');
+        const contentBottom = allRecords
+          ? allRecords.getBoundingClientRect().bottom + window.pageYOffset
+          : document.documentElement.clientHeight;
+
+        const fullHeight = Math.max(contentBottom, window.innerHeight);
+        const nextHeight = Math.ceil(fullHeight) + 'px';
+
+        if (grid.style.height !== nextHeight) {
+          grid.style.height = nextHeight;
+        }
+      }
+
+      function updateGrid() {
+        document.body.style.setProperty('padding-top', '0', 'important');
+        document.body.style.setProperty('overflow-x', 'hidden', 'important');
+        grid.style.setProperty('display', 'block', 'important');
+        updateGridHeight();
+      }
+
+      window.addEventListener('load', updateGrid);
+      window.addEventListener('resize', updateGrid);
+
+      setTimeout(updateGrid, 200);
+      setTimeout(updateGrid, 800);
+      setTimeout(updateGrid, 1500);
+      setTimeout(updateGrid, 3000);
+
+      const observer = new MutationObserver(function (mutations) {
+        const shouldUpdate = mutations.some(function (mutation) {
+          return mutation.target !== grid;
+        });
+
+        if (shouldUpdate) {
+          updateGrid();
+        }
+      });
+
+      observer.observe(document.body, {
+        attributes: true,
+        attributeFilter: ['class', 'style'],
+        childList: true,
+        subtree: true
+      });
+    })();
+
+    (function () {
+      const demo = document.querySelector('.visual-section__text-demo');
+      const button = document.querySelector('.visual-section__eye-button');
+
+      if (!demo || !button) {
+        return;
+      }
+
+      button.addEventListener('click', function () {
+        const isActive = demo.classList.toggle('is-grid-visible');
+        button.classList.toggle('is-active', isActive);
+        button.setAttribute('aria-pressed', String(isActive));
+      });
+    })();
+  </script>
+</body>
+</html>
