@@ -81,9 +81,9 @@ input {
 #grid-32-underlay {
   position: absolute;
   top: 0;
-  left: 50%;
-  width: 100vw;
-  margin-left: -50vw;
+  left: 0;
+  right: 0;
+  width: auto;
   min-height: 100vh;
   pointer-events: none;
   z-index: 0;
@@ -127,7 +127,6 @@ input {
   overflow: hidden;
 }
 
-.hero__nav,
 .hero__work {
   position: absolute;
   top: 0;
@@ -135,9 +134,18 @@ input {
 }
 
 .hero__nav {
+  position: fixed;
+  top: 0;
   left: 0;
+  z-index: 5;
   width: var(--layout-nav-width);
+  height: 100vh;
   padding-left: var(--layout-nav-padding-left);
+  pointer-events: none;
+}
+
+.hero__nav > * {
+  pointer-events: auto;
 }
 
 .hero__work {

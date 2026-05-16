@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="ru">
 
 <head>
@@ -47,19 +47,19 @@
         </ul>
 
         <ul class="visual-section__subnav snap" style="--y: 8;">
-          <li class="is-current">Логотип</li>
-          <li>Цвета</li>
-          <li>Типографика</li>
-          <li>текст</li>
-          <li>текст</li>
-          <li>текст</li>
+          <li class="is-current" data-target="section-logo">Логотип</li>
+          <li data-target="section-colors">Цвета</li>
+          <li data-target="section-typography">Типографика</li>
+          <li data-target="section-graphics">Графические <br> элементы</li>
+          <li data-target="section-photo">Фотоконтент</li>
+          <li data-target="section-3d">3Д-контент</li>
         </ul>
       </nav>
 
       <section class="visual-section__work" aria-label="Рабочая зона">
         <h1 class="visual-section__title snap" style="--x: 0; --y: 3;">Визуальный блок</h1>
 
-        <h2 class="visual-section__subtitle snap" style="--x: 0; --y:7;">Логотип</h2>
+        <h2 id="section-logo" class="visual-section__subtitle snap" style="--x: 0; --y:7;">Логотип</h2>
 
         <p class="visual-section__lead snap" style="--x: ; --y: 9;">В процессе создания были перестроены все буквы для формирования более узнаваемого и цельного визуального образа.</p>
 
@@ -78,7 +78,892 @@
           </button>
         </div>
 
-        <h2 class="visual-section__block-title snap" style="--x: 0; --y: 25;">Логотип</h2>
+        <h2 id="section-colors" class="visual-section__block-title snap" style="--x: 0; --y: 27;">Цвета</h2>
+
+        <span class="palette-label snap" style="--x: 0; --y: 30;">Основные</span>
+        <span class="palette-label snap" style="--x: 14; --y: 30;">Дополнительные</span>
+        <span class="palette-label snap" style="--x: 22; --y: 30;">Нейтральные цвета</span>
+
+        <figure class="swatch snap" style="--x: 0; --y: 31;" tabindex="0">
+          <div class="swatch__card">
+            <div class="swatch__face swatch__face--front" style="background:#090C9B">
+              <span class="swatch__tag">HEX</span>
+              <span class="swatch__code">#090C9B</span>
+            </div>
+            <div class="swatch__face swatch__face--back">
+              <span class="swatch__tag">RGB</span>
+              <span class="swatch__code">RGB: 9, 12, 155</span>
+            </div>
+          </div>
+        </figure>
+        <figure class="swatch snap" style="--x: 6; --y: 31;" tabindex="0">
+          <div class="swatch__card">
+            <div class="swatch__face swatch__face--front" style="background:#FF6700">
+              <span class="swatch__tag">HEX</span>
+              <span class="swatch__code">#FF6700</span>
+            </div>
+            <div class="swatch__face swatch__face--back">
+              <span class="swatch__tag">RGB</span>
+              <span class="swatch__code">RGB: 255, 103, 0</span>
+            </div>
+          </div>
+        </figure>
+
+        <figure class="swatch snap" style="--x: 14; --y: 31;" tabindex="0">
+          <div class="swatch__card">
+            <div class="swatch__face swatch__face--front" style="background:#3C3744">
+              <span class="swatch__tag">HEX</span>
+              <span class="swatch__code">#3C3744</span>
+            </div>
+            <div class="swatch__face swatch__face--back">
+              <span class="swatch__tag">RGB</span>
+              <span class="swatch__code">RGB: 60, 55, 68</span>
+            </div>
+          </div>
+        </figure>
+
+        <figure class="swatch snap" style="--x: 22; --y: 31;" tabindex="0">
+          <div class="swatch__card">
+            <div class="swatch__face swatch__face--front swatch__face--light" style="background:#F5F1ED">
+              <span class="swatch__tag">HEX</span>
+              <span class="swatch__code">#F5F1ED</span>
+            </div>
+            <div class="swatch__face swatch__face--back">
+              <span class="swatch__tag">RGB</span>
+              <span class="swatch__code">RGB: 245, 241, 237</span>
+            </div>
+          </div>
+        </figure>
+        <figure class="swatch snap" style="--x: 28; --y: 31;" tabindex="0">
+          <div class="swatch__card">
+            <div class="swatch__face swatch__face--front swatch__face--light swatch__face--bordered" style="background:#FFFFFF">
+              <span class="swatch__tag">HEX</span>
+              <span class="swatch__code">#FFFFFF</span>
+            </div>
+            <div class="swatch__face swatch__face--back">
+              <span class="swatch__tag">RGB</span>
+              <span class="swatch__code">RGB: 255, 255, 255</span>
+            </div>
+          </div>
+        </figure>
+        <figure class="swatch snap" style="--x: 34; --y: 31;" tabindex="0">
+          <div class="swatch__card">
+            <div class="swatch__face swatch__face--front" style="background:#111111">
+              <span class="swatch__tag">HEX</span>
+              <span class="swatch__code">#111111</span>
+            </div>
+            <div class="swatch__face swatch__face--back">
+              <span class="swatch__tag">RGB</span>
+              <span class="swatch__code">RGB: 17, 17, 17</span>
+            </div>
+          </div>
+        </figure>
+
+        <span class="palette-label snap" style="--x: 0; --y: 39;">Физические носители</span>
+
+        <figure class="swatch snap" style="--x: 0; --y: 40;" tabindex="0">
+          <div class="swatch__card">
+            <div class="swatch__face swatch__face--front" style="background:#090C9B">
+              <span class="swatch__tag">HEX</span>
+              <span class="swatch__code">#090C9B</span>
+            </div>
+            <div class="swatch__face swatch__face--back">
+              <span class="swatch__tag">RGB</span>
+              <span class="swatch__code">RGB: 9, 12, 155</span>
+            </div>
+          </div>
+        </figure>
+        <figure class="swatch snap" style="--x: 6; --y: 40;" tabindex="0">
+          <div class="swatch__card">
+            <div class="swatch__face swatch__face--front swatch__face--light swatch__face--bordered" style="background:#FFFFFF">
+              <span class="swatch__tag">HEX</span>
+              <span class="swatch__code">#FFFFFF</span>
+            </div>
+            <div class="swatch__face swatch__face--back">
+              <span class="swatch__tag">RGB</span>
+              <span class="swatch__code">RGB: 255, 255, 255</span>
+            </div>
+          </div>
+        </figure>
+
+        <figure class="swatch snap" style="--x: 14; --y: 40;" tabindex="0">
+          <div class="swatch__card">
+            <div class="swatch__face swatch__face--front" style="background:#FF6700">
+              <span class="swatch__tag">HEX</span>
+              <span class="swatch__code">#FF6700</span>
+            </div>
+            <div class="swatch__face swatch__face--back">
+              <span class="swatch__tag">RGB</span>
+              <span class="swatch__code">RGB: 255, 103, 0</span>
+            </div>
+          </div>
+        </figure>
+        <figure class="swatch snap" style="--x: 20; --y: 40;" tabindex="0">
+          <div class="swatch__card">
+            <div class="swatch__face swatch__face--front swatch__face--light swatch__face--bordered" style="background:#FFFFFF">
+              <span class="swatch__tag">HEX</span>
+              <span class="swatch__code">#FFFFFF</span>
+            </div>
+            <div class="swatch__face swatch__face--back">
+              <span class="swatch__tag">RGB</span>
+              <span class="swatch__code">RGB: 255, 255, 255</span>
+            </div>
+          </div>
+        </figure>
+
+        <figure class="swatch snap" style="--x: 28; --y: 40;" tabindex="0">
+          <div class="swatch__card">
+            <div class="swatch__face swatch__face--front" style="background:#FF6700">
+              <span class="swatch__tag">HEX</span>
+              <span class="swatch__code">#FF6700</span>
+            </div>
+            <div class="swatch__face swatch__face--back">
+              <span class="swatch__tag">RGB</span>
+              <span class="swatch__code">RGB: 255, 103, 0</span>
+            </div>
+          </div>
+        </figure>
+        <figure class="swatch snap" style="--x: 34; --y: 40;" tabindex="0">
+          <div class="swatch__card">
+            <div class="swatch__face swatch__face--front swatch__face--light swatch__face--bordered" style="background:#FFFFFF">
+              <span class="swatch__tag">HEX</span>
+              <span class="swatch__code">#FFFFFF</span>
+            </div>
+            <div class="swatch__face swatch__face--back">
+              <span class="swatch__tag">RGB</span>
+              <span class="swatch__code">RGB: 255, 255, 255</span>
+            </div>
+          </div>
+        </figure>
+        <figure class="swatch snap" style="--x: 40; --y: 40;" tabindex="0">
+          <div class="swatch__card">
+            <div class="swatch__face swatch__face--front" style="background:#3C3744">
+              <span class="swatch__tag">HEX</span>
+              <span class="swatch__code">#3C3744</span>
+            </div>
+            <div class="swatch__face swatch__face--back">
+              <span class="swatch__tag">RGB</span>
+              <span class="swatch__code">RGB: 60, 55, 68</span>
+            </div>
+          </div>
+        </figure>
+
+        <figure class="swatch snap" style="--x: 0; --y: 48;" tabindex="0">
+          <div class="swatch__card">
+            <div class="swatch__face swatch__face--front" style="background:#090C9B">
+              <span class="swatch__tag">HEX</span>
+              <span class="swatch__code">#090C9B</span>
+            </div>
+            <div class="swatch__face swatch__face--back">
+              <span class="swatch__tag">RGB</span>
+              <span class="swatch__code">RGB: 9, 12, 155</span>
+            </div>
+          </div>
+        </figure>
+        <figure class="swatch snap" style="--x: 6; --y: 48;" tabindex="0">
+          <div class="swatch__card">
+            <div class="swatch__face swatch__face--front" style="background:#111111">
+              <span class="swatch__tag">HEX</span>
+              <span class="swatch__code">#111111</span>
+            </div>
+            <div class="swatch__face swatch__face--back">
+              <span class="swatch__tag">RGB</span>
+              <span class="swatch__code">RGB: 17, 17, 17</span>
+            </div>
+          </div>
+        </figure>
+
+        <figure class="swatch snap" style="--x: 14; --y: 48;" tabindex="0">
+          <div class="swatch__card">
+            <div class="swatch__face swatch__face--front" style="background:#FF6700">
+              <span class="swatch__tag">HEX</span>
+              <span class="swatch__code">#FF6700</span>
+            </div>
+            <div class="swatch__face swatch__face--back">
+              <span class="swatch__tag">RGB</span>
+              <span class="swatch__code">RGB: 255, 103, 0</span>
+            </div>
+          </div>
+        </figure>
+        <figure class="swatch snap" style="--x: 20; --y: 48;" tabindex="0">
+          <div class="swatch__card">
+            <div class="swatch__face swatch__face--front" style="background:#111111">
+              <span class="swatch__tag">HEX</span>
+              <span class="swatch__code">#111111</span>
+            </div>
+            <div class="swatch__face swatch__face--back">
+              <span class="swatch__tag">RGB</span>
+              <span class="swatch__code">RGB: 17, 17, 17</span>
+            </div>
+          </div>
+        </figure>
+
+        <figure class="swatch snap" style="--x: 28; --y: 48;" tabindex="0">
+          <div class="swatch__card">
+            <div class="swatch__face swatch__face--front" style="background:#090C9B">
+              <span class="swatch__tag">HEX</span>
+              <span class="swatch__code">#090C9B</span>
+            </div>
+            <div class="swatch__face swatch__face--back">
+              <span class="swatch__tag">RGB</span>
+              <span class="swatch__code">RGB: 9, 12, 155</span>
+            </div>
+          </div>
+        </figure>
+        <figure class="swatch snap" style="--x: 34; --y: 48;" tabindex="0">
+          <div class="swatch__card">
+            <div class="swatch__face swatch__face--front" style="background:#111111">
+              <span class="swatch__tag">HEX</span>
+              <span class="swatch__code">#111111</span>
+            </div>
+            <div class="swatch__face swatch__face--back">
+              <span class="swatch__tag">RGB</span>
+              <span class="swatch__code">RGB: 17, 17, 17</span>
+            </div>
+          </div>
+        </figure>
+        <figure class="swatch snap" style="--x: 40; --y: 48;" tabindex="0">
+          <div class="swatch__card">
+            <div class="swatch__face swatch__face--front swatch__face--light swatch__face--bordered" style="background:#FFFFFF">
+              <span class="swatch__tag">HEX</span>
+              <span class="swatch__code">#FFFFFF</span>
+            </div>
+            <div class="swatch__face swatch__face--back">
+              <span class="swatch__tag">RGB</span>
+              <span class="swatch__code">RGB: 255, 255, 255</span>
+            </div>
+          </div>
+        </figure>
+
+        <span class="palette-label snap" style="--x: 0; --y: 56;">Цифровой контент</span>
+
+        <figure class="swatch snap" style="--x: 0; --y: 57;" tabindex="0">
+          <div class="swatch__card">
+            <div class="swatch__face swatch__face--front" style="background:#090C9B">
+              <span class="swatch__tag">HEX</span>
+              <span class="swatch__code">#090C9B</span>
+            </div>
+            <div class="swatch__face swatch__face--back">
+              <span class="swatch__tag">RGB</span>
+              <span class="swatch__code">RGB: 9, 12, 155</span>
+            </div>
+          </div>
+        </figure>
+        <figure class="swatch snap" style="--x: 6; --y: 57;" tabindex="0">
+          <div class="swatch__card">
+            <div class="swatch__face swatch__face--front swatch__face--light swatch__face--bordered" style="background:#FFFFFF">
+              <span class="swatch__tag">HEX</span>
+              <span class="swatch__code">#FFFFFF</span>
+            </div>
+            <div class="swatch__face swatch__face--back">
+              <span class="swatch__tag">RGB</span>
+              <span class="swatch__code">RGB: 255, 255, 255</span>
+            </div>
+          </div>
+        </figure>
+
+        <figure class="swatch snap" style="--x: 14; --y: 57;" tabindex="0">
+          <div class="swatch__card">
+            <div class="swatch__face swatch__face--front" style="background:#FF6700">
+              <span class="swatch__tag">HEX</span>
+              <span class="swatch__code">#FF6700</span>
+            </div>
+            <div class="swatch__face swatch__face--back">
+              <span class="swatch__tag">RGB</span>
+              <span class="swatch__code">RGB: 255, 103, 0</span>
+            </div>
+          </div>
+        </figure>
+        <figure class="swatch snap" style="--x: 20; --y: 57;" tabindex="0">
+          <div class="swatch__card">
+            <div class="swatch__face swatch__face--front swatch__face--light swatch__face--bordered" style="background:#FFFFFF">
+              <span class="swatch__tag">HEX</span>
+              <span class="swatch__code">#FFFFFF</span>
+            </div>
+            <div class="swatch__face swatch__face--back">
+              <span class="swatch__tag">RGB</span>
+              <span class="swatch__code">RGB: 255, 255, 255</span>
+            </div>
+          </div>
+        </figure>
+
+        <figure class="swatch snap" style="--x: 28; --y: 57;" tabindex="0">
+          <div class="swatch__card">
+            <div class="swatch__face swatch__face--front" style="background:#FF6700">
+              <span class="swatch__tag">HEX</span>
+              <span class="swatch__code">#FF6700</span>
+            </div>
+            <div class="swatch__face swatch__face--back">
+              <span class="swatch__tag">RGB</span>
+              <span class="swatch__code">RGB: 255, 103, 0</span>
+            </div>
+          </div>
+        </figure>
+        <figure class="swatch snap" style="--x: 34; --y: 57;" tabindex="0">
+          <div class="swatch__card">
+            <div class="swatch__face swatch__face--front" style="background:#090C9B">
+              <span class="swatch__tag">HEX</span>
+              <span class="swatch__code">#090C9B</span>
+            </div>
+            <div class="swatch__face swatch__face--back">
+              <span class="swatch__tag">RGB</span>
+              <span class="swatch__code">RGB: 9, 12, 155</span>
+            </div>
+          </div>
+        </figure>
+        <figure class="swatch snap" style="--x: 40; --y: 57;" tabindex="0">
+          <div class="swatch__card">
+            <div class="swatch__face swatch__face--front" style="background:#111111">
+              <span class="swatch__tag">HEX</span>
+              <span class="swatch__code">#111111</span>
+            </div>
+            <div class="swatch__face swatch__face--back">
+              <span class="swatch__tag">RGB</span>
+              <span class="swatch__code">RGB: 17, 17, 17</span>
+            </div>
+          </div>
+        </figure>
+
+        <figure class="swatch snap" style="--x: 0; --y: 65;" tabindex="0">
+          <div class="swatch__card">
+            <div class="swatch__face swatch__face--front" style="background:#090C9B">
+              <span class="swatch__tag">HEX</span>
+              <span class="swatch__code">#090C9B</span>
+            </div>
+            <div class="swatch__face swatch__face--back">
+              <span class="swatch__tag">RGB</span>
+              <span class="swatch__code">RGB: 9, 12, 155</span>
+            </div>
+          </div>
+        </figure>
+        <figure class="swatch snap" style="--x: 6; --y: 65;" tabindex="0">
+          <div class="swatch__card">
+            <div class="swatch__face swatch__face--front swatch__face--light" style="background:#F5F1ED">
+              <span class="swatch__tag">HEX</span>
+              <span class="swatch__code">#F5F1ED</span>
+            </div>
+            <div class="swatch__face swatch__face--back">
+              <span class="swatch__tag">RGB</span>
+              <span class="swatch__code">RGB: 245, 241, 237</span>
+            </div>
+          </div>
+        </figure>
+
+        <figure class="swatch snap" style="--x: 14; --y: 65;" tabindex="0">
+          <div class="swatch__card">
+            <div class="swatch__face swatch__face--front" style="background:#FF6700">
+              <span class="swatch__tag">HEX</span>
+              <span class="swatch__code">#FF6700</span>
+            </div>
+            <div class="swatch__face swatch__face--back">
+              <span class="swatch__tag">RGB</span>
+              <span class="swatch__code">RGB: 255, 103, 0</span>
+            </div>
+          </div>
+        </figure>
+        <figure class="swatch snap" style="--x: 20; --y: 65;" tabindex="0">
+          <div class="swatch__card">
+            <div class="swatch__face swatch__face--front swatch__face--light" style="background:#F5F1ED">
+              <span class="swatch__tag">HEX</span>
+              <span class="swatch__code">#F5F1ED</span>
+            </div>
+            <div class="swatch__face swatch__face--back">
+              <span class="swatch__tag">RGB</span>
+              <span class="swatch__code">RGB: 245, 241, 237</span>
+            </div>
+          </div>
+        </figure>
+
+        <figure class="swatch snap" style="--x: 28; --y: 65;" tabindex="0">
+          <div class="swatch__card">
+            <div class="swatch__face swatch__face--front" style="background:#FF6700">
+              <span class="swatch__tag">HEX</span>
+              <span class="swatch__code">#FF6700</span>
+            </div>
+            <div class="swatch__face swatch__face--back">
+              <span class="swatch__tag">RGB</span>
+              <span class="swatch__code">RGB: 255, 103, 0</span>
+            </div>
+          </div>
+        </figure>
+        <figure class="swatch snap" style="--x: 34; --y: 65;" tabindex="0">
+          <div class="swatch__card">
+            <div class="swatch__face swatch__face--front" style="background:#090C9B">
+              <span class="swatch__tag">HEX</span>
+              <span class="swatch__code">#090C9B</span>
+            </div>
+            <div class="swatch__face swatch__face--back">
+              <span class="swatch__tag">RGB</span>
+              <span class="swatch__code">RGB: 9, 12, 155</span>
+            </div>
+          </div>
+        </figure>
+        <figure class="swatch snap" style="--x: 40; --y: 65;" tabindex="0">
+          <div class="swatch__card">
+            <div class="swatch__face swatch__face--front swatch__face--light swatch__face--bordered" style="background:#FFFFFF">
+              <span class="swatch__tag">HEX</span>
+              <span class="swatch__code">#FFFFFF</span>
+            </div>
+            <div class="swatch__face swatch__face--back">
+              <span class="swatch__tag">RGB</span>
+              <span class="swatch__code">RGB: 255, 255, 255</span>
+            </div>
+          </div>
+        </figure>
+
+        <span class="palette-label snap" style="--x: 0; --y: 73;">Примеры применения</span>
+
+        <div class="examples-row snap" style="--x: 0; --y: 74;">
+          <img class="examples-row__item" src="visual/img/color_dispaly1.png" alt="Пример применения цвета — каталог в мобильном приложении">
+          <img class="examples-row__item" src="visual/img/color_dispaly2.png" alt="Пример применения цвета — пост «Твой оберег от пересдач»">
+          <img class="examples-row__item" src="visual/img/color_dispaly3.png" alt="Пример применения цвета — пост «Как сделать свой принт?»">
+          <img class="examples-row__item" src="visual/img/color_dispaly4.png" alt="Пример применения цвета — пост «Стильный мерч как часть студенчества»">
+          <img class="examples-row__item" src="visual/img/color_dispaly5.png" alt="Пример применения цвета — пост «Быстрая покупка без ожидания»">
+        </div>
+
+        <h2 id="section-typography" class="visual-section__block-title snap" style="--x: 0; --y: 92;">Типографика</h2>
+
+        <span class="palette-label snap" style="--x: 0; --y: 95;">Шрифт</span>
+
+        <div class="font-block snap" style="--x: 0; --y: 97;">
+          <div class="font-block__copy">
+            <p>Для заголовков используется Gros Ventre Bold. Это выразительный акцентный шрифт с характерной пластикой и мягкой геометрией, который формирует визуальный стиль бренда. Он помогает задать современный, уверенный и немного дерзкий тон коммуникации, отражающий студенческую среду и характер УниВенд.</p>
+            <p>Для основного текста используется Gros Ventre Light. Это более лёгкое и спокойное начертание того же шрифта, которое обеспечивает хорошую читаемость и визуальный баланс в макетах. Оно поддерживает общий стиль бренда, не перегружая восприятие и делая текст удобным для чтения в цифровой среде.</p>
+            <p class="font-block__credit">Автор: Дмитрий Антонов (Синяя Кривая Студия Дизайна)<br>Лицензия: CC BY 4.0 (бесплатный при указании авторства)</p>
+          </div>
+
+          <div class="font-sample font-sample--bold">
+            <h3 class="font-sample__title">Gros Ventre</h3>
+            <p class="font-sample__caption">Данный шрифт используется<br>для заголовков</p>
+            <span class="font-sample__big" aria-hidden="true">Aa</span>
+            <p class="font-sample__alphabet">Aa Bb Cc Dd Ee Ff Gg Hh Ii Jj Kk Ll<br>Mm Nn Oo Pp Qq Rr Ss Tt Uu Vv<br>Ww Xx Yy Zz</p>
+            <p class="font-sample__alphabet">Аа Бб Вв Гг Дд Ее Ёё Жж Зз Ии Йй Кк<br>Лл Мм Нн Оо Пп Рр Сс Тт Уу Фф Хх<br>Цц Чч Шш Щщ Ъъ Ыы Ьь Ээ Юю Яя</p>
+            <p class="font-sample__digits">0123456789</p>
+          </div>
+
+          <div class="font-sample font-sample--light">
+            <h3 class="font-sample__title">Gros Ventre</h3>
+            <p class="font-sample__caption">Данный шрифт используется<br>для основного текста</p>
+            <span class="font-sample__big" aria-hidden="true">Aa</span>
+            <p class="font-sample__alphabet">Aa Bb Cc Dd Ee Ff Gg Hh Ii Jj Kk Ll<br>Mm Nn Oo Pp Qq Rr Ss Tt Uu Vv<br>Ww Xx Yy Zz</p>
+            <p class="font-sample__alphabet">Аа Бб Вв Гг Дд Ее Ёё Жж Зз Ии Йй Кк<br>Лл Мм Нн Оо Пп Рр Сс Тт Уу Фф Хх<br>Цц Чч Шш Щщ Ъъ Ыы Ьь Ээ Юю Яя</p>
+            <p class="font-sample__digits">0123456789</p>
+          </div>
+        </div>
+
+        <span class="palette-label snap" style="--x: 0; --y: 118;">Иерархия</span>
+
+        <div class="hierarchy-block snap" style="--x: 0; --y: 120;">
+         <div class="hierarchy-block__devices">
+           <button class="hero__button hero__button--primary hierarchy-block__device is-active" type="button" data-target="desktop">Сайт (десктоп)</button>
+           <button class="hero__button hierarchy-block__device" type="button" data-target="mobile">Сайт (мобильная версия)</button>
+           <button class="hero__button hierarchy-block__device" type="button" data-target="digital">Цифровой контент</button>
+         </div>
+
+         <div class="hierarchy-block__body">
+          <div class="hierarchy-block__left">
+
+          <div class="hierarchy-block__content" data-target="desktop">
+            <div class="hierarchy-row hierarchy-row--lg">
+              <p class="hierarchy-row__sample" style="font-size: 92px; font-weight: 700;">Заголовок 1</p>
+              <p class="hierarchy-row__spec">Gros Ventre Bold, 206pt<br>#3C3744</p>
+            </div>
+            <div class="hierarchy-row hierarchy-row--md">
+              <p class="hierarchy-row__sample" style="font-size: 46pt; font-weight: 600;">Заголовок 2</p>
+              <p class="hierarchy-row__spec">Gros Ventre SemiBold, 46pt<br>#3C3744</p>
+            </div>
+            <div class="hierarchy-row hierarchy-row--sm">
+              <p class="hierarchy-row__sample" style="font-size: 36pt; font-weight: 300;">Подзаголовок 1</p>
+              <p class="hierarchy-row__spec">Gros Ventre Light, 36pt<br>#3C3744</p>
+            </div>
+            <div class="hierarchy-row hierarchy-row--sm">
+              <p class="hierarchy-row__sample" style="font-size: 32pt; font-weight: 600;">Подзаголовок 2</p>
+              <p class="hierarchy-row__spec">Gros Ventre SemiBold, 32pt<br>#3C3744</p>
+            </div>
+            <div class="hierarchy-row hierarchy-row--sm">
+              <p class="hierarchy-row__sample" style="font-size: 24pt; font-weight: 600;">Кнопки и стоимость</p>
+              <p class="hierarchy-row__spec">Gros Ventre SemiBold, 24pt<br>#3C3744</p>
+            </div>
+            <div class="hierarchy-row hierarchy-row--sm">
+              <p class="hierarchy-row__sample" style="font-size: 20pt; font-weight: 600;">Подзаголовок 3</p>
+              <p class="hierarchy-row__spec">Gros Ventre SemiBold, 20pt<br>#3C3744</p>
+            </div>
+            <div class="hierarchy-row hierarchy-row--sm">
+              <p class="hierarchy-row__sample" style="font-size: 18pt; font-weight: 300;">Основной текст</p>
+              <p class="hierarchy-row__spec">Gros Ventre Light, 18pt<br>#3C3744</p>
+            </div>
+            <div class="hierarchy-row hierarchy-row--sm">
+              <p class="hierarchy-row__sample" style="font-size: 14pt; font-weight: 400;">Подписи</p>
+              <p class="hierarchy-row__spec">Gros Ventre Regular, 14pt<br>#3C3744</p>
+            </div>
+          </div>
+
+          <div class="hierarchy-block__content" data-target="mobile" hidden>
+            <div class="hierarchy-row hierarchy-row--md">
+              <p class="hierarchy-row__sample" style="font-size: 69pt; font-weight: 700;">Заголовок 1</p>
+              <p class="hierarchy-row__spec">Gros Ventre Bold, 69pt<br>#3C3744</p>
+            </div>
+            <div class="hierarchy-row hierarchy-row--md">
+              <p class="hierarchy-row__sample" style="font-size: 45pt; font-weight: 600;">Заголовок 2</p>
+              <p class="hierarchy-row__spec">Gros Ventre SemiBold, 45pt<br>#3C3744</p>
+            </div>
+            <div class="hierarchy-row hierarchy-row--sm">
+              <p class="hierarchy-row__sample" style="font-size: 36pt; font-weight: 300;">Подзаголовок 1</p>
+              <p class="hierarchy-row__spec">Gros Ventre Light, 36pt<br>#3C3744</p>
+            </div>
+            <div class="hierarchy-row hierarchy-row--sm">
+              <p class="hierarchy-row__sample" style="font-size: 24pt; font-weight: 600;">Подзаголовок 2</p>
+              <p class="hierarchy-row__spec">Gros Ventre SemiBold, 24pt<br>#3C3744</p>
+            </div>
+            <div class="hierarchy-row hierarchy-row--sm">
+              <p class="hierarchy-row__sample" style="font-size: 18pt; font-weight: 600;">Кнопки и стоимость</p>
+              <p class="hierarchy-row__spec">Gros Ventre SemiBold, 18pt<br>#3C3744</p>
+            </div>
+            <div class="hierarchy-row hierarchy-row--sm">
+              <p class="hierarchy-row__sample" style="font-size: 18pt; font-weight: 600;">Подзаголовок 3</p>
+              <p class="hierarchy-row__spec">Gros Ventre SemiBold, 18pt<br>#3C3744</p>
+            </div>
+            <div class="hierarchy-row hierarchy-row--sm">
+              <p class="hierarchy-row__sample" style="font-size: 16pt; font-weight: 300;">Основной текст</p>
+              <p class="hierarchy-row__spec">Gros Ventre Light, 16pt<br>#3C3744</p>
+            </div>
+            <div class="hierarchy-row hierarchy-row--sm">
+              <p class="hierarchy-row__sample" style="font-size: 14pt; font-weight: 400;">Подписи</p>
+              <p class="hierarchy-row__spec">Gros Ventre Regular, 14pt<br>#3C3744</p>
+            </div>
+          </div>
+
+          <div class="hierarchy-block__content" data-target="digital" hidden>
+            <div class="hierarchy-row hierarchy-row--lg">
+              <p class="hierarchy-row__sample" style="font-size: 69pt; font-weight: 700;">Заголовок 1</p>
+              <p class="hierarchy-row__spec">Gros Ventre Bold, 103pt<br>#3C3744</p>
+            </div>
+            <div class="hierarchy-row hierarchy-row--lg">
+              <p class="hierarchy-row__sample" style="font-size: 45pt; font-weight: 700;">Заголовок 2</p>
+              <p class="hierarchy-row__spec">Gros Ventre Bold, 72pt<br>#3C3744</p>
+            </div>
+            <div class="hierarchy-row hierarchy-row--md">
+              <p class="hierarchy-row__sample" style="font-size: 45pt; font-weight: 600;">Текст в стикере</p>
+              <p class="hierarchy-row__spec">Gros Ventre SemiBold, 45pt<br>#3C3744</p>
+            </div>
+            <div class="hierarchy-row hierarchy-row--md">
+              <p class="hierarchy-row__sample" style="font-size: 44pt; font-weight: 600;">Подзаголовок 1</p>
+              <p class="hierarchy-row__spec">Gros Ventre SemiBold, 44pt<br>#3C3744</p>
+            </div>
+            <div class="hierarchy-row hierarchy-row--sm">
+              <p class="hierarchy-row__sample" style="font-size: 32pt; font-weight: 600;">Подзаголовок 2</p>
+              <p class="hierarchy-row__spec">Gros Ventre SemiBold, 32pt<br>#3C3744</p>
+            </div>
+            <div class="hierarchy-row hierarchy-row--sm">
+              <p class="hierarchy-row__sample" style="font-size: 24pt; font-weight: 300;">Основной текст</p>
+              <p class="hierarchy-row__spec">Gros Ventre Light, 24pt<br>#3C3744</p>
+            </div>
+          </div>
+         </div>
+
+         <div class="hierarchy-block__photo">
+          <img class="hierarchy-block__photo-img hierarchy-block__photo-img--pc" data-target="desktop" src="visual/img/display_pc.png" alt="Пример типографики на десктопной версии сайта">
+          <img class="hierarchy-block__photo-img hierarchy-block__photo-img--pc hierarchy-block__photo-img--pc-2" data-target="desktop" src="visual/img/display_pc.png" alt="">
+          <img class="hierarchy-block__photo-img" data-target="mobile" src="visual/img/display_mobile.png" alt="Пример типографики на мобильной версии сайта" hidden>
+          <img class="hierarchy-block__photo-img" data-target="digital" src="visual/img/display_cifra.png" alt="Пример типографики в цифровом контенте" hidden>
+         </div>
+         </div>
+        </div>
+
+        <span class="palette-label snap" style="--x: 0; --y: 145;">Интервалы</span>
+
+        <div class="intervals-block snap" style="--x: 0; --y: 147;">
+          <span class="intervals-col__label">Сайт (десктоп)</span>
+          <span class="intervals-col__label">Сайт (мобильная версия)</span>
+          <span class="intervals-col__label">Цифровой контент</span>
+
+          <div class="intervals-row">
+            <p class="intervals-row__heading">Заголовок 2</p>
+            <div class="intervals-row__bar" style="--bar-h: 32;"><span>32</span></div>
+            <p class="intervals-row__body">Универсальная и удобная модель на каждый день. Свободный крой дарит расслабленную посадку.</p>
+          </div>
+          <div class="intervals-row">
+            <p class="intervals-row__heading">Заголовок 2</p>
+            <div class="intervals-row__bar" style="--bar-h: 32;"><span>32</span></div>
+            <p class="intervals-row__body">Универсальная и удобная модель на каждый день. Свободный крой дарит расслабленную посадку.</p>
+          </div>
+          <div class="intervals-row">
+            <p class="intervals-row__heading intervals-row__heading--xl">Заголовок 1</p>
+            <div class="intervals-row__bar" style="--bar-h: 55;"><span>55</span></div>
+            <p class="intervals-row__body">Универсальная и удобная модель футболки на каждый день.</p>
+          </div>
+
+          <div class="intervals-row">
+            <p class="intervals-row__heading">Подзаголовок 2</p>
+            <div class="intervals-row__bar" style="--bar-h: 32;"><span>32</span></div>
+            <p class="intervals-row__body">Универсальная и удобная модель на каждый день. Свободный крой дарит расслабленную посадку.</p>
+          </div>
+          <div class="intervals-row">
+            <p class="intervals-row__heading">Подзаголовок 2</p>
+            <div class="intervals-row__bar" style="--bar-h: 16;"><span>16</span></div>
+            <p class="intervals-row__body">Универсальная и удобная модель на каждый день. Свободный крой дарит расслабленную посадку.</p>
+          </div>
+          <div class="intervals-row">
+            <p class="intervals-row__heading intervals-row__heading--lg">Заголовок 2</p>
+            <div class="intervals-row__bar" style="--bar-h: 55;"><span>55</span></div>
+            <p class="intervals-row__body">Универсальная и удобная модель футболки на каждый день.</p>
+          </div>
+
+          <div class="intervals-row">
+            <p class="intervals-row__heading intervals-row__heading--sm">Подзаголовок 3</p>
+            <div class="intervals-row__bar" style="--bar-h: 32;"><span>32</span></div>
+            <p class="intervals-row__body">Универсальная и удобная модель на каждый день. Свободный крой дарит расслабленную посадку.</p>
+          </div>
+          <div class="intervals-row">
+            <p class="intervals-row__heading intervals-row__heading--sm">Подзаголовок 3</p>
+            <div class="intervals-row__bar" style="--bar-h: 16;"><span>16</span></div>
+            <p class="intervals-row__body">Универсальная и удобная модель на каждый день. Свободный крой дарит расслабленную посадку.</p>
+          </div>
+          <div class="intervals-row">
+            <p class="intervals-row__heading">Подзаголовок 2</p>
+            <div class="intervals-row__bar" style="--bar-h: 48;"><span>48</span></div>
+            <p class="intervals-row__body">Универсальная и удобная модель футболки на каждый день.</p>
+          </div>
+
+          <div class="intervals-row">
+            <p class="intervals-row__body">Универсальная и удобная модель на каждый день. Свободный крой дарит расслабленную посадку.</p>
+            <div class="intervals-row__bar" style="--bar-h: 24;"><span>24</span></div>
+            <p class="intervals-row__body">Универсальная и удобная модель на каждый день. Свободный крой дарит расслабленную посадку.</p>
+          </div>
+          <div class="intervals-row">
+            <p class="intervals-row__body">Универсальная и удобная модель на каждый день. Свободный крой дарит расслабленную посадку.</p>
+            <div class="intervals-row__bar" style="--bar-h: 24;"><span>24</span></div>
+            <p class="intervals-row__body">Универсальная и удобная модель на каждый день. Свободный крой дарит расслабленную посадку.</p>
+          </div>
+          <div class="intervals-row">
+            <p class="intervals-row__body">Универсальная и удобная модель футболки на каждый день.</p>
+            <div class="intervals-row__bar" style="--bar-h: 32;"><span>32</span></div>
+            <p class="intervals-row__body">Универсальная и удобная модель футболки на каждый день.</p>
+          </div>
+
+          <div class="intervals-row">
+            <p class="intervals-row__heading intervals-row__heading--sm">Кнопки, отзывы и стоимость товаров</p>
+            <div class="intervals-row__bar" style="--bar-h: 8;"><span>8</span></div>
+            <p class="intervals-row__body">Универсальная и удобная модель на каждый день. Свободный крой дарит расслабленную посадку.</p>
+          </div>
+          <div class="intervals-row">
+            <p class="intervals-row__heading intervals-row__heading--sm">Кнопки и стоимость товаров</p>
+            <div class="intervals-row__bar" style="--bar-h: 16;"><span>16</span></div>
+            <p class="intervals-row__body">Универсальная и удобная модель на каждый день. Свободный крой дарит расслабленную посадку.</p>
+          </div>
+          <div class="intervals-row" aria-hidden="true"></div>
+        </div>
+
+        <span class="palette-label snap" style="--x: 0; --y: 170;">Начертания</span>
+
+        <div class="weights-block snap" style="--x: 0; --y: 172;">
+          <div class="weight-sample weight-sample--bold">
+            <h3 class="weight-sample__title">Gros Ventre (Bold)</h3>
+            <p class="weight-sample__alphabet">Аа Бб Вв Гг Дд Ее Ёё Жж Зз Ии Йй Кк&nbsp;&nbsp;Лл Мм Нн Оо Пп<br>Рр Сс Тт Уу Фф Хх&nbsp;&nbsp;Цц Чч Шш Щщ Ъъ Ыы Ьь Ээ Юю Яя</p>
+            <p class="weight-sample__alphabet">Aa Bb Cc Dd Ee Ff Gg Hh Ii Jj Kk&nbsp;&nbsp;Ll Mm Nn Oo Pp Qq<br>Rr Ss Tt Uu&nbsp;&nbsp;Vv Ww Xx Yy Zz</p>
+            <p class="weight-sample__digits">0123456789</p>
+          </div>
+
+          <div class="weight-sample weight-sample--semibold">
+            <h3 class="weight-sample__title">Gros Ventre (SemiBold)</h3>
+            <p class="weight-sample__alphabet">Аа Бб Вв Гг Дд Ее Ёё Жж Зз Ии Йй Кк&nbsp;&nbsp;Лл Мм Нн Оо Пп<br>Рр Сс Тт Уу Фф Хх&nbsp;&nbsp;Цц Чч Шш Щщ Ъъ Ыы Ьь Ээ Юю Яя</p>
+            <p class="weight-sample__alphabet">Aa Bb Cc Dd Ee Ff Gg Hh Ii Jj Kk&nbsp;&nbsp;Ll Mm Nn Oo Pp Qq<br>Rr Ss Tt Uu&nbsp;&nbsp;Vv Ww Xx Yy Zz</p>
+            <p class="weight-sample__digits">0123456789</p>
+          </div>
+
+          <div class="weight-sample weight-sample--regular">
+            <h3 class="weight-sample__title">Gros Ventre (Regular)</h3>
+            <p class="weight-sample__alphabet">Аа Бб Вв Гг Дд Ее Ёё Жж Зз Ии Йй Кк&nbsp;&nbsp;Лл Мм Нн Оо Пп<br>Рр Сс Тт Уу Фф Хх&nbsp;&nbsp;Цц Чч Шш Щщ Ъъ Ыы Ьь Ээ Юю Яя</p>
+            <p class="weight-sample__alphabet">Aa Bb Cc Dd Ee Ff Gg Hh Ii Jj Kk&nbsp;&nbsp;Ll Mm Nn Oo Pp<br>Qq Rr Ss Tt Uu&nbsp;&nbsp;Vv Ww Xx Yy Zz</p>
+            <p class="weight-sample__digits">0123456789</p>
+          </div>
+
+          <div class="weight-sample weight-sample--light">
+            <h3 class="weight-sample__title">Gros Ventre (Light)</h3>
+            <p class="weight-sample__alphabet">Аа Бб Вв Гг Дд Ее Ёё Жж Зз Ии Йй Кк&nbsp;&nbsp;Лл Мм Нн Оо Пп<br>Рр Сс Тт Уу Фф Хх&nbsp;&nbsp;Цц Чч Шш Щщ Ъъ Ыы Ьь Ээ Юю Яя</p>
+            <p class="weight-sample__alphabet">Aa Bb Cc Dd Ee Ff Gg Hh Ii Jj Kk&nbsp;&nbsp;Ll Mm Nn Oo Pp<br>Qq Rr Ss Tt Uu&nbsp;&nbsp;Vv Ww Xx Yy Zz</p>
+            <p class="weight-sample__digits">0123456789</p>
+          </div>
+        </div>
+
+        <span class="palette-label snap" style="--x: 0; --y: 192;">Примеры применения</span>
+
+        <div class="weights-examples snap" style="--x: 0; --y: 194;">
+          <figure class="weights-example">
+            <img class="weights-example__img" src="visual/img/Bold + SemiBold + Regular.png" alt="Пример использования начертаний Bold, SemiBold и Regular">
+            <figcaption class="weights-example__caption">Bold + SemiBold + Regular</figcaption>
+          </figure>
+          <figure class="weights-example">
+            <img class="weights-example__img" src="visual/img/Bold + Light.png" alt="Пример использования начертаний Bold и Light">
+            <figcaption class="weights-example__caption">Bold + Light</figcaption>
+          </figure>
+          <figure class="weights-example">
+            <img class="weights-example__img" src="visual/img/SemiBold + Regular.png" alt="Пример использования начертаний SemiBold и Regular">
+            <figcaption class="weights-example__caption">SemiBold + Regular</figcaption>
+          </figure>
+        </div>
+
+        <h2 id="section-graphics" class="visual-section__block-title snap" style="--x: 0; --y: 222;">Графические элементы</h2>
+
+        <span class="palette-label snap" style="--x: 0; --y: 226;">Сетка</span>
+
+        <div class="grid-copy snap" style="--x: 0; --y: 228;">
+          <p class="grid-copy__lead">Сетка является основным графическим элементом визуальной системы УниВенд и используется как фоновый и структурный инструмент при создании цифрового контента.</p>
+
+          <div class="grid-copy__notes">
+            <p>Основная функция сетки — создать ощущение порядка и простоты (так как основной продукт компании — базовые футболки)</p>
+            <p>При использовании сетки в контенте важно сохранять её ненавязчивость — линии не должны конкурировать с основным контентом. Допускается частичное перекрытие сетки графическими элементами, а также её обрезка по краям макета.</p>
+          </div>
+        </div>
+
+        <span class="palette-label snap" style="--x: 0; --y: 235;">Стикеры</span>
+
+        <p class="grid-copy__note snap" style="--x: 0; --y: 237;">Стикеры являются основным элементом визуальной айдентики УниВенд и формируют узнаваемость бренда в цифровой среде. Они представляют собой иллюстрации с эффектом наклейки: с белой обводкой, тенью и визуальным ощущением отрыва от поверхности (peel-эффект).</p>
+
+        <div class="stickers-stage snap" style="--x: 0; --y:239;" id="stickers-stage" aria-label="Интерактивная площадка со стикерами">
+          <img class="sticker" src="visual/img/stic/stic.png"  alt="Стикер 1"  draggable="false">
+          <img class="sticker" src="visual/img/stic/stic2.png" alt="Стикер 2"  draggable="false">
+          <img class="sticker" src="visual/img/stic/stic3.png" alt="Стикер 3"  draggable="false">
+          <img class="sticker" src="visual/img/stic/stic4.png" alt="Стикер 4"  draggable="false">
+          <img class="sticker" src="visual/img/stic/stic5.png" alt="Стикер 5"  draggable="false">
+          <img class="sticker" src="visual/img/stic/stic6.png" alt="Стикер 6"  draggable="false">
+          <img class="sticker" src="visual/img/stic/stic7.png" alt="Стикер 7"  draggable="false">
+          <img class="sticker" src="visual/img/stic/stic8.png" alt="Стикер 8"  draggable="false">
+          <img class="sticker" src="visual/img/stic/stic.png"  alt="Стикер 9"  draggable="false">
+          <img class="sticker" src="visual/img/stic/stic2.png" alt="Стикер 10" draggable="false">
+          <img class="sticker" src="visual/img/stic/stic3.png" alt="Стикер 11" draggable="false">
+          <img class="sticker" src="visual/img/stic/stic4.png" alt="Стикер 12" draggable="false">
+          <img class="sticker" src="visual/img/stic/stic5.png" alt="Стикер 13" draggable="false">
+          <img class="sticker" src="visual/img/stic/stic6.png" alt="Стикер 14" draggable="false">
+          <img class="sticker" src="visual/img/stic/stic7.png" alt="Стикер 15" draggable="false">
+          <img class="sticker" src="visual/img/stic/stic8.png" alt="Стикер 16" draggable="false">
+        </div>
+
+        <span class="palette-label snap" style="--x: 0; --y: 265;">Правила для стикеров:</span>
+
+        <ul class="sticker-rules snap" style="--x: 0; --y: 267;">
+          <li class="sticker-rule">
+            <span class="sticker-rule__bullet" aria-hidden="true"></span>
+            <p class="sticker-rule__text">иллюстрации должны быть выполнены в упрощённой векторной стилистике с ограниченной цветовой палитрой (основной акцент — фирменный синий и оранжевый цвета). Допускаются персонажи, объекты (футболки, вендинг) и абстрактные элементы, отражающие характер бренда</p>
+          </li>
+          <li class="sticker-rule">
+            <span class="sticker-rule__bullet" aria-hidden="true"></span>
+            <p class="sticker-rule__text">текст внутри стикеров (используется при необходимости) должен быть коротким, читаемым и визуально интегрированным в форму стикера. Предпочтительны простые формулировки, связанные с характеристиками продукта или эмоцией (100% хлопок, оверсайз)</p>
+          </li>
+          <li class="sticker-rule">
+            <span class="sticker-rule__bullet" aria-hidden="true"></span>
+            <p class="sticker-rule__text">стикеры могут размещаться поверх сетки, фотографий и других элементов, частично перекрывая их. Допускается лёгкое вращение и наложение друг на друга, при этом важно сохранять читаемость и не создавать визуальный шум</p>
+          </li>
+        </ul>
+
+        <p class="grid-copy__lead snap" style="--x: 9; --y: 275; width: calc(var(--site-grid-size) * 30); text-align: center;">Для упрощения работы с графикой в процессе создания цифрового контента разработан инструмент, который позволяет загрузить любую иллюстрацию и преобразовать её в стикер в фирменном стиле УниВенд (с обводкой и peel-эффектом).</p>
+
+        <span class="palette-label snap" style="--x: 0; --y: 281;">Инструмент Sticker Peel</span>
+
+        <iframe class="sticker-peel-frame snap" style="--x: 0; --y: 283;" src="https://sticker-peel.vercel.app/" title="Инструмент Sticker Peel" loading="lazy"></iframe>
+
+        <p class="grid-copy__note snap" style="--x: 0; --y: 312;">Использование инструмента обязательно при создании новых стикеров, чтобы сохранить единый визуальный стиль бренда и всех его графических элементов.</p>
+
+        <h2 id="section-photo" class="visual-section__block-title snap" style="--x: 0; --y: 316;">Фотоконтент</h2>
+
+        <div class="photo-slider snap" style="--x: 0; --y: 319;" id="photo-slider">
+          <div class="photo-slider__viewport">
+            <div class="photo-slider__track">
+              <img class="photo-slider__item" src="visual/img/photo/IMG_9671.JPG"  alt="Фотоконтент УниВенд 1">
+              <img class="photo-slider__item" src="visual/img/photo/IMG_9734.JPG"  alt="Фотоконтент УниВенд 2">
+              <img class="photo-slider__item" src="visual/img/photo/IMG_9771.JPG"  alt="Фотоконтент УниВенд 3">
+              <img class="photo-slider__item" src="visual/img/photo/IMG_9826.JPG"  alt="Фотоконтент УниВенд 4">
+              <img class="photo-slider__item" src="visual/img/photo/IMG_9830.JPG"  alt="Фотоконтент УниВенд 5">
+              <img class="photo-slider__item" src="visual/img/photo/IMG_9870.JPG"  alt="Фотоконтент УниВенд 6">
+              <img class="photo-slider__item" src="visual/img/photo/IMG_9901.JPG"  alt="Фотоконтент УниВенд 7">
+              <img class="photo-slider__item" src="visual/img/photo/IMG_9932.JPG"  alt="Фотоконтент УниВенд 8">
+              <img class="photo-slider__item" src="visual/img/photo/IMG_02751.jpg" alt="Фотоконтент УниВенд 9">
+              <img class="photo-slider__item" src="visual/img/photo/IMG_0052.JPG"  alt="Фотоконтент УниВенд 10">
+              <img class="photo-slider__item" src="visual/img/photo/IMG_0075.JPG"  alt="Фотоконтент УниВенд 11">
+            </div>
+          </div>
+          <div class="photo-slider__bullets" role="tablist" aria-label="Страницы галереи">
+            <button type="button" class="photo-slider__bullet is-active" data-start="0" aria-label="Фото 1–4"></button>
+            <button type="button" class="photo-slider__bullet" data-start="2" aria-label="Фото 3–6"></button>
+            <button type="button" class="photo-slider__bullet" data-start="5" aria-label="Фото 6–9"></button>
+            <button type="button" class="photo-slider__bullet" data-start="7" aria-label="Фото 8–11"></button>
+          </div>
+        </div>
+
+        <div class="photo-lightbox" id="photo-lightbox" role="dialog" aria-modal="true" aria-label="Просмотр фото" hidden>
+          <button type="button" class="photo-lightbox__close" aria-label="Закрыть">×</button>
+          <button type="button" class="photo-lightbox__nav photo-lightbox__nav--prev" aria-label="Предыдущее фото">‹</button>
+          <img class="photo-lightbox__img" alt="">
+          <button type="button" class="photo-lightbox__nav photo-lightbox__nav--next" aria-label="Следующее фото">›</button>
+        </div>
+
+        <p class="grid-copy__note snap" style="--x: 0; --y: 336;">Фотоконтент УниВенд используется для постов в социальные сети и направлен на демонстрацию продукта в реальной среде и формирование визуального доверия к бренду. Основной акцент делается на посадке футболки, качестве материала и простоте образа. В кадре используются студенты или модели, близкие к целевой аудитории бренда, без сложного стилизованного образа — внешний вид должен быть естественным и повседневным.</p>
+
+        <span class="palette-label snap" style="--x: 0; --y: 342;">Технические характеристики</span>
+
+        <div class="tech-specs snap" style="--x: 0; --y: 344;">
+          <section class="tech-specs__col">
+            <h3 class="tech-specs__heading">Освещение:</h3>
+            <ul class="tech-specs__list">
+              <li class="sticker-rule"><span class="sticker-rule__bullet" aria-hidden="true"></span><p class="sticker-rule__text">мягкий рассеянный свет (естественный или студийный через использование софтбоксов)</p></li>
+              <li class="sticker-rule"><span class="sticker-rule__bullet" aria-hidden="true"></span><p class="sticker-rule__text">отсутствие жёстких теней и пересветов</p></li>
+              <li class="sticker-rule"><span class="sticker-rule__bullet" aria-hidden="true"></span><p class="sticker-rule__text">равномерное освещение всей фигуры модели и изделия</p></li>
+              <li class="sticker-rule"><span class="sticker-rule__bullet" aria-hidden="true"></span><p class="sticker-rule__text">допускается лёгкий контраст для выделения формы</p></li>
+            </ul>
+          </section>
+
+          <section class="tech-specs__col">
+            <h3 class="tech-specs__heading">Фон:</h3>
+            <ul class="tech-specs__list">
+              <li class="sticker-rule"><span class="sticker-rule__bullet" aria-hidden="true"></span><p class="sticker-rule__text">однотонный, без текстур и лишних объектов</p></li>
+              <li class="sticker-rule"><span class="sticker-rule__bullet" aria-hidden="true"></span><p class="sticker-rule__text">используется чёрный или белый фон (в зависимости от цвета футболки: белые на чёрном фоне и наоборот)</p></li>
+              <li class="sticker-rule"><span class="sticker-rule__bullet" aria-hidden="true"></span><p class="sticker-rule__text">следует избегать попадания солнечных лучей и других источников света</p></li>
+            </ul>
+          </section>
+
+          <section class="tech-specs__col">
+            <h3 class="tech-specs__heading">Оборудование:</h3>
+            <ul class="tech-specs__list">
+              <li class="sticker-rule"><span class="sticker-rule__bullet" aria-hidden="true"></span><p class="sticker-rule__text">камера: цифровая (DSLR или беззеркальная)</p></li>
+              <li class="sticker-rule"><span class="sticker-rule__bullet" aria-hidden="true"></span><p class="sticker-rule__text">разрешение: не менее 3000 px по длинной стороне</p></li>
+              <li class="sticker-rule"><span class="sticker-rule__bullet" aria-hidden="true"></span><p class="sticker-rule__text">объектив: 35–50 мм</p></li>
+            </ul>
+          </section>
+
+          <section class="tech-specs__col">
+            <h3 class="tech-specs__heading">Параметры съёмки:</h3>
+            <ul class="tech-specs__list">
+              <li class="sticker-rule"><span class="sticker-rule__bullet" aria-hidden="true"></span><p class="sticker-rule__text">ISO: минимально возможное (100–200)</p></li>
+              <li class="sticker-rule"><span class="sticker-rule__bullet" aria-hidden="true"></span><p class="sticker-rule__text">диафрагма: f/4 – f/8 (для чёткости изделия)</p></li>
+              <li class="sticker-rule"><span class="sticker-rule__bullet" aria-hidden="true"></span><p class="sticker-rule__text">выдержка: подбирать в зависимости от освещения</p></li>
+              <li class="sticker-rule"><span class="sticker-rule__bullet" aria-hidden="true"></span><p class="sticker-rule__text">баланс белого: нейтральный (без цветовых искажений)</p></li>
+            </ul>
+          </section>
+
+          <section class="tech-specs__col">
+            <h3 class="tech-specs__heading">Композиция:</h3>
+            <ul class="tech-specs__list">
+              <li class="sticker-rule"><span class="sticker-rule__bullet" aria-hidden="true"></span><p class="sticker-rule__text">центрированный или слегка смещённый объект</p></li>
+              <li class="sticker-rule"><span class="sticker-rule__bullet" aria-hidden="true"></span><p class="sticker-rule__text">наличие воздуха вокруг модели для последующей обрезки</p></li>
+              <li class="sticker-rule"><span class="sticker-rule__bullet" aria-hidden="true"></span><p class="sticker-rule__text">акцент на изделии, а не на лице или окружении</p></li>
+              <li class="sticker-rule"><span class="sticker-rule__bullet" aria-hidden="true"></span><p class="sticker-rule__text">избегать сложных поз и перекрытий изделия руками</p></li>
+            </ul>
+          </section>
+
+          <section class="tech-specs__col">
+            <h3 class="tech-specs__heading">Обработка:</h3>
+            <ul class="tech-specs__list">
+              <li class="sticker-rule"><span class="sticker-rule__bullet" aria-hidden="true"></span><p class="sticker-rule__text">обязательное удаление фона при подготовке контента</p></li>
+              <li class="sticker-rule"><span class="sticker-rule__bullet" aria-hidden="true"></span><p class="sticker-rule__text">базовая цветокоррекция (контраст, баланс белого)</p></li>
+              <li class="sticker-rule"><span class="sticker-rule__bullet" aria-hidden="true"></span><p class="sticker-rule__text">удаление дефектов (пыль, складки, шум)</p></li>
+              <li class="sticker-rule"><span class="sticker-rule__bullet" aria-hidden="true"></span><p class="sticker-rule__text">сохранение естественного цвета ткани</p></li>
+            </ul>
+          </section>
+        </div>
+
+        <h2 id="section-3d" class="visual-section__block-title snap" style="--x: 0; --y: 368;">3Д-контент</h2>
+
+        <p class="grid-copy__note snap" style="--x: 0; --y: 372;">Использование 3д-контента не предусмотрено.</p>
       </section>
     </main>
   </div>
@@ -153,6 +1038,480 @@
         button.classList.toggle('is-active', isActive);
         button.setAttribute('aria-pressed', String(isActive));
       });
+    })();
+
+    (function () {
+      const swatches = document.querySelectorAll('.swatch');
+      const defaultHint = 'Скопировать цвет';
+      const copiedHint = 'Скопировано';
+
+      swatches.forEach(function (swatch, index) {
+        const front = swatch.querySelector('.swatch__face--front');
+        const back = swatch.querySelector('.swatch__face--back');
+        if (!front || !back) return;
+
+        if (front.style.background) {
+          back.style.background = front.style.background;
+        }
+        if (front.classList.contains('swatch__face--light')) {
+          back.classList.add('swatch__face--light');
+        }
+        if (front.classList.contains('swatch__face--bordered')) {
+          back.classList.add('swatch__face--bordered');
+        }
+
+        swatch.style.setProperty('--swatch-index', index);
+
+        const hint = document.createElement('span');
+        hint.className = 'swatch__copy-hint';
+        hint.textContent = defaultHint;
+        swatch.appendChild(hint);
+
+        const hexNode = front.querySelector('.swatch__code');
+        const hex = hexNode ? hexNode.textContent.trim() : '';
+
+        let resetTimer = null;
+        const triggerCopy = function () {
+          if (!hex) return;
+          const finish = function (ok) {
+            if (!ok) return;
+            hint.textContent = copiedHint;
+            swatch.classList.add('is-copied');
+            clearTimeout(resetTimer);
+            resetTimer = setTimeout(function () {
+              swatch.classList.remove('is-copied');
+              hint.textContent = defaultHint;
+            }, 1200);
+          };
+
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(hex).then(function () { finish(true); }, function () { finish(false); });
+          } else {
+            const temp = document.createElement('textarea');
+            temp.value = hex;
+            temp.setAttribute('readonly', '');
+            temp.style.position = 'absolute';
+            temp.style.left = '-9999px';
+            document.body.appendChild(temp);
+            temp.select();
+            try { document.execCommand('copy'); finish(true); } catch (e) { finish(false); }
+            document.body.removeChild(temp);
+          }
+        };
+
+        swatch.addEventListener('click', triggerCopy);
+        swatch.addEventListener('keydown', function (event) {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            triggerCopy();
+          }
+        });
+      });
+    })();
+
+    (function () {
+      const buttons = document.querySelectorAll('.hierarchy-block__device[data-target]');
+      const contents = document.querySelectorAll('.hierarchy-block__content[data-target]');
+      const photos = document.querySelectorAll('.hierarchy-block__photo-img[data-target]');
+      if (!buttons.length || !contents.length) return;
+
+      buttons.forEach(function (button) {
+        button.addEventListener('click', function () {
+          const target = button.dataset.target;
+          buttons.forEach(function (b) {
+            const active = b.dataset.target === target;
+            b.classList.toggle('hero__button--primary', active);
+            b.classList.toggle('is-active', active);
+          });
+          contents.forEach(function (c) {
+            c.hidden = c.dataset.target !== target;
+          });
+          photos.forEach(function (p) {
+            p.hidden = p.dataset.target !== target;
+          });
+        });
+      });
+    })();
+
+    (function () {
+      const stage = document.getElementById('stickers-stage');
+      if (!stage) return;
+
+      const stickers = Array.from(stage.querySelectorAll('.sticker'));
+      const items = [];
+      let stageW = 0;
+      let stageH = 0;
+      const FRICTION = 0.996;
+      const ANG_FRICTION = 0.99;
+      const RESTITUTION = 0.78;
+      const COLLISION_REST = 0.92;
+      const DRIFT_MIN = 0.35;
+      const DRIFT_NUDGE = 0.06;
+      let dragging = null;
+      const pointers = new Map();
+
+      function measureStage() {
+        const rect = stage.getBoundingClientRect();
+        stageW = rect.width;
+        stageH = rect.height;
+      }
+
+      function rand(min, max) { return min + Math.random() * (max - min); }
+
+      function init() {
+        measureStage();
+        const cols = Math.ceil(Math.sqrt(stickers.length * (stageW / stageH)));
+        const rows = Math.ceil(stickers.length / cols);
+        items.length = 0;
+        stickers.forEach((el, i) => {
+          el.style.transform = 'translate3d(0,0,0) rotate(0deg)';
+          const w = el.naturalWidth || el.offsetWidth || 160;
+          const h = el.naturalHeight || el.offsetHeight || 160;
+          const cellW = stageW / cols;
+          const cellH = stageH / rows;
+          const col = i % cols;
+          const row = Math.floor(i / cols);
+          const cx = cellW * col + cellW / 2;
+          const cy = cellH * row + cellH / 2;
+          const dir = rand(0, Math.PI * 2);
+          const speed = rand(0.6, 1.1);
+          const item = {
+            el,
+            w, h,
+            r: Math.min(w, h) * 0.42,
+            x: Math.max(w / 2 + 10, Math.min(stageW - w / 2 - 10, cx + rand(-20, 20))),
+            y: Math.max(h / 2 + 10, Math.min(stageH - h / 2 - 10, cy + rand(-20, 20))),
+            vx: Math.cos(dir) * speed,
+            vy: Math.sin(dir) * speed,
+            angle: rand(-12, 12),
+            angVel: rand(-0.3, 0.3),
+          };
+          items.push(item);
+          attachDrag(item);
+        });
+      }
+
+      function applyTransform(it) {
+        it.el.style.transform =
+          'translate3d(' + (it.x - it.w / 2) + 'px,' + (it.y - it.h / 2) + 'px,0) rotate(' + it.angle + 'deg)';
+      }
+
+      function spawnTrail(it) {
+        const ghost = it.el.cloneNode(false);
+        ghost.classList.remove('sticker', 'is-dragging');
+        ghost.classList.add('sticker-ghost');
+        ghost.removeAttribute('id');
+        ghost.style.width = it.w + 'px';
+        ghost.style.height = it.h + 'px';
+        ghost.style.transform =
+          'translate3d(' + (it.x - it.w / 2) + 'px,' + (it.y - it.h / 2) + 'px,0) rotate(' + it.angle + 'deg)';
+        ghost.addEventListener('animationend', function () { ghost.remove(); });
+        stage.insertBefore(ghost, it.el);
+      }
+
+      function step(now) {
+        if (typeof now !== 'number') now = performance.now();
+        for (const it of items) {
+          const speed = Math.hypot(it.vx, it.vy);
+          if (it._lastTrail === undefined) it._lastTrail = 0;
+          if (now - it._lastTrail > 70 && (speed > 0.5 || it === dragging)) {
+            spawnTrail(it);
+            it._lastTrail = now;
+          }
+          if (it === dragging) {
+            applyTransform(it);
+            continue;
+          }
+          it.vx *= FRICTION;
+          it.vy *= FRICTION;
+          it.angVel *= ANG_FRICTION;
+          it.x += it.vx;
+          it.y += it.vy;
+          it.angle += it.angVel;
+
+          const halfW = it.w / 2;
+          const halfH = it.h / 2;
+          if (it.x - halfW < 0) {
+            it.x = halfW;
+            it.vx = -it.vx * RESTITUTION;
+            it.angVel += it.vy * 0.05;
+          } else if (it.x + halfW > stageW) {
+            it.x = stageW - halfW;
+            it.vx = -it.vx * RESTITUTION;
+            it.angVel -= it.vy * 0.05;
+          }
+          if (it.y - halfH < 0) {
+            it.y = halfH;
+            it.vy = -it.vy * RESTITUTION;
+            it.angVel -= it.vx * 0.05;
+          } else if (it.y + halfH > stageH) {
+            it.y = stageH - halfH;
+            it.vy = -it.vy * RESTITUTION;
+            it.angVel += it.vx * 0.05;
+          }
+
+          const sp = Math.hypot(it.vx, it.vy);
+          if (sp < DRIFT_MIN) {
+            const a = rand(0, Math.PI * 2);
+            it.vx += Math.cos(a) * DRIFT_NUDGE;
+            it.vy += Math.sin(a) * DRIFT_NUDGE;
+          }
+          if (Math.abs(it.angVel) < 0.01) it.angVel += rand(-0.04, 0.04);
+
+          applyTransform(it);
+        }
+
+        for (let i = 0; i < items.length; i++) {
+          for (let j = i + 1; j < items.length; j++) {
+            const a = items[i], b = items[j];
+            const dx = b.x - a.x;
+            const dy = b.y - a.y;
+            const dist = Math.hypot(dx, dy);
+            const minDist = a.r + b.r;
+            if (dist > 0 && dist < minDist) {
+              const overlap = (minDist - dist) / 2;
+              const nx = dx / dist;
+              const ny = dy / dist;
+              if (a !== dragging) { a.x -= nx * overlap; a.y -= ny * overlap; }
+              if (b !== dragging) { b.x += nx * overlap; b.y += ny * overlap; }
+              const rvx = b.vx - a.vx;
+              const rvy = b.vy - a.vy;
+              const dot = rvx * nx + rvy * ny;
+              if (dot < 0) {
+                const imp = -(1 + COLLISION_REST) * dot / 2;
+                if (a !== dragging) { a.vx -= imp * nx; a.vy -= imp * ny; a.angVel += (rvy * nx - rvx * ny) * 0.04; }
+                if (b !== dragging) { b.vx += imp * nx; b.vy += imp * ny; b.angVel -= (rvy * nx - rvx * ny) * 0.04; }
+              }
+            }
+          }
+        }
+
+        requestAnimationFrame(step);
+      }
+
+      function attachDrag(item) {
+        const el = item.el;
+        el.addEventListener('pointerdown', function (e) {
+          e.preventDefault();
+          el.setPointerCapture(e.pointerId);
+          dragging = item;
+          el.classList.add('is-dragging');
+          const rect = stage.getBoundingClientRect();
+          const px = e.clientX - rect.left;
+          const py = e.clientY - rect.top;
+          item._grabDX = item.x - px;
+          item._grabDY = item.y - py;
+          item._lastX = px;
+          item._lastY = py;
+          item._lastT = performance.now();
+          item.vx = 0;
+          item.vy = 0;
+          item.angVel = 0;
+        });
+        el.addEventListener('pointermove', function (e) {
+          if (dragging !== item) return;
+          const rect = stage.getBoundingClientRect();
+          const px = e.clientX - rect.left;
+          const py = e.clientY - rect.top;
+          const halfW = item.w / 2;
+          const halfH = item.h / 2;
+          item.x = Math.max(halfW, Math.min(stageW - halfW, px + item._grabDX));
+          item.y = Math.max(halfH, Math.min(stageH - halfH, py + item._grabDY));
+          const now = performance.now();
+          const dt = Math.max(1, now - item._lastT);
+          item._velX = (px - item._lastX) / dt * 16;
+          item._velY = (py - item._lastY) / dt * 16;
+          item._lastX = px;
+          item._lastY = py;
+          item._lastT = now;
+        });
+        function release(e) {
+          if (dragging !== item) return;
+          try { el.releasePointerCapture(e.pointerId); } catch (_) {}
+          dragging = null;
+          el.classList.remove('is-dragging');
+          item.vx = (item._velX || 0);
+          item.vy = (item._velY || 0);
+          item.angVel = (item._velX || 0) * 0.05;
+          item._velX = 0;
+          item._velY = 0;
+        }
+        el.addEventListener('pointerup', release);
+        el.addEventListener('pointercancel', release);
+      }
+
+      function startWhenReady() {
+        const pending = stickers.filter(s => !s.complete);
+        if (!pending.length) {
+          init();
+          requestAnimationFrame(step);
+          return;
+        }
+        let left = pending.length;
+        pending.forEach(s => {
+          const done = () => { if (--left === 0) { init(); requestAnimationFrame(step); } };
+          s.addEventListener('load', done, { once: true });
+          s.addEventListener('error', done, { once: true });
+        });
+      }
+
+      window.addEventListener('resize', function () {
+        const oldW = stageW || 1;
+        const oldH = stageH || 1;
+        measureStage();
+        const sx = stageW / oldW;
+        const sy = stageH / oldH;
+        for (const it of items) {
+          it.x = Math.max(it.w / 2, Math.min(stageW - it.w / 2, it.x * sx));
+          it.y = Math.max(it.h / 2, Math.min(stageH - it.h / 2, it.y * sy));
+        }
+      });
+
+      startWhenReady();
+    })();
+
+    (function () {
+      const slider = document.getElementById('photo-slider');
+      if (!slider) return;
+      const track = slider.querySelector('.photo-slider__track');
+      const bullets = Array.from(slider.querySelectorAll('.photo-slider__bullet'));
+
+      function go(bulletIdx) {
+        const start = parseInt(bullets[bulletIdx].dataset.start, 10) || 0;
+        const item = track.children[0];
+        if (!item) return;
+        const itemW = item.getBoundingClientRect().width;
+        const styles = getComputedStyle(track);
+        const gap = parseFloat(styles.columnGap || styles.gap || '0');
+        const shift = start * (itemW + gap);
+        track.style.transform = 'translateX(' + (-shift) + 'px)';
+        bullets.forEach(function (b, i) {
+          b.classList.toggle('is-active', i === bulletIdx);
+        });
+      }
+
+      bullets.forEach(function (b, i) {
+        b.addEventListener('click', function () { go(i); });
+      });
+
+      window.addEventListener('resize', function () {
+        const active = bullets.findIndex(function (b) { return b.classList.contains('is-active'); });
+        go(active < 0 ? 0 : active);
+      });
+
+      go(0);
+
+      (function () {
+        const targets = document.querySelectorAll('.visual-section__work .snap');
+        if (!targets.length || !('IntersectionObserver' in window)) return;
+        targets.forEach(function (el) { el.classList.add('reveal'); });
+
+        const obs = new IntersectionObserver(function (entries) {
+          entries.forEach(function (e) {
+            if (e.isIntersecting) {
+              e.target.classList.add('is-visible');
+              e.target.classList.remove('is-passed');
+            } else {
+              e.target.classList.remove('is-visible');
+              if (e.boundingClientRect.top < 0) {
+                e.target.classList.add('is-passed');
+              } else {
+                e.target.classList.remove('is-passed');
+              }
+            }
+          });
+        }, { threshold: 0, rootMargin: '-8% 0px -12% 0px' });
+
+        targets.forEach(function (el) { obs.observe(el); });
+      })();
+
+      (function () {
+        const items = Array.from(document.querySelectorAll('.visual-section__subnav li[data-target]'));
+        if (!items.length) return;
+        const targets = items.map(function (li) {
+          return { li: li, el: document.getElementById(li.dataset.target) };
+        }).filter(function (t) { return t.el; });
+
+        function setActive(id) {
+          items.forEach(function (li) {
+            li.classList.toggle('is-current', li.dataset.target === id);
+          });
+        }
+
+        items.forEach(function (li) {
+          li.addEventListener('click', function () {
+            const t = document.getElementById(li.dataset.target);
+            if (!t) return;
+            const top = t.getBoundingClientRect().top + window.pageYOffset - 40;
+            window.scrollTo({ top: top, behavior: 'smooth' });
+            setActive(li.dataset.target);
+          });
+        });
+
+        let ticking = false;
+        function onScroll() {
+          if (ticking) return;
+          ticking = true;
+          requestAnimationFrame(function () {
+            ticking = false;
+            const probe = window.innerHeight * 0.35;
+            let active = targets[0];
+            for (const t of targets) {
+              const top = t.el.getBoundingClientRect().top;
+              if (top - probe <= 0) active = t;
+            }
+            setActive(active.li.dataset.target);
+          });
+        }
+        window.addEventListener('scroll', onScroll, { passive: true });
+        onScroll();
+      })();
+
+      const lightbox = document.getElementById('photo-lightbox');
+      if (lightbox) {
+        const lbImg = lightbox.querySelector('.photo-lightbox__img');
+        const lbClose = lightbox.querySelector('.photo-lightbox__close');
+        const lbPrev = lightbox.querySelector('.photo-lightbox__nav--prev');
+        const lbNext = lightbox.querySelector('.photo-lightbox__nav--next');
+        const photos = Array.from(slider.querySelectorAll('.photo-slider__item'));
+        let current = 0;
+
+        function show(idx) {
+          if (!photos.length) return;
+          current = (idx + photos.length) % photos.length;
+          const img = photos[current];
+          lbImg.src = img.src;
+          lbImg.alt = img.alt || '';
+        }
+
+        function open(idx) {
+          show(idx);
+          lightbox.hidden = false;
+          document.body.style.overflow = 'hidden';
+        }
+
+        function close() {
+          lightbox.hidden = true;
+          lbImg.src = '';
+          document.body.style.overflow = '';
+        }
+
+        photos.forEach(function (img, i) {
+          img.addEventListener('click', function () { open(i); });
+        });
+        lightbox.addEventListener('click', function (e) {
+          if (e.target === lightbox) close();
+        });
+        lbClose.addEventListener('click', close);
+        lbPrev.addEventListener('click', function (e) { e.stopPropagation(); show(current - 1); });
+        lbNext.addEventListener('click', function (e) { e.stopPropagation(); show(current + 1); });
+        document.addEventListener('keydown', function (e) {
+          if (lightbox.hidden) return;
+          if (e.key === 'Escape') close();
+          else if (e.key === 'ArrowLeft') show(current - 1);
+          else if (e.key === 'ArrowRight') show(current + 1);
+        });
+      }
     })();
   </script>
 </body>
