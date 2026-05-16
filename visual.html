@@ -968,6 +968,74 @@
     </main>
   </div>
 
+  <div class="page-transition" id="page-transition" aria-hidden="true">
+    <div class="page-transition__panel"></div>
+    <div class="page-transition__panel"></div>
+    <div class="page-transition__panel"></div>
+    <div class="page-transition__panel"></div>
+    <div class="page-transition__panel"></div>
+    <div class="page-transition__panel"></div>
+    <div class="page-transition__panel"></div>
+    <div class="page-transition__panel"></div>
+    <span class="page-transition__label">УниВенд</span>
+  </div>
+
+  <script>
+    (function () {
+      const overlay = document.getElementById('page-transition');
+      if (!overlay) return;
+
+      function navigateWith(href) {
+        try { sessionStorage.setItem('univend:page-transition', '1'); } catch (e) {}
+        overlay.classList.add('is-covering');
+        setTimeout(function () { window.location.href = href; }, 750);
+      }
+
+      document.querySelectorAll('a[href]').forEach(function (a) {
+        const href = a.getAttribute('href');
+        if (!href || href.startsWith('#') || href.startsWith('mailto:') || href.startsWith('tel:')) return;
+        if (a.target && a.target !== '' && a.target !== '_self') return;
+        try {
+          const url = new URL(href, window.location.href);
+          if (url.origin !== window.location.origin) return;
+          if (url.pathname === window.location.pathname) return;
+        } catch (e) { return; }
+
+        a.addEventListener('click', function (e) {
+          if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+          e.preventDefault();
+          navigateWith(href);
+        });
+      });
+
+      let revealed = false;
+      try {
+        if (sessionStorage.getItem('univend:page-transition')) {
+          sessionStorage.removeItem('univend:page-transition');
+          overlay.classList.add('no-anim', 'is-covering');
+          requestAnimationFrame(function () {
+            overlay.offsetHeight;
+            overlay.classList.remove('no-anim');
+            requestAnimationFrame(function () {
+              overlay.classList.remove('is-covering');
+              overlay.classList.add('is-revealing');
+              revealed = true;
+              setTimeout(function () {
+                overlay.classList.remove('is-revealing');
+              }, 1100);
+            });
+          });
+        }
+      } catch (e) {}
+
+      window.addEventListener('pageshow', function (e) {
+        if (e.persisted && !revealed) {
+          overlay.classList.remove('is-covering', 'is-revealing');
+        }
+      });
+    })();
+  </script>
+
   <script>
     (function () {
       let grid = document.getElementById('grid-32-underlay');
