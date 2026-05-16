@@ -520,6 +520,39 @@
   display: none;
 }
 
+.hierarchy-row {
+  transition:
+    opacity 320ms cubic-bezier(0.22, 0.61, 0.36, 1),
+    transform 320ms cubic-bezier(0.22, 0.61, 0.36, 1);
+  will-change: opacity, transform;
+}
+
+.hierarchy-row.is-leaving {
+  opacity: 0;
+  transform: translateX(-24px);
+}
+
+.hierarchy-row.is-entering {
+  opacity: 0;
+  transform: translateX(24px);
+}
+
+.hierarchy-block__photo-img {
+  transition:
+    opacity 320ms cubic-bezier(0.22, 0.61, 0.36, 1),
+    transform 320ms cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.hierarchy-block__photo-img.is-leaving {
+  opacity: 0;
+  transform: scale(0.94);
+}
+
+.hierarchy-block__photo-img.is-entering {
+  opacity: 0;
+  transform: scale(1.06);
+}
+
 .hero__button:not(.hero__button--primary):hover {
   background: rgba(9, 9, 201, 0.2);
 }

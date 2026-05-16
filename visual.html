@@ -1186,22 +1186,107 @@
       const photos = document.querySelectorAll('.hierarchy-block__photo-img[data-target]');
       if (!buttons.length || !contents.length) return;
 
-      buttons.forEach(function (button) {
-        button.addEventListener('click', function () {
-          const target = button.dataset.target;
+      const STAGGER = 45;
+      const ANIM = 320;
+      let currentTarget = null;
+      let switching = false;
+
+      function animateOut(el) {
+        const rows = el.querySelectorAll('.hierarchy-row');
+        rows.forEach(function (r, i) {
+          r.style.transitionDelay = (i * STAGGER) + 'ms';
+          r.classList.add('is-leaving');
+        });
+      }
+
+      function animateIn(el) {
+        const rows = el.querySelectorAll('.hierarchy-row');
+        rows.forEach(function (r, i) {
+          r.classList.add('is-entering');
+          r.style.transitionDelay = '0ms';
+        });
+        requestAnimationFrame(function () {
+          requestAnimationFrame(function () {
+            rows.forEach(function (r, i) {
+              r.style.transitionDelay = (i * STAGGER) + 'ms';
+              r.classList.remove('is-entering');
+            });
+          });
+        });
+      }
+
+      function animatePhotoOut(p) {
+        if (!p || p.hidden) return;
+        p.classList.add('is-leaving');
+      }
+
+      function animatePhotoIn(p) {
+        if (!p) return;
+        p.classList.add('is-entering');
+        requestAnimationFrame(function () {
+          requestAnimationFrame(function () { p.classList.remove('is-entering'); });
+        });
+      }
+
+      function setActiveTarget(target) {
+        if (switching || target === currentTarget) {
           buttons.forEach(function (b) {
             const active = b.dataset.target === target;
             b.classList.toggle('hero__button--primary', active);
             b.classList.toggle('is-active', active);
           });
+          return;
+        }
+        switching = true;
+        buttons.forEach(function (b) {
+          const active = b.dataset.target === target;
+          b.classList.toggle('hero__button--primary', active);
+          b.classList.toggle('is-active', active);
+        });
+
+        const oldContent = Array.from(contents).find(function (c) { return !c.hidden; });
+        const newContent = Array.from(contents).find(function (c) { return c.dataset.target === target; });
+        const oldPhoto = Array.from(photos).find(function (p) { return !p.hidden; });
+        const newPhoto = Array.from(photos).find(function (p) { return p.dataset.target === target; });
+
+        if (oldContent) animateOut(oldContent);
+        animatePhotoOut(oldPhoto);
+
+        const oldRowsCount = oldContent ? oldContent.querySelectorAll('.hierarchy-row').length : 0;
+        const exitDuration = ANIM + Math.max(0, (oldRowsCount - 1)) * STAGGER;
+
+        setTimeout(function () {
           contents.forEach(function (c) {
-            c.hidden = c.dataset.target !== target;
+            const isNew = c === newContent;
+            c.hidden = !isNew;
+            if (!isNew) {
+              c.querySelectorAll('.hierarchy-row.is-leaving').forEach(function (r) {
+                r.classList.remove('is-leaving');
+                r.style.transitionDelay = '';
+              });
+            }
           });
           photos.forEach(function (p) {
-            p.hidden = p.dataset.target !== target;
+            const isNew = p === newPhoto;
+            p.hidden = !isNew;
+            if (!isNew) p.classList.remove('is-leaving');
           });
+          if (newContent) animateIn(newContent);
+          animatePhotoIn(newPhoto);
+          currentTarget = target;
+          const newRowsCount = newContent ? newContent.querySelectorAll('.hierarchy-row').length : 0;
+          setTimeout(function () { switching = false; }, ANIM + Math.max(0, (newRowsCount - 1)) * STAGGER);
+        }, exitDuration);
+      }
+
+      buttons.forEach(function (button) {
+        button.addEventListener('click', function () {
+          setActiveTarget(button.dataset.target);
         });
       });
+
+      const initialActive = Array.from(buttons).find(function (b) { return b.classList.contains('is-active'); });
+      currentTarget = initialActive ? initialActive.dataset.target : (buttons[0] && buttons[0].dataset.target);
     })();
 
     (function () {
