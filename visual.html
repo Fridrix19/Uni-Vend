@@ -10,9 +10,12 @@
 </head>
 
 <body>
+  <button class="visual-section__burger" id="visual-burger" type="button" aria-label="Открыть меню" aria-expanded="false" aria-controls="visual-nav">
+    <span></span><span></span><span></span>
+  </button>
   <div id="allrecords" class="site-page">
     <main class="visual-section" aria-label="Визуальный блок">
-      <nav class="visual-section__nav" aria-label="Навигация визуального блока">
+      <nav class="visual-section__nav" id="visual-nav" aria-label="Навигация визуального блока">
         <ul class="hero__ticks visual-section__dots snap" style="--y: 8;">
           <li>
             <a class="hero__nav-dot" href="index.html">
@@ -1231,10 +1234,14 @@
         const cols = Math.ceil(Math.sqrt(stickers.length * (stageW / stageH)));
         const rows = Math.ceil(stickers.length / cols);
         items.length = 0;
+        const isMobile = window.innerWidth <= 833;
+        const scale = isMobile ? 0.5 : 1;
         stickers.forEach((el, i) => {
           el.style.transform = 'translate3d(0,0,0) rotate(0deg)';
-          const w = el.naturalWidth || el.offsetWidth || 160;
-          const h = el.naturalHeight || el.offsetHeight || 160;
+          const w = (el.naturalWidth || el.offsetWidth || 160) * scale;
+          const h = (el.naturalHeight || el.offsetHeight || 160) * scale;
+          el.style.width = w + 'px';
+          el.style.height = h + 'px';
           const cellW = stageW / cols;
           const cellH = stageH / rows;
           const col = i % cols;
@@ -1491,6 +1498,25 @@
         }, { threshold: 0, rootMargin: '-8% 0px -12% 0px' });
 
         targets.forEach(function (el) { obs.observe(el); });
+      })();
+
+      (function () {
+        const burger = document.getElementById('visual-burger');
+        const nav = document.getElementById('visual-nav');
+        if (!burger || !nav) return;
+        function setOpen(open) {
+          document.body.classList.toggle('is-nav-open', open);
+          burger.setAttribute('aria-expanded', open ? 'true' : 'false');
+        }
+        burger.addEventListener('click', function () {
+          setOpen(!document.body.classList.contains('is-nav-open'));
+        });
+        nav.addEventListener('click', function (e) {
+          if (e.target.closest('li[data-target], a[href]')) setOpen(false);
+        });
+        document.addEventListener('keydown', function (e) {
+          if (e.key === 'Escape') setOpen(false);
+        });
       })();
 
       (function () {
