@@ -1,0 +1,4 @@
+/* Стили страницы «Видео-контент» */
+.video-section.subpage-section {
+  min-height: max(100vh, calc(var(--site-grid-size) * 110));
+}

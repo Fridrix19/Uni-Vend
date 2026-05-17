@@ -1,0 +1,4 @@
+/* Стили страницы «Универсальные правила» */
+.rules-section.subpage-section {
+  min-height: max(100vh, calc(var(--site-grid-size) * 110));
+}

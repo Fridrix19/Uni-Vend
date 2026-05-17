@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="ru">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Текстовый контент — УниВенд</title>
+  <link rel="stylesheet" href="hero.css">
+  <link rel="stylesheet" href="visual.css">
+  <link rel="stylesheet" href="types.css">
+  <link rel="stylesheet" href="text.css">
+</head>
+
+<body>
+  <button class="visual-section__burger" id="page-burger" type="button" aria-label="Открыть меню" aria-expanded="false" aria-controls="page-nav">
+    <span></span><span></span><span></span>
+  </button>
+  <div id="allrecords" class="site-page">
+    <main class="visual-section subpage-section text-section" aria-label="Текстовый контент">
+      <nav class="visual-section__nav" id="page-nav" aria-label="Навигация раздела">
+        <ul class="hero__ticks visual-section__dots snap">
+          <li>
+            <a class="hero__nav-dot" href="system.html">
+              <span class="hero__tooltip">Система контента</span>
+            </a>
+          </li>
+          <li>
+            <a class="hero__nav-dot" href="types.html">
+              <span class="hero__tooltip">Типы контента</span>
+            </a>
+          </li>
+          <li>
+            <a class="hero__nav-dot is-active" href="text.html" aria-current="page">
+              <span class="hero__tooltip">Текстовый контент</span>
+            </a>
+          </li>
+          <li>
+            <a class="hero__nav-dot" href="visual.html">
+              <span class="hero__tooltip">Графический контент</span>
+            </a>
+          </li>
+          <li>
+            <a class="hero__nav-dot" href="video.html">
+              <span class="hero__tooltip">Видео-контент</span>
+            </a>
+          </li>
+          <li>
+            <a class="hero__nav-dot" href="music.html">
+              <span class="hero__tooltip">Музыкальный контент</span>
+            </a>
+          </li>
+          <li>
+            <a class="hero__nav-dot" href="rules.html">
+              <span class="hero__tooltip">Универсальные правила</span>
+            </a>
+          </li>
+          <li>
+            <a class="hero__nav-dot" href="templates.html">
+              <span class="hero__tooltip">Шаблоны и чек-листы</span>
+            </a>
+          </li>
+        </ul>
+
+        <ul class="visual-section__subnav snap" style="--y: 8;">
+          <li class="is-current" data-target="block-1">Блок 1</li>
+          <li data-target="block-2">Блок 2</li>
+          <li data-target="block-3">Блок 3</li>
+          <li data-target="block-4">Блок 4</li>
+        </ul>
+      </nav>
+
+      <section class="visual-section__work" aria-label="Рабочая зона">
+        <h1 class="visual-section__title snap" style="--x: 0; --y: 3;">Текстовый контент</h1>
+
+        <p class="visual-section__lead snap" style="--x: 0; --y: 6;">Текстовый контент — это все слова бренда: посты и подписи, заголовки, описания товаров, инструкции, тексты в плашках и интерфейсе. Он переводит идеи в понятные сообщения и помогает пользователю принять решение.</p>
+
+        <label class="hero__search visual-section__search snap" style="--y: 3;">
+          <img class="hero__search-icon" src="heropage/img/sertch.svg" alt="" aria-hidden="true">
+          <input type="search" placeholder="Найдите раздел, канал, шаблон, шрифт">
+        </label>
+
+        <h2 id="block-1" class="visual-section__block-title types-block-title snap" style="--x: 0; --y: 13;">Блок 1</h2>
+        <h2 id="block-2" class="visual-section__block-title types-block-title snap" style="--x: 0; --y: 40;">Блок 2</h2>
+        <h2 id="block-3" class="visual-section__block-title types-block-title snap" style="--x: 0; --y: 67;">Блок 3</h2>
+        <h2 id="block-4" class="visual-section__block-title types-block-title snap" style="--x: 0; --y: 94;">Блок 4</h2>
+      </section>
+    </main>
+  </div>
+
+  <div class="page-transition" id="page-transition" aria-hidden="true">
+    <div class="page-transition__panel"></div>
+    <div class="page-transition__panel"></div>
+    <div class="page-transition__panel"></div>
+    <div class="page-transition__panel"></div>
+    <div class="page-transition__panel"></div>
+    <div class="page-transition__panel"></div>
+    <div class="page-transition__panel"></div>
+    <div class="page-transition__panel"></div>
+    <span class="page-transition__label">УниВенд</span>
+  </div>
+
+  <script src="subpage.js"></script>
+</body>
+
+</html>

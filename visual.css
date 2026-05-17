@@ -145,10 +145,70 @@
   text-box-edge: cap alphabetic;
 }
 
-.visual-section__search {
+/* Плавающий поиск: привязка к сетке (48 колонок от work-left); свернут 2×2 клетки справа, развёрнут 18×2 */
+.visual-section__search.hero__search {
+  position: fixed;
+  top: calc(var(--site-grid-size) * 3);
+  right: auto;
+  /* Столбцы 46–47 (правый край на 48-й линии сетки контента); на узком экране не выходим за вьюпорт */
+  left: min(
+    calc(var(--work-left) + var(--site-grid-size) * 46),
+    calc(100vw - var(--layout-right-gap) - var(--site-grid-size) * 2)
+  );
+  z-index: 45;
+  width: calc(var(--site-grid-size) * 2);
+  height: calc(var(--site-grid-size) * 2);
+  min-height: calc(var(--site-grid-size) * 2);
+  margin: 0;
+  padding: 0;
+  gap: 0;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  cursor: pointer;
+  transition:
+    width 0.38s cubic-bezier(0.4, 0, 0.2, 1),
+    left 0.38s cubic-bezier(0.4, 0, 0.2, 1),
+    padding 0.38s cubic-bezier(0.4, 0, 0.2, 1),
+    gap 0.38s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.2s ease;
+}
+
+.visual-section__search.hero__search .hero__search-icon {
+  flex: 0 0 auto;
+}
+
+.visual-section__search.hero__search input {
+  flex: 0 1 auto;
+  width: 0;
+  min-width: 0;
+  max-width: none;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.visual-section__search.hero__search:hover,
+.visual-section__search.hero__search:focus-within {
   width: calc(var(--site-grid-size) * 18);
-  left: auto;
-  right: 0;
+  left: min(
+    calc(var(--work-left) + var(--site-grid-size) * 30),
+    calc(100vw - var(--layout-right-gap) - var(--site-grid-size) * 18)
+  );
+  height: calc(var(--site-grid-size) * 2);
+  min-height: calc(var(--site-grid-size) * 2);
+  padding: 0 24px;
+  gap: 24px;
+  justify-content: flex-start;
+  cursor: text;
+}
+
+.visual-section__search.hero__search:hover input,
+.visual-section__search.hero__search:focus-within input {
+  flex: 1 1 auto;
+  min-width: 0;
+  opacity: 1;
+  pointer-events: auto;
 }
 
 .visual-section__text-demo {
@@ -1186,6 +1246,29 @@
     text-align: left !important;
     overflow-wrap: break-word;
     word-break: break-word;
+  }
+
+  /* Поиск остаётся fixed; привязка к мелкой сетке + отступ от бургера */
+  .visual-section__work > .visual-section__search.hero__search {
+    position: fixed !important;
+    top: var(--site-grid-size);
+    right: calc(var(--site-grid-size) * 5);
+    left: auto !important;
+    width: calc(var(--site-grid-size) * 4);
+    height: calc(var(--site-grid-size) * 4);
+    min-height: calc(var(--site-grid-size) * 4);
+    max-width: none;
+    text-align: left;
+    z-index: 95;
+  }
+
+  .visual-section__work > .visual-section__search.hero__search:hover,
+  .visual-section__work > .visual-section__search.hero__search:focus-within {
+    left: auto !important;
+    right: calc(var(--site-grid-size) * 5);
+    width: min(calc(100vw - 96px), calc(var(--site-grid-size) * 18));
+    height: calc(var(--site-grid-size) * 4);
+    min-height: calc(var(--site-grid-size) * 4);
   }
 
   .visual-section__work p,
