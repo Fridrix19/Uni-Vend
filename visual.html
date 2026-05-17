@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="ru">
 
 <head>
@@ -14,9 +14,15 @@
     <span></span><span></span><span></span>
   </button>
   <div id="allrecords" class="site-page">
-    <main class="visual-section" aria-label="Визуальный блок">
+    <main class="visual-section visual-page-section" aria-label="Визуальный блок">
       <nav class="visual-section__nav" id="visual-nav" aria-label="Навигация визуального блока">
         <ul class="hero__ticks visual-section__dots snap">
+          <li>
+            <a class="hero__nav-dot hero__nav-dot--home" href="index.html">
+              <img class="hero__nav-logo" src="logoty%5Be.svg" alt="">
+              <span class="hero__tooltip">Главная</span>
+            </a>
+          </li>
           <li>
             <a class="hero__nav-dot" href="system.html">
               <span class="hero__tooltip">Система контента</span>
@@ -25,11 +31,6 @@
           <li>
             <a class="hero__nav-dot" href="types.html">
               <span class="hero__tooltip">Типы контента</span>
-            </a>
-          </li>
-          <li>
-            <a class="hero__nav-dot" href="text.html">
-              <span class="hero__tooltip">Текстовый контент</span>
             </a>
           </li>
           <li>
@@ -52,11 +53,6 @@
               <span class="hero__tooltip">Универсальные правила</span>
             </a>
           </li>
-          <li>
-            <a class="hero__nav-dot" href="templates.html">
-              <span class="hero__tooltip">Шаблоны и чек-листы</span>
-            </a>
-          </li>
         </ul>
 
         <ul class="visual-section__subnav snap" style="--y: 8;">
@@ -76,9 +72,9 @@
 
         <p class="visual-section__lead snap" style="--x: ; --y: 9;">В процессе создания были перестроены все буквы для формирования более узнаваемого и цельного визуального образа.</p>
 
-        <label class="hero__search visual-section__search snap" style="--y: 3;">
+        <label class="hero__search visual-section__search">
           <img class="hero__search-icon" src="heropage/img/sertch.svg" alt="" aria-hidden="true">
-          <input type="search" placeholder="Найдите раздел, канал, шаблон, шрифт">
+          <input type="search" placeholder="...шаблон">
         </label>
 
         <div class="visual-section__text-demo snap" style="--x: 0; --y: 11;">
@@ -998,10 +994,12 @@
       const overlay = document.getElementById('page-transition');
       if (!overlay) return;
 
-      function navigateWith(href) {
-        try { sessionStorage.setItem('univend:page-transition', '1'); } catch (e) {}
-        overlay.classList.add('is-covering');
-        setTimeout(function () { window.location.href = href; }, 750);
+      function navigateWith(href, mode) {
+        const isLogo = mode === 'logo';
+        try { sessionStorage.setItem('univend:page-transition', isLogo ? 'logo' : 'default'); } catch (e) {}
+        overlay.classList.remove('is-covering', 'is-revealing', 'is-logo-covering', 'is-logo-revealing');
+        overlay.classList.add(isLogo ? 'is-logo-covering' : 'is-covering');
+        setTimeout(function () { window.location.href = href; }, isLogo ? 900 : 750);
       }
 
       document.querySelectorAll('a[href]').forEach(function (a) {
@@ -1017,25 +1015,29 @@
         a.addEventListener('click', function (e) {
           if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
           e.preventDefault();
-          navigateWith(href);
+          navigateWith(href, a.classList.contains('hero__nav-dot--home') ? 'logo' : 'default');
         });
       });
 
       let revealed = false;
       try {
-        if (sessionStorage.getItem('univend:page-transition')) {
+        const transitionMode = sessionStorage.getItem('univend:page-transition');
+        if (transitionMode) {
           sessionStorage.removeItem('univend:page-transition');
-          overlay.classList.add('no-anim', 'is-covering');
+          const isLogo = transitionMode === 'logo';
+          const coverClass = isLogo ? 'is-logo-covering' : 'is-covering';
+          const revealClass = isLogo ? 'is-logo-revealing' : 'is-revealing';
+          overlay.classList.add('no-anim', coverClass);
           requestAnimationFrame(function () {
             overlay.offsetHeight;
             overlay.classList.remove('no-anim');
             requestAnimationFrame(function () {
-              overlay.classList.remove('is-covering');
-              overlay.classList.add('is-revealing');
+              overlay.classList.remove(coverClass);
+              overlay.classList.add(revealClass);
               revealed = true;
               setTimeout(function () {
-                overlay.classList.remove('is-revealing');
-              }, 1100);
+                overlay.classList.remove(revealClass);
+              }, isLogo ? 1000 : 1100);
             });
           });
         }
@@ -1043,7 +1045,7 @@
 
       window.addEventListener('pageshow', function (e) {
         if (e.persisted && !revealed) {
-          overlay.classList.remove('is-covering', 'is-revealing');
+          overlay.classList.remove('is-covering', 'is-revealing', 'is-logo-covering', 'is-logo-revealing');
         }
       });
     })();
@@ -1612,6 +1614,33 @@
         document.addEventListener('keydown', function (e) {
           if (e.key === 'Escape') setOpen(false);
         });
+      })();
+
+      (function () {
+        const nav = document.getElementById('visual-nav');
+        if (!nav) return;
+
+        const dots = nav.querySelector('.visual-section__dots');
+        const subnav = nav.querySelector('.visual-section__subnav');
+        const activeDot = dots ? dots.querySelector('.hero__nav-dot.is-active') : null;
+        const activeItem = activeDot ? activeDot.closest('li') : null;
+        if (!dots || !subnav || !activeItem) return;
+
+        const originalParent = subnav.parentNode;
+        const originalNext = subnav.nextSibling;
+        const mobileQuery = window.matchMedia('(max-width: 833px)');
+
+        function syncMobileSubnav() {
+          if (mobileQuery.matches) {
+            if (subnav.parentNode !== activeItem) activeItem.appendChild(subnav);
+          } else if (subnav.parentNode !== originalParent) {
+            originalParent.insertBefore(subnav, originalNext);
+          }
+        }
+
+        syncMobileSubnav();
+        if (mobileQuery.addEventListener) mobileQuery.addEventListener('change', syncMobileSubnav);
+        else mobileQuery.addListener(syncMobileSubnav);
       })();
 
       (function () {

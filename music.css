@@ -2,3 +2,73 @@
 .music-section.subpage-section {
   min-height: max(100vh, calc(var(--site-grid-size) * 110));
 }
+
+@media screen and (max-width: 833px) {
+  body {
+    --site-grid-offset-x: calc(var(--site-grid-size) / 2);
+    --music-mobile-grid-inset: calc(var(--site-grid-offset-x) + var(--site-grid-size));
+    background-image:
+      linear-gradient(to right, var(--line) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--line) 1px, transparent 1px);
+    background-size: var(--site-grid-size) var(--site-grid-size);
+    background-position:
+      var(--site-grid-offset-x) 0,
+      var(--site-grid-offset-x) 0;
+    background-repeat: repeat;
+  }
+
+  #grid-32-underlay {
+    display: none !important;
+  }
+
+  .music-section.visual-section {
+    padding-left: var(--music-mobile-grid-inset);
+    padding-right: var(--music-mobile-grid-inset);
+    overflow: visible;
+  }
+
+  .music-section .visual-section__burger {
+    top: var(--site-grid-size);
+    right: var(--music-mobile-grid-inset);
+    width: calc(var(--site-grid-size) * 3);
+    height: calc(var(--site-grid-size) * 3);
+  }
+
+  .music-section .visual-section__work {
+    padding-top: calc(var(--site-grid-size) * 6);
+  }
+
+  .music-section .visual-section__work > .visual-section__search.hero__search,
+  .music-section .visual-section__work > .visual-section__search.hero__search:hover,
+  .music-section .visual-section__work > .visual-section__search.hero__search:focus-within {
+    top: var(--site-grid-size);
+    left: var(--music-mobile-grid-inset) !important;
+    right: calc(var(--music-mobile-grid-inset) + var(--site-grid-size) * 4);
+    width: auto;
+    height: calc(var(--site-grid-size) * 3);
+    min-height: calc(var(--site-grid-size) * 3);
+    max-width: none;
+    padding: 0 var(--site-grid-size);
+    gap: var(--site-grid-size);
+    justify-content: flex-start;
+    cursor: text;
+    transition: none !important;
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    will-change: auto;
+  }
+
+  .music-section .visual-section__work > .visual-section__search.hero__search input,
+  .music-section .visual-section__work > .visual-section__search.hero__search:hover input,
+  .music-section .visual-section__work > .visual-section__search.hero__search:focus-within input {
+    flex: 1 1 auto;
+    width: 100%;
+    min-width: 0;
+    opacity: 1;
+    pointer-events: auto;
+    font-size: 16px;
+    transition: none !important;
+    animation: none !important;
+  }
+}

@@ -2,10 +2,12 @@
   const overlay = document.getElementById('page-transition');
   if (!overlay) return;
 
-  function navigateWith(href) {
-    try { sessionStorage.setItem('univend:page-transition', '1'); } catch (e) {}
-    overlay.classList.add('is-covering');
-    setTimeout(function () { window.location.href = href; }, 750);
+  function navigateWith(href, mode) {
+    const isLogo = mode === 'logo';
+    try { sessionStorage.setItem('univend:page-transition', isLogo ? 'logo' : 'default'); } catch (e) {}
+    overlay.classList.remove('is-covering', 'is-revealing', 'is-logo-covering', 'is-logo-revealing');
+    overlay.classList.add(isLogo ? 'is-logo-covering' : 'is-covering');
+    setTimeout(function () { window.location.href = href; }, isLogo ? 900 : 750);
   }
 
   document.querySelectorAll('a[href]').forEach(function (a) {
@@ -21,25 +23,29 @@
     a.addEventListener('click', function (e) {
       if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
       e.preventDefault();
-      navigateWith(href);
+      navigateWith(href, a.classList.contains('hero__nav-dot--home') ? 'logo' : 'default');
     });
   });
 
   let revealed = false;
   try {
-    if (sessionStorage.getItem('univend:page-transition')) {
+    const transitionMode = sessionStorage.getItem('univend:page-transition');
+    if (transitionMode) {
       sessionStorage.removeItem('univend:page-transition');
-      overlay.classList.add('no-anim', 'is-covering');
+      const isLogo = transitionMode === 'logo';
+      const coverClass = isLogo ? 'is-logo-covering' : 'is-covering';
+      const revealClass = isLogo ? 'is-logo-revealing' : 'is-revealing';
+      overlay.classList.add('no-anim', coverClass);
       requestAnimationFrame(function () {
         overlay.offsetHeight;
         overlay.classList.remove('no-anim');
         requestAnimationFrame(function () {
-          overlay.classList.remove('is-covering');
-          overlay.classList.add('is-revealing');
+          overlay.classList.remove(coverClass);
+          overlay.classList.add(revealClass);
           revealed = true;
           setTimeout(function () {
-            overlay.classList.remove('is-revealing');
-          }, 1100);
+            overlay.classList.remove(revealClass);
+          }, isLogo ? 1000 : 1100);
         });
       });
     }
@@ -47,7 +53,7 @@
 
   window.addEventListener('pageshow', function (e) {
     if (e.persisted && !revealed) {
-      overlay.classList.remove('is-covering', 'is-revealing');
+      overlay.classList.remove('is-covering', 'is-revealing', 'is-logo-covering', 'is-logo-revealing');
     }
   });
 })();
@@ -78,6 +84,12 @@
   function updateGrid() {
     document.body.style.setProperty('padding-top', '0', 'important');
     document.body.style.setProperty('overflow-x', 'hidden', 'important');
+
+    if (window.matchMedia('(max-width: 833px)').matches) {
+      grid.style.setProperty('display', 'none', 'important');
+      return;
+    }
+
     grid.style.setProperty('display', 'block', 'important');
     updateGridHeight();
   }
@@ -124,6 +136,33 @@
   document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape') setOpen(false);
   });
+})();
+
+(function () {
+  const nav = document.getElementById('page-nav');
+  if (!nav) return;
+
+  const dots = nav.querySelector('.visual-section__dots');
+  const subnav = nav.querySelector('.visual-section__subnav');
+  const activeDot = dots ? dots.querySelector('.hero__nav-dot.is-active') : null;
+  const activeItem = activeDot ? activeDot.closest('li') : null;
+  if (!dots || !subnav || !activeItem) return;
+
+  const originalParent = subnav.parentNode;
+  const originalNext = subnav.nextSibling;
+  const mobileQuery = window.matchMedia('(max-width: 833px)');
+
+  function syncMobileSubnav() {
+    if (mobileQuery.matches) {
+      if (subnav.parentNode !== activeItem) activeItem.appendChild(subnav);
+    } else if (subnav.parentNode !== originalParent) {
+      originalParent.insertBefore(subnav, originalNext);
+    }
+  }
+
+  syncMobileSubnav();
+  if (mobileQuery.addEventListener) mobileQuery.addEventListener('change', syncMobileSubnav);
+  else mobileQuery.addListener(syncMobileSubnav);
 })();
 
 (function () {

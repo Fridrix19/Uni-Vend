@@ -12,13 +12,20 @@
 </head>
 
 <body>
-  <button class="visual-section__burger" id="page-burger" type="button" aria-label="Открыть меню" aria-expanded="false" aria-controls="page-nav">
+  <button class="visual-section__burger" id="page-burger" type="button" aria-label="Открыть меню" aria-expanded="false"
+    aria-controls="page-nav">
     <span></span><span></span><span></span>
   </button>
   <div id="allrecords" class="site-page">
     <main class="visual-section subpage-section rules-section" aria-label="Универсальные правила">
       <nav class="visual-section__nav" id="page-nav" aria-label="Навигация раздела">
         <ul class="hero__ticks visual-section__dots snap">
+          <li>
+            <a class="hero__nav-dot hero__nav-dot--home" href="index.html">
+              <img class="hero__nav-logo" src="logoty%5Be.svg" alt="">
+              <span class="hero__tooltip">Главная</span>
+            </a>
+          </li>
           <li>
             <a class="hero__nav-dot" href="system.html">
               <span class="hero__tooltip">Система контента</span>
@@ -27,11 +34,6 @@
           <li>
             <a class="hero__nav-dot" href="types.html">
               <span class="hero__tooltip">Типы контента</span>
-            </a>
-          </li>
-          <li>
-            <a class="hero__nav-dot" href="text.html">
-              <span class="hero__tooltip">Текстовый контент</span>
             </a>
           </li>
           <li>
@@ -54,35 +56,108 @@
               <span class="hero__tooltip">Универсальные правила</span>
             </a>
           </li>
-          <li>
-            <a class="hero__nav-dot" href="templates.html">
-              <span class="hero__tooltip">Шаблоны и чек-листы</span>
-            </a>
-          </li>
         </ul>
 
         <ul class="visual-section__subnav snap" style="--y: 8;">
-          <li class="is-current" data-target="block-1">Блок 1</li>
-          <li data-target="block-2">Блок 2</li>
-          <li data-target="block-3">Блок 3</li>
-          <li data-target="block-4">Блок 4</li>
+          <li class="is-current" data-target="rules-block">Правила</li>
         </ul>
       </nav>
 
       <section class="visual-section__work" aria-label="Рабочая зона">
         <h1 class="visual-section__title snap" style="--x: 0; --y: 3;">Универсальные правила</h1>
 
-        <p class="visual-section__lead snap" style="--x: 0; --y: 6;">Универсальные правила — общая логика, по которой собирается любой материал бренда. Здесь собраны принципы тон-оф-войс, композиции, ритма и взаимодействия форматов между собой.</p>
+        <p class="visual-section__lead snap" style="--x: 0; --y: 6;">Универсальные правила фиксируют сквозные требования
+          к&nbsp;любому типу контента бренда «УниВенд» — текстовому, графическому,
+          видео‑ <br>и&nbsp;музыкальному. Они обеспечивают брендовую целостность, читаемость, юридическую корректность и&nbsp;упрощают
+          работу <br>с&nbsp;исходниками и&nbsp;архивами</p>
 
-        <label class="hero__search visual-section__search snap" style="--y: 3;">
+        <label class="hero__search visual-section__search">
           <img class="hero__search-icon" src="heropage/img/sertch.svg" alt="" aria-hidden="true">
-          <input type="search" placeholder="Найдите раздел, канал, шаблон, шрифт">
+          <input type="search" placeholder="...шаблон">
         </label>
 
-        <h2 id="block-1" class="visual-section__block-title types-block-title snap" style="--x: 0; --y: 13;">Блок 1</h2>
-        <h2 id="block-2" class="visual-section__block-title types-block-title snap" style="--x: 0; --y: 40;">Блок 2</h2>
-        <h2 id="block-3" class="visual-section__block-title types-block-title snap" style="--x: 0; --y: 67;">Блок 3</h2>
-        <h2 id="block-4" class="visual-section__block-title types-block-title snap" style="--x: 0; --y: 94;">Блок 4</h2>
+        <section id="rules-block" class="rules-grid snap" style="--x: 0; --y: 13;" aria-label="Правила">
+          <article class="rules-card">
+            <h2 class="rules-card__title">Брендовая целостность</h2>
+            <div class="rules-card__body">
+              <span class="rules-card__bullet" aria-hidden="true"></span>
+              <p class="rules-card__text">Все материалы бренда UniVend создаются в&nbsp;рамках единой визуальной и&nbsp;смысловой
+                системы: шрифт Gros Ventre, фирменная цветовая палитра, модульная сетка, фирменные плашки и&nbsp;анимация
+                логотипа. Независимо от&nbsp;формата (пост, видео, сайт, рассылка) контент должен быть узнаваем как часть
+                бренда и&nbsp;соответствовать tone of voice, принятым в&nbsp;системе</p>
+            </div>
+          </article>
+
+          <article class="rules-card">
+            <h2 class="rules-card__title">Доступность и читаемость</h2>
+            <div class="rules-card__body">
+              <span class="rules-card__bullet" aria-hidden="true"></span>
+              <p class="rules-card__text">Контент разрабатывается с&nbsp;учётом принципов доступности: текст должен быть
+                достаточно крупным и&nbsp;контрастным для&nbsp;чтения с&nbsp;экрана смартфона, особенно в&nbsp;видео и&nbsp;интерфейсах сайта.
+                Видеоматериалы с&nbsp;речью обязательно снабжаются субтитрами, а&nbsp;графические элементы и&nbsp;фото — понятными
+                подписями, помогающими быстро считывать смысл</p>
+            </div>
+          </article>
+
+          <article class="rules-card">
+            <h2 class="rules-card__title">Адаптация под платформы</h2>
+            <div class="rules-card__body">
+              <span class="rules-card__bullet" aria-hidden="true"></span>
+              <p class="rules-card__text">Каждый материал адаптируется под&nbsp;требования и&nbsp;формат конкретной платформы:
+                соотношение сторон и&nbsp;разрешение — под&nbsp;VK, Telegram, RuTube и&nbsp;сайт; длительность и&nbsp;структура — под&nbsp;формат
+                ленты или длинного видео. При адаптации сохраняются фирменные элементы (плашки, логотип, шрифт, цветовая
+                система), а&nbsp;также общий характер текста и&nbsp;музыки</p>
+            </div>
+          </article>
+
+          <article class="rules-card">
+            <h2 class="rules-card__title">Авторские права и лицензии</h2>
+            <div class="rules-card__body">
+              <span class="rules-card__bullet" aria-hidden="true"></span>
+              <p class="rules-card__text">Во&nbsp;всех материалах используются только те шрифты, графика, музыка и&nbsp;фото,
+                на&nbsp;которые у&nbsp;бренда есть права: фирменный шрифт, авторские графические элементы и&nbsp;фотографии, авторская
+                музыка FRIDRIX. Внешний лицензионный контент (если используется) должен соответствовать условиям
+                лицензии и&nbsp;не нарушать авторские права; запрещено использовать чужие треки и&nbsp;изображения без&nbsp;разрешения
+              </p>
+            </div>
+          </article>
+
+          <article class="rules-card rules-card--file">
+            <h2 class="rules-card__title">Именование файлов</h2>
+            <div class="rules-card__body">
+              <span class="rules-card__bullet" aria-hidden="true"></span>
+              <p class="rules-card__text">Файлы исходников и&nbsp;экспортов именуются по&nbsp;единой схеме, включающей тип
+                материала, платформу, рубрику/формат и&nbsp;версию.</p>
+            </div>
+            <p class="rules-card__example">
+              <span>Пример:</span>
+              <code>video_vk_pov_asmr_v01.mp4</code>
+            </p>
+          </article>
+
+          <article class="rules-card">
+            <h2 class="rules-card__title">Хранение и архивирование</h2>
+            <div class="rules-card__body">
+              <span class="rules-card__bullet" aria-hidden="true"></span>
+              <p class="rules-card__text">Исходные материалы (Figma-макеты, проекты AE/PR, исходные аудиофайлы FL)
+                хранятся в&nbsp;структурированной системе: по&nbsp;проектам, типам контента и&nbsp;датам. Для&nbsp;каждого финального
+                материала сохраняются: исходник (редактируемый файл), финальный экспорт (готовый к&nbsp;публикации файл)
+                и&nbsp;при&nbsp;необходимости — промежуточные версии</p>
+            </div>
+          </article>
+
+          <article class="rules-card">
+            <h2 class="rules-card__title">Проверка качества перед публикацией</h2>
+            <div class="rules-card__body">
+              <span class="rules-card__bullet" aria-hidden="true"></span>
+              <p class="rules-card__text">Перед публикацией любой материал проходит проверку по&nbsp;чек-листу: соответствие
+                бренд-гайду, читаемость текста, корректный формат и&nbsp;разрешение, отсутствие орфографических ошибок
+                и&nbsp;технических артефактов. Для&nbsp;видео отдельно проверяются: наличие плашки формата, анимированного
+                логотипа-водяного знака, субтитров (при&nbsp;наличии речи), корректная громкость музыки и&nbsp;чёткий финальный
+                CTA</p>
+            </div>
+          </article>
+        </section>
       </section>
     </main>
   </div>

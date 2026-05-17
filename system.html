@@ -20,6 +20,12 @@
       <nav class="visual-section__nav" id="page-nav" aria-label="Навигация раздела">
         <ul class="hero__ticks visual-section__dots snap">
           <li>
+            <a class="hero__nav-dot hero__nav-dot--home" href="index.html">
+              <img class="hero__nav-logo" src="logoty%5Be.svg" alt="">
+              <span class="hero__tooltip">Главная</span>
+            </a>
+          </li>
+          <li>
             <a class="hero__nav-dot is-active" href="system.html" aria-current="page">
               <span class="hero__tooltip">Система контента</span>
             </a>
@@ -27,11 +33,6 @@
           <li>
             <a class="hero__nav-dot" href="types.html">
               <span class="hero__tooltip">Типы контента</span>
-            </a>
-          </li>
-          <li>
-            <a class="hero__nav-dot" href="text.html">
-              <span class="hero__tooltip">Текстовый контент</span>
             </a>
           </li>
           <li>
@@ -54,18 +55,12 @@
               <span class="hero__tooltip">Универсальные правила</span>
             </a>
           </li>
-          <li>
-            <a class="hero__nav-dot" href="templates.html">
-              <span class="hero__tooltip">Шаблоны и чек-листы</span>
-            </a>
-          </li>
         </ul>
 
         <ul class="visual-section__subnav snap" style="--y: 8;">
-          <li class="is-current" data-target="block-1">Блок 1</li>
-          <li data-target="block-2">Блок 2</li>
-          <li data-target="block-3">Блок 3</li>
-          <li data-target="block-4">Блок 4</li>
+          <li class="is-current" data-target="block-1">Задачи</li>
+          <li data-target="block-2">Целевая<br> аудитория</li>
+          <li data-target="block-3">Единство <br> бренда</li>
         </ul>
       </nav>
 
@@ -74,15 +69,213 @@
 
         <p class="visual-section__lead snap" style="--x: 0; --y: 6;">Система контента — это единая структура, которая связывает между собой текст, графику, видео и звук, превращая отдельные публикации в цельный язык бренда. Она задаёт правила, по которым УниВенд говорит с пользователем на любом канале.</p>
 
-        <label class="hero__search visual-section__search snap" style="--y: 3;">
+        <label class="hero__search visual-section__search">
           <img class="hero__search-icon" src="heropage/img/sertch.svg" alt="" aria-hidden="true">
-          <input type="search" placeholder="Найдите раздел, канал, шаблон, шрифт">
+          <input type="search" placeholder="Найдите раздел, канал, шаблон">
         </label>
 
-        <h2 id="block-1" class="visual-section__block-title types-block-title snap" style="--x: 0; --y: 13;">Блок 1</h2>
-        <h2 id="block-2" class="visual-section__block-title types-block-title snap" style="--x: 0; --y: 40;">Блок 2</h2>
-        <h2 id="block-3" class="visual-section__block-title types-block-title snap" style="--x: 0; --y: 67;">Блок 3</h2>
-        <h2 id="block-4" class="visual-section__block-title types-block-title snap" style="--x: 0; --y: 94;">Блок 4</h2>
+        <div class="system-stack snap" style="--x: 0; --y: 11;">
+          <section id="block-1" class="system-tasks" aria-labelledby="system-tasks-heading">
+            <h2 id="system-tasks-heading" class="system-tasks__heading">Задачи</h2>
+            <div class="system-tasks__grid">
+              <div class="system-tasks__item">
+                <span class="system-tasks__bullet" aria-hidden="true"></span>
+                <p class="system-tasks__text">Объяснить формат сервиса: как выбрать товар, оплатить покупку, получить футболку через вендинг или оформить кастомный заказ</p>
+              </div>
+              <div class="system-tasks__item">
+                <span class="system-tasks__bullet" aria-hidden="true"></span>
+                <p class="system-tasks__text">Показать продукт: посадку футболок, материалы, принты, реальные сценарии использования и примеры коллекций</p>
+              </div>
+              <div class="system-tasks__item">
+                <span class="system-tasks__bullet" aria-hidden="true"></span>
+                <p class="system-tasks__text">Снизить барьеры и страхи: развеять сомнения по поводу качества печати, надёжности автомата и удобства процесса</p>
+              </div>
+              <div class="system-tasks__item">
+                <span class="system-tasks__bullet" aria-hidden="true"></span>
+                <p class="system-tasks__text">Сформировать эмоциональную связь: создать ощущение «своего» студенческого проекта, за которым стоят живые люди и понятные ценности</p>
+              </div>
+            </div>
+          </section>
+
+          <div class="system-stack__gap" aria-hidden="true"></div>
+
+          <section id="block-2" class="system-audiences" aria-labelledby="system-audiences-heading">
+            <h2 id="system-audiences-heading" class="visual-section__block-title types-block-title system-audiences__title">Целевая аудитория</h2>
+            <div class="system-audiences__columns">
+              <div class="system-audiences__card">
+                <img class="system-audiences__frame" src="system/colomn.png" alt="" aria-hidden="true">
+                <p class="system-audiences__text">Студенты 18–25 лет — основная пользователи сервиса и&nbsp;ядро цифровой аудитории, которые взаимодействуют с&nbsp;брендом через соцсети, сайт и&nbsp;вендинг</p>
+              </div>
+              <div class="system-audiences__card">
+                <img class="system-audiences__frame" src="system/colomn.png" alt="" aria-hidden="true">
+                <p class="system-audiences__text">Представители вузов и&nbsp;организации — администрации, департаменты молодёжной политики, студенческие объединения, которые принимают решения о&nbsp;внедрении проекта и&nbsp;заказе мерча для групп и&nbsp;мероприятий.</p>
+              </div>
+              <div class="system-audiences__card">
+                <img class="system-audiences__frame" src="system/colomn.png" alt="" aria-hidden="true">
+                <p class="system-audiences__text">Молодые специалисты 25–34 лет — выпускники и&nbsp;молодые сотрудники, интересующиеся базовой одеждой <br>и&nbsp;кастомным мерчем.</p>
+              </div>
+            </div>
+
+            <div class="system-ca-slider" id="system-ca-slider" data-ca-slider>
+              <div class="system-ca-slider__slides">
+                <div class="system-ca-slider__slide is-active" id="system-ca-slide-0" role="tabpanel" data-slide="0" aria-labelledby="system-ca-bullet-0" aria-hidden="false">
+                  <div class="system-ca-slider__row">
+                    <div class="system-ca-slider__col">
+                      <div class="system-ca-slider__hdr">Аудитория</div>
+                      <div class="system-ca-slider__card">
+                        <img class="system-ca-slider__frame" src="system/ktekta.png" alt="" aria-hidden="true">
+                        <p class="system-ca-slider__body">Студенты/покупатели</p>
+                      </div>
+                    </div>
+                    <div class="system-ca-slider__col">
+                      <div class="system-ca-slider__hdr">Задача контента</div>
+                      <div class="system-ca-slider__card">
+                        <img class="system-ca-slider__frame" src="system/ktekta.png" alt="" aria-hidden="true">
+                        <p class="system-ca-slider__body">Объяснить, как купить и&nbsp;как выбрать размер/принт</p>
+                      </div>
+                    </div>
+                    <div class="system-ca-slider__col">
+                      <div class="system-ca-slider__hdr">Подходящий&nbsp;контент</div>
+                      <div class="system-ca-slider__card">
+                        <img class="system-ca-slider__frame" src="system/ktekta.png" alt="" aria-hidden="true">
+                        <p class="system-ca-slider__body">Образовательно-информационные ролики, инструкции, FAQ-посты</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="system-ca-slider__slide" id="system-ca-slide-1" role="tabpanel" data-slide="1" aria-labelledby="system-ca-bullet-1" aria-hidden="true">
+                  <div class="system-ca-slider__row">
+                    <div class="system-ca-slider__col">
+                      <div class="system-ca-slider__hdr">Аудитория</div>
+                      <div class="system-ca-slider__card">
+                        <img class="system-ca-slider__frame" src="system/ktekta.png" alt="" aria-hidden="true">
+                        <p class="system-ca-slider__body">Молодые специалисты</p>
+                      </div>
+                    </div>
+                    <div class="system-ca-slider__col">
+                      <div class="system-ca-slider__hdr">Задача контента</div>
+                      <div class="system-ca-slider__card">
+                        <img class="system-ca-slider__frame" src="system/ktekta.png" alt="" aria-hidden="true">
+                        <p class="system-ca-slider__body">Показать качество и&nbsp;универсальность продукта</p>
+                      </div>
+                    </div>
+                    <div class="system-ca-slider__col">
+                      <div class="system-ca-slider__hdr">Подходящий&nbsp;контент</div>
+                      <div class="system-ca-slider__card">
+                        <img class="system-ca-slider__frame" src="system/ktekta.png" alt="" aria-hidden="true">
+                        <p class="system-ca-slider__body">Продуктовые посты, обзоры коллекций, фото и&nbsp;видео демонстрация футболок</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="system-ca-slider__slide" id="system-ca-slide-2" role="tabpanel" data-slide="2" aria-labelledby="system-ca-bullet-2" aria-hidden="true">
+                  <div class="system-ca-slider__row">
+                    <div class="system-ca-slider__col">
+                      <div class="system-ca-slider__hdr">Аудитория</div>
+                      <div class="system-ca-slider__card">
+                        <img class="system-ca-slider__frame" src="system/ktekta.png" alt="" aria-hidden="true">
+                        <p class="system-ca-slider__body">Администрации вузов, структуры</p>
+                      </div>
+                    </div>
+                    <div class="system-ca-slider__col">
+                      <div class="system-ca-slider__hdr">Задача контента</div>
+                      <div class="system-ca-slider__card">
+                        <img class="system-ca-slider__frame" src="system/ktekta.png" alt="" aria-hidden="true">
+                        <p class="system-ca-slider__body">Показать серьёзность проекта и&nbsp;готовность к&nbsp;внедрению</p>
+                      </div>
+                    </div>
+                    <div class="system-ca-slider__col">
+                      <div class="system-ca-slider__hdr">Подходящий&nbsp;контент</div>
+                      <div class="system-ca-slider__card">
+                        <img class="system-ca-slider__frame" src="system/ktekta.png" alt="" aria-hidden="true">
+                        <p class="system-ca-slider__body">Длинные RuTube-видео, презентационные материалы, кейсы, лендинг</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="system-ca-slider__slide" id="system-ca-slide-3" role="tabpanel" data-slide="3" aria-labelledby="system-ca-bullet-3" aria-hidden="true">
+                  <div class="system-ca-slider__row">
+                    <div class="system-ca-slider__col">
+                      <div class="system-ca-slider__hdr">Аудитория</div>
+                      <div class="system-ca-slider__card">
+                        <img class="system-ca-slider__frame" src="system/ktekta.png" alt="" aria-hidden="true">
+                        <p class="system-ca-slider__body">Студобъединения, организаторы</p>
+                      </div>
+                    </div>
+                    <div class="system-ca-slider__col">
+                      <div class="system-ca-slider__hdr">Задача контента</div>
+                      <div class="system-ca-slider__card">
+                        <img class="system-ca-slider__frame" src="system/ktekta.png" alt="" aria-hidden="true">
+                        <p class="system-ca-slider__body">Показать удобство заказа мерча для группы</p>
+                      </div>
+                    </div>
+                    <div class="system-ca-slider__col">
+                      <div class="system-ca-slider__hdr">Подходящий&nbsp;контент</div>
+                      <div class="system-ca-slider__card">
+                        <img class="system-ca-slider__frame" src="system/ktekta.png" alt="" aria-hidden="true">
+                        <p class="system-ca-slider__body">Кейсы, инструкции по&nbsp;кастомным заказам, примеры коллекций и&nbsp;событий</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="system-ca-slider__bullets" role="tablist" aria-label="Слайды таблицы целевой аудитории">
+                <button class="system-ca-slider__bullet is-active" type="button" role="tab" aria-selected="true" aria-controls="system-ca-slide-0" id="system-ca-bullet-0" data-slide-to="0" title="Слайд 1">
+                  <span class="sr-only">Слайд 1</span>
+                </button>
+                <button class="system-ca-slider__bullet" type="button" role="tab" aria-selected="false" aria-controls="system-ca-slide-1" id="system-ca-bullet-1" data-slide-to="1" title="Слайд 2">
+                  <span class="sr-only">Слайд 2</span>
+                </button>
+                <button class="system-ca-slider__bullet" type="button" role="tab" aria-selected="false" aria-controls="system-ca-slide-2" id="system-ca-bullet-2" data-slide-to="2" title="Слайд 3">
+                  <span class="sr-only">Слайд 3</span>
+                </button>
+                <button class="system-ca-slider__bullet" type="button" role="tab" aria-selected="false" aria-controls="system-ca-slide-3" id="system-ca-bullet-3" data-slide-to="3" title="Слайд 4">
+                  <span class="sr-only">Слайд 4</span>
+                </button>
+              </div>
+            </div>
+          </section>
+
+          <div class="system-stack__gap" aria-hidden="true"></div>
+
+          <section id="block-3" class="system-brand-principles" aria-labelledby="system-brand-heading">
+            <h2 id="system-brand-heading" class="visual-section__block-title types-block-title system-brand-principles__title">
+              Принципы единства бренда
+            </h2>
+            <div class="system-brand-principles__columns">
+              <article class="system-brand-principles__column">
+                <div class="system-brand-principles__head">
+                  <span class="system-brand-principles__bullet" aria-hidden="true"></span>
+                  <h3 class="system-brand-principles__subtitle">Единая визуальная система</h3>
+                </div>
+                <figure class="system-brand-principles__figure">
+                  <img class="system-brand-principles__art" src="system/brand/visual.svg" alt="" loading="lazy" decoding="async">
+                </figure>
+                <p class="system-brand-principles__text">Использование шрифта, фирменной палитры, модульная сетка, бренд-плашек, стикеров и&nbsp;водяного знака во&nbsp;всех типах контента.</p>
+              </article>
+              <article class="system-brand-principles__column">
+                <div class="system-brand-principles__head">
+                  <span class="system-brand-principles__bullet" aria-hidden="true"></span>
+                  <h3 class="system-brand-principles__subtitle">Единые графические шаблоны</h3>
+                </div>
+                <figure class="system-brand-principles__figure">
+                  <img class="system-brand-principles__art" src="system/brand/graph.svg" alt="" loading="lazy" decoding="async">
+                </figure>
+                <p class="system-brand-principles__text">Шаблоны для видео, обложек и&nbsp;постов разрабатываются один раз и&nbsp;адаптируются под форматы, что обеспечивает узнаваемость и&nbsp;ускоряет производство.</p>
+              </article>
+              <article class="system-brand-principles__column">
+                <div class="system-brand-principles__head">
+                  <span class="system-brand-principles__bullet" aria-hidden="true"></span>
+                  <h3 class="system-brand-principles__subtitle">Единый tone of&nbsp;voice</h3>
+                </div>
+                <figure class="system-brand-principles__figure">
+                  <img class="system-brand-principles__art" src="system/brand/tonov.svg" alt="" loading="lazy" decoding="async">
+                </figure>
+                <p class="system-brand-principles__text">Независимо от&nbsp;площадки (VK, Telegram, RuTube, сайт) сохраняются базовые принципы: простота, конкретность, отсутствие канцелярита, ориентация на&nbsp;студенческую аудиторию.</p>
+              </article>
+            </div>
+          </section>
+        </div>
       </section>
     </main>
   </div>
@@ -100,6 +293,42 @@
   </div>
 
   <script src="subpage.js"></script>
+  <script>
+    (function () {
+      var root = document.querySelector('[data-ca-slider]');
+      if (!root) return;
+
+      root.querySelectorAll('.system-ca-slider__slide:not(.is-active)').forEach(function (p) {
+        p.toggleAttribute('inert', true);
+      });
+
+      root.addEventListener('click', function (e) {
+        var btn = e.target.closest('[data-slide-to]');
+        if (!btn || !root.contains(btn)) return;
+
+        var n = btn.getAttribute('data-slide-to');
+        if (n === null) return;
+
+        var current = root.querySelector('.system-ca-slider__slide.is-active');
+        if (current && current.getAttribute('data-slide') === n) return;
+
+        root.classList.add('system-ca-slider--has-changed-slide');
+
+        root.querySelectorAll('.system-ca-slider__slide').forEach(function (panel) {
+          var sel = panel.getAttribute('data-slide') === n;
+          panel.classList.toggle('is-active', sel);
+          panel.setAttribute('aria-hidden', sel ? 'false' : 'true');
+          panel.toggleAttribute('inert', !sel);
+        });
+
+        root.querySelectorAll('[data-slide-to]').forEach(function (b) {
+          var sel = b.getAttribute('data-slide-to') === n;
+          b.classList.toggle('is-active', sel);
+          b.setAttribute('aria-selected', sel ? 'true' : 'false');
+        });
+      });
+    })();
+  </script>
 </body>
 
 </html>
