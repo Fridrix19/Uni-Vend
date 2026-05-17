@@ -1,0 +1,3329 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Uni-Vend Visual Editor</title>
+<style>
+  :root {
+    --bg: #1e1e1e; --panel-bg: #252526; --header-bg: #333333; --border: #3c3c3c;
+    --text: #cccccc; --text-active: #ffffff; --accent: #007acc; --accent-hover: #0098ff;
+    --danger: #f48771; --item-hover: #2a2d2e; --item-active: #37373d;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); color: var(--text); height: 100vh; display: flex; flex-direction: column; overflow: hidden; font-size: 13px; }
+  * { scrollbar-width: thin; scrollbar-color: #6b6b6b #1b1b1b; }
+  *::-webkit-scrollbar { width: 12px; height: 12px; }
+  *::-webkit-scrollbar-track { background: #1b1b1b; border-radius: 10px; }
+  *::-webkit-scrollbar-thumb { background: #5f6368; border: 3px solid #1b1b1b; border-radius: 10px; }
+  *::-webkit-scrollbar-thumb:hover { background: #7a7f86; }
+  *::-webkit-scrollbar-corner { background: #1b1b1b; }
+  
+  /* Topbar */
+  .topbar { height: 40px; background: var(--header-bg); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 16px; gap: 16px; flex-shrink: 0; }
+  .topbar select, .topbar button { background: var(--panel-bg); color: var(--text); border: 1px solid var(--border); padding: 4px 8px; border-radius: 3px; font-size: 12px; cursor: pointer; }
+  .topbar button:hover { background: var(--item-hover); }
+  .topbar .btn-primary { background: var(--accent); color: #fff; border: none; }
+  .topbar .btn-primary:hover { background: var(--accent-hover); }
+  .topbar-group { display: flex; align-items: center; gap: 8px; }
+  .spacer { flex: 1; }
+
+  /* Main Workspace */
+  .workspace { display: flex; flex: 1; overflow: hidden; }
+  
+  /* Panels */
+  .panel { width: 280px; background: var(--panel-bg); display: flex; flex-direction: column; border-right: 1px solid var(--border); flex-shrink: 0; }
+  .panel-right { border-right: none; border-left: 1px solid var(--border); width: 360px; }
+  .panel-header { padding: 8px 12px; font-weight: 600; color: var(--text-active); border-bottom: 1px solid var(--border); background: var(--header-bg); text-transform: uppercase; font-size: 11px; letter-spacing: 0.5px; }
+  .panel-content { flex: 1; overflow-y: auto; }
+  .panel-section { border-bottom: 1px solid var(--border); padding: 12px; }
+  .panel-section-title { font-weight: 600; margin-bottom: 8px; color: var(--text-active); }
+
+  /* Canvas */
+  .canvas-container { flex: 1; background: #111; overflow: auto; padding: 20px; position: relative; }
+  #canvasScaler { position: relative; flex-shrink: 0; margin: 0 auto; }
+  .canvas-wrapper { position: absolute; top: 0; left: 0; background: #fff; box-shadow: 0 4px 20px rgba(0,0,0,0.5); transform-origin: 0 0; transition: none; }
+  #iframe { width: 100%; height: 100%; border: none; display: block; min-height: 100vh; }
+
+  /* Controls */
+  .ctrl-row { display: flex; align-items: center; margin-bottom: 8px; gap: 8px; }
+  .ctrl-label { width: 80px; color: #999; flex-shrink: 0; }
+  .ctrl-input { flex: 1; min-width: 0; background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 4px; border-radius: 3px; width: 100%; }
+  .ctrl-input:focus { border-color: var(--accent); outline: none; }
+  .ctrl-group { display: flex; gap: 4px; flex: 1; min-width: 0; }
+  .ctrl-row--stack { align-items: flex-start; flex-direction: column; gap: 4px; }
+  .ctrl-row--stack .ctrl-label { width: auto; }
+  .ctrl-grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px; width: 100%; }
+  .ctrl-grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; width: 100%; }
+  
+  /* Layers */
+  .layer-item { padding: 4px 8px; cursor: pointer; display: flex; align-items: center; white-space: nowrap; user-select: none; border-bottom: 1px solid transparent; }
+  .layer-item:hover { background: var(--item-hover); }
+  .layer-item.selected { background: #005a9e; color: #fff; box-shadow: inset 3px 0 0 #4fc3ff; font-weight: 600; }
+  .layer-item.selected-child { background: rgba(0, 122, 204, 0.22); color: #d7ecff; box-shadow: inset 2px 0 0 rgba(79, 195, 255, 0.55); }
+  .layer-name { flex: 1; overflow: hidden; text-overflow: ellipsis; margin-left: 4px; }
+  .layer-toggle { cursor: pointer; display: inline-block; width: 16px; text-align: center; color: #888; }
+  .layer-actions { display: none; gap: 8px; font-size: 12px; margin-left: 8px; }
+  .layer-item:hover .layer-actions { display: flex; }
+  .layer-item.is-locked .layer-actions, .layer-item.is-hidden .layer-actions { display: flex; }
+  .layer-action { cursor: pointer; opacity: 0.4; }
+  .layer-action:hover { opacity: 1; }
+  .layer-item.is-locked .btn-lock { opacity: 1; color: #f1c40f; }
+  .layer-item.is-hidden .btn-hide { opacity: 1; color: var(--danger); text-decoration: line-through; }
+  
+  /* Overlay */
+  #overlay { position: absolute; pointer-events: none; border: 2px solid var(--accent); z-index: 1000; display: none; }
+  #marqueeSelect { position: absolute; pointer-events: none; border: 1px solid #4fc3ff; background: rgba(0, 152, 255, 0.16); z-index: 998; display: none; }
+  .resizer { position: absolute; width: 8px; height: 8px; background: #fff; border: 1px solid var(--accent); pointer-events: auto; }
+  .resizer-se { bottom: -4px; right: -4px; cursor: se-resize; }
+  .resizer-e { top: calc(50% - 4px); right: -4px; cursor: e-resize; }
+  .resizer-s { bottom: -4px; left: calc(50% - 4px); cursor: s-resize; }
+  .drag-handle { position: absolute; top: -20px; left: -2px; background: var(--accent); color: #fff; padding: 2px 6px; font-size: 10px; pointer-events: auto; cursor: move; border-radius: 2px 2px 0 0; }
+
+  /* Modals */
+  .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 2000; align-items: center; justify-content: center; }
+  .modal-content { background: var(--panel-bg); padding: 20px; border-radius: 4px; border: 1px solid var(--border); min-width: 400px; max-height: 80vh; overflow-y: auto; }
+  .history-item { padding: 8px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+  .history-item:hover { background: var(--item-hover); }
+
+  /* Tools */
+  .tools-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .tool-btn { background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 8px; border-radius: 3px; cursor: pointer; text-align: center; }
+  .tool-btn:hover { background: var(--item-hover); border-color: var(--accent); }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-group">
+    <select id="pageSelect">
+      <option value="visual.html">visual.html</option>
+      <option value="index.html">index.html</option>
+    </select>
+    <button id="btnLoad">Загрузить</button>
+  </div>
+  
+  <div class="topbar-group" style="margin-left: 20px;">
+    <span>Разрешение:</span>
+    <select id="bpSelect">
+      <option value="1920">Desktop (1920px)</option>
+      <option value="1440">Laptop (1440px)</option>
+      <option value="1194">Tablet L (1194px)</option>
+      <option value="834">Tablet P (834px)</option>
+      <option value="375">Mobile (375px)</option>
+    </select>
+  </div>
+
+  <div class="topbar-group" style="margin-left: 20px;">
+    <span>Zoom:</span>
+    <button onclick="setZoom(zoom - 0.1)">-</button>
+    <span id="zoomValue" style="min-width: 40px; text-align: center;">100%</span>
+    <button onclick="setZoom(zoom + 0.1)">+</button>
+    <button id="btnResetTransforms" title="Сбросить transform: matrix(...) у всех элементов">Reset Matrix</button>
+  </div>
+
+  <div class="spacer"></div>
+  
+  <div class="topbar-group">
+    <button id="btnHistory">История версий</button>
+    <button id="btnSave" class="btn-primary">💾 Сохранить</button>
+  </div>
+</div>
+
+<div class="workspace">
+  <!-- Left Panel: Layers & Add -->
+  <div class="panel">
+    <div class="panel-header">Добавить элемент</div>
+    <div class="panel-section">
+      <div class="tools-grid">
+        <div class="tool-btn" id="tool-div" onclick="setPlacementMode('div')">Block (div)</div>
+        <div class="tool-btn" id="tool-text" onclick="setPlacementMode('text')">Text (p)</div>
+        <div class="tool-btn" id="tool-image" onclick="setPlacementMode('image')">Image (img)</div>
+        <div class="tool-btn" id="tool-grid" onclick="setPlacementMode('grid')">CSS Grid</div>
+        <div class="tool-btn" id="tool-flex" onclick="setPlacementMode('flex')">Flexbox</div>
+        <div class="tool-btn" id="tool-button" onclick="setButtonPlacementMode()">Button</div>
+        <div class="tool-btn" id="tool-device-switcher" onclick="setPlacementMode('device-switcher')">Device Switcher</div>
+        <div class="tool-btn" id="tool-index-page" onclick="createIndexPageTemplate()">Index Page</div>
+      </div>
+    </div>
+    <div class="panel-header">Слои (DOM)</div>
+    <div class="panel-content" id="layersPanel">
+      <!-- Layers tree will be generated here -->
+    </div>
+  </div>
+
+  <!-- Canvas -->
+  <div class="canvas-container" id="canvasContainer">
+    <div id="canvasScaler">
+      <div class="canvas-wrapper" id="canvasWrapper" style="width: 1920px; height: 1000px;">
+        <iframe id="iframe" src="visual.html"></iframe>
+      <div id="hoverOverlay" style="position: absolute; pointer-events: none; border: 1px solid #0098ff; background: rgba(0,152,255,0.05); z-index: 999; display: none;"></div>
+      <div id="marqueeSelect"></div>
+      <div id="overlay">
+        <div class="drag-handle" id="dragHandle">Drag</div>
+        <div class="resizer resizer-e" id="resizeE"></div>
+        <div class="resizer resizer-s" id="resizeS"></div>
+        <div class="resizer resizer-se" id="resizeSE"></div>
+      </div>
+    </div>
+    </div>
+  </div>
+
+  <!-- Right Panel: Properties -->
+  <div class="panel panel-right">
+    <div class="panel-header">Свойства</div>
+    <div class="panel-content" id="propsPanel">
+      <div style="padding: 12px; color: #888; text-align: center;" id="noSelMsg">Элемент не выбран</div>
+      
+      <div id="bpIndicator" style="display:none; padding: 8px 12px; background: #1a3a5c; border-bottom: 1px solid var(--border); font-size: 11px;">
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap;">
+          <span id="bpIndicatorLabel" style="color: #4fc3ff; font-weight: 600;">Desktop 1920px</span>
+          <div style="display: flex; gap: 4px;">
+            <button class="tool-btn" id="btnCopyDesktopToBp" title="Скопировать Desktop → текущий" style="font-size: 10px; padding: 2px 6px;">📋 Desktop→BP</button>
+            <button class="tool-btn" id="btnClearBpValues" title="Очистить значения текущего BP" style="font-size: 10px; padding: 2px 6px;">🗑 Clear BP</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="propsContainer" style="display:none;">
+        <!-- Identificators -->
+        <div class="panel-section">
+          <div class="ctrl-row">
+            <div class="ctrl-label">ID</div>
+            <input type="text" class="ctrl-input" id="propId">
+          </div>
+          <div class="ctrl-row">
+            <div class="ctrl-label">Classes</div>
+            <input type="text" class="ctrl-input" id="propClass">
+          </div>
+        </div>
+
+        <div class="panel-section" id="deviceSwitcherProps" style="display:none;">
+          <div class="panel-section-title">Device Switcher</div>
+          <button class="tool-btn" id="btnAddDeviceSwitcherButton" type="button" style="width:100%;">+ Добавить кнопку</button>
+        </div>
+
+        <!-- Position -->
+        <div class="panel-section">
+          <div class="panel-section-title">Позиция</div>
+          <div class="ctrl-row">
+            <div class="ctrl-label">Type</div>
+            <select class="ctrl-input" id="propPosition">
+              <option value="">(inherit)</option>
+              <option value="static">static</option>
+              <option value="relative">relative</option>
+              <option value="absolute">absolute</option>
+              <option value="fixed">fixed</option>
+              <option value="sticky">sticky</option>
+            </select>
+          </div>
+          <div class="ctrl-row">
+            <div class="ctrl-label">Сетка X / Y</div>
+            <div class="ctrl-group">
+              <input type="text" class="ctrl-input" id="propGridX" placeholder="--x">
+              <input type="text" class="ctrl-input" id="propGridY" placeholder="--y">
+            </div>
+          </div>
+          <div class="ctrl-row">
+            <div class="ctrl-label">Смещение</div>
+            <select class="ctrl-input" id="propTranslatePreset">
+              <option value="">Без смещения</option>
+              <option value="translateY(-100%)">translateY(-100%)</option>
+              <option value="translateY(calc(var(--site-grid-size) - 100%))">Grid - 100%</option>
+              <option value="translateY(calc((var(--site-grid-size) * 0.5) - 100%))">Grid*0.5 - 100%</option>
+            </select>
+          </div>
+          <div class="ctrl-row">
+            <div class="ctrl-label">Transform</div>
+            <input type="text" class="ctrl-input" id="propTransform" placeholder="transform">
+          </div>
+          <div class="ctrl-row">
+            <div class="ctrl-label">Move X / Y</div>
+            <div class="ctrl-group">
+              <input type="text" class="ctrl-input" id="propTranslateX" placeholder="X">
+              <input type="text" class="ctrl-input" id="propTranslateY" placeholder="Y">
+            </div>
+          </div>
+          <div class="ctrl-row">
+            <div class="ctrl-label">Scale / Rot</div>
+            <div class="ctrl-group">
+              <input type="text" class="ctrl-input" id="propScale" placeholder="Scale">
+              <input type="text" class="ctrl-input" id="propRotate" placeholder="Rotate">
+            </div>
+          </div>
+          <div class="ctrl-row">
+            <div class="ctrl-label">T/R/B/L</div>
+            <div class="ctrl-group">
+              <input type="text" class="ctrl-input" id="propTop" placeholder="Top">
+              <input type="text" class="ctrl-input" id="propRight" placeholder="Right">
+              <input type="text" class="ctrl-input" id="propBottom" placeholder="Bottom">
+              <input type="text" class="ctrl-input" id="propLeft" placeholder="Left">
+            </div>
+          </div>
+        </div>
+
+        <!-- Размеры -->
+        <div class="panel-section">
+          <div class="panel-section-title">Размеры</div>
+          <div class="ctrl-row">
+            <div class="ctrl-label">W / H</div>
+            <div class="ctrl-group">
+              <input type="text" class="ctrl-input" id="propWidth" placeholder="Width">
+              <input type="text" class="ctrl-input" id="propHeight" placeholder="Height">
+            </div>
+          </div>
+          <div class="ctrl-row">
+            <div class="ctrl-label">Min W / H</div>
+            <div class="ctrl-group">
+              <input type="text" class="ctrl-input" id="propMinWidth" placeholder="Min Width">
+              <input type="text" class="ctrl-input" id="propMinHeight" placeholder="Min Height">
+            </div>
+          </div>
+          <div class="ctrl-row">
+            <div class="ctrl-label">Max W / H</div>
+            <div class="ctrl-group">
+              <input type="text" class="ctrl-input" id="propMaxWidth" placeholder="Max Width">
+              <input type="text" class="ctrl-input" id="propMaxHeight" placeholder="Max Height">
+            </div>
+          </div>
+        </div>
+
+        <!-- Layout -->
+        <div class="panel-section">
+          <div class="panel-section-title">Layout контейнера</div>
+          <div class="ctrl-row">
+            <div class="ctrl-label">Display</div>
+            <select class="ctrl-input" id="propDisplay">
+              <option value="">(inherit)</option>
+              <option value="block">block</option>
+              <option value="inline">inline</option>
+              <option value="inline-block">inline-block</option>
+              <option value="flex">flex</option>
+              <option value="inline-flex">inline-flex</option>
+              <option value="grid">grid</option>
+              <option value="inline-grid">inline-grid</option>
+              <option value="contents">contents</option>
+              <option value="none">none</option>
+            </select>
+          </div>
+          <div class="ctrl-row">
+            <div class="ctrl-label">Flex Dir</div>
+            <select class="ctrl-input" id="propFlexDir">
+              <option value="">(default)</option>
+              <option value="row">row</option>
+              <option value="row-reverse">row-reverse</option>
+              <option value="column">column</option>
+              <option value="column-reverse">column-reverse</option>
+            </select>
+          </div>
+          <div class="ctrl-row">
+            <div class="ctrl-label">Flex Wrap</div>
+            <select class="ctrl-input" id="propFlexWrap">
+              <option value="">(default)</option>
+              <option value="nowrap">nowrap</option>
+              <option value="wrap">wrap</option>
+              <option value="wrap-reverse">wrap-reverse</option>
+            </select>
+          </div>
+          <div class="ctrl-row">
+            <div class="ctrl-label">Justify</div>
+            <select class="ctrl-input" id="propJustify" title="justify-content">
+              <option value="">justify-content</option>
+              <option value="flex-start">flex-start</option>
+              <option value="center">center</option>
+              <option value="flex-end">flex-end</option>
+              <option value="normal">normal</option>
+              <option value="start">start</option>
+              <option value="end">end</option>
+              <option value="left">left</option>
+              <option value="right">right</option>
+              <option value="space-between">space-between</option>
+              <option value="space-around">space-around</option>
+              <option value="space-evenly">space-evenly</option>
+              <option value="stretch">stretch</option>
+            </select>
+          </div>
+          <div class="ctrl-row">
+            <div class="ctrl-label">Align</div>
+            <select class="ctrl-input" id="propAlign" title="align-items">
+              <option value="">align-items</option>
+              <option value="stretch">stretch</option>
+              <option value="flex-start">flex-start</option>
+              <option value="center">center</option>
+              <option value="flex-end">flex-end</option>
+              <option value="start">start</option>
+              <option value="end">end</option>
+              <option value="baseline">baseline</option>
+            </select>
+          </div>
+          <div class="ctrl-row">
+            <div class="ctrl-label">Content</div>
+            <select class="ctrl-input" id="propAlignContent" title="align-content">
+              <option value="">align-content</option>
+              <option value="normal">normal</option>
+              <option value="stretch">stretch</option>
+              <option value="flex-start">flex-start</option>
+              <option value="center">center</option>
+              <option value="flex-end">flex-end</option>
+              <option value="start">start</option>
+              <option value="end">end</option>
+              <option value="space-between">space-between</option>
+              <option value="space-around">space-around</option>
+              <option value="space-evenly">space-evenly</option>
+            </select>
+          </div>
+          <div class="ctrl-row">
+            <div class="ctrl-label">Grid Items</div>
+            <select class="ctrl-input" id="propJustifyItems" title="justify-items">
+              <option value="">justify-items</option>
+              <option value="normal">normal</option>
+              <option value="stretch">stretch</option>
+              <option value="start">start</option>
+              <option value="center">center</option>
+              <option value="end">end</option>
+              <option value="left">left</option>
+              <option value="right">right</option>
+            </select>
+          </div>
+          <div class="ctrl-row--stack ctrl-row">
+            <div class="ctrl-label">Grid templates</div>
+            <input type="text" class="ctrl-input" id="propGridCols" placeholder="grid-template-columns: repeat(auto-fit, minmax(160px, 1fr))">
+            <input type="text" class="ctrl-input" id="propGridRows" placeholder="grid-template-rows: auto 1fr">
+          </div>
+          <div class="ctrl-row--stack ctrl-row">
+            <div class="ctrl-label">Grid auto</div>
+            <div class="ctrl-grid-3">
+              <select class="ctrl-input" id="propGridAutoFlow" title="grid-auto-flow">
+                <option value="">auto-flow</option>
+                <option value="row">row</option>
+                <option value="column">column</option>
+                <option value="dense">dense</option>
+                <option value="row dense">row dense</option>
+                <option value="column dense">column dense</option>
+              </select>
+              <input type="text" class="ctrl-input" id="propGridAutoCols" placeholder="auto-cols">
+              <input type="text" class="ctrl-input" id="propGridAutoRows" placeholder="auto-rows">
+            </div>
+          </div>
+          <div class="ctrl-row--stack ctrl-row">
+            <div class="ctrl-label">Gap</div>
+            <div class="ctrl-grid-3">
+              <input type="text" class="ctrl-input" id="propGap" placeholder="gap">
+              <input type="text" class="ctrl-input" id="propRowGap" placeholder="row-gap">
+              <input type="text" class="ctrl-input" id="propColumnGap" placeholder="column-gap">
+            </div>
+          </div>
+        </div>
+
+        <div class="panel-section">
+          <div class="panel-section-title">Layout элемента</div>
+          <div class="ctrl-row--stack ctrl-row">
+            <div class="ctrl-label">Flex item</div>
+            <input type="text" class="ctrl-input" id="propFlex" placeholder="flex: 1 1 160px">
+            <div class="ctrl-grid-3">
+              <input type="text" class="ctrl-input" id="propFlexGrow" placeholder="grow">
+              <input type="text" class="ctrl-input" id="propFlexShrink" placeholder="shrink">
+              <input type="text" class="ctrl-input" id="propFlexBasis" placeholder="basis">
+            </div>
+          </div>
+          <div class="ctrl-row">
+            <div class="ctrl-label">Order</div>
+            <input type="text" class="ctrl-input" id="propOrder" placeholder="0">
+          </div>
+          <div class="ctrl-row">
+            <div class="ctrl-label">Self</div>
+            <div class="ctrl-group">
+              <select class="ctrl-input" id="propAlignSelf" title="align-self">
+                <option value="">align-self</option>
+                <option value="auto">auto</option>
+                <option value="stretch">stretch</option>
+                <option value="flex-start">flex-start</option>
+                <option value="center">center</option>
+                <option value="flex-end">flex-end</option>
+                <option value="start">start</option>
+                <option value="end">end</option>
+                <option value="baseline">baseline</option>
+              </select>
+              <select class="ctrl-input" id="propJustifySelf" title="justify-self">
+                <option value="">justify-self</option>
+                <option value="auto">auto</option>
+                <option value="stretch">stretch</option>
+                <option value="start">start</option>
+                <option value="center">center</option>
+                <option value="end">end</option>
+                <option value="left">left</option>
+                <option value="right">right</option>
+              </select>
+            </div>
+          </div>
+          <div class="ctrl-row--stack ctrl-row">
+            <div class="ctrl-label">Grid item</div>
+            <div class="ctrl-grid-3">
+              <input type="text" class="ctrl-input" id="propGridColumn" placeholder="grid-column">
+              <input type="text" class="ctrl-input" id="propGridRow" placeholder="grid-row">
+              <input type="text" class="ctrl-input" id="propGridArea" placeholder="grid-area">
+            </div>
+          </div>
+        </div>
+
+        <!-- Spacing -->
+        <div class="panel-section">
+          <div class="panel-section-title">Отступы (Margin / Padding)</div>
+          <div class="ctrl-row">
+            <div class="ctrl-label">Margin</div>
+            <div class="ctrl-group">
+              <input type="text" class="ctrl-input" id="propMt" placeholder="T" title="Top">
+              <input type="text" class="ctrl-input" id="propMr" placeholder="R" title="Right">
+              <input type="text" class="ctrl-input" id="propMb" placeholder="B" title="Bottom">
+              <input type="text" class="ctrl-input" id="propMl" placeholder="L" title="Left">
+            </div>
+          </div>
+          <div class="ctrl-row">
+            <div class="ctrl-label">Padding</div>
+            <div class="ctrl-group">
+              <input type="text" class="ctrl-input" id="propPt" placeholder="T" title="Top">
+              <input type="text" class="ctrl-input" id="propPr" placeholder="R" title="Right">
+              <input type="text" class="ctrl-input" id="propPb" placeholder="B" title="Bottom">
+              <input type="text" class="ctrl-input" id="propPl" placeholder="L" title="Left">
+            </div>
+          </div>
+        </div>
+
+        <!-- Typography -->
+        <div class="panel-section">
+          <div class="panel-section-title">Типографика</div>
+          <div class="ctrl-row">
+            <div class="ctrl-label">Font</div>
+            <div class="ctrl-group">
+              <input type="text" class="ctrl-input" id="propFontSize" placeholder="Size">
+              <input type="text" class="ctrl-input" id="propFontWeight" placeholder="Weight">
+            </div>
+          </div>
+          <div class="ctrl-row">
+            <div class="ctrl-label">Line H / Trim</div>
+            <div class="ctrl-group">
+              <input type="text" class="ctrl-input" id="propLineHeight" placeholder="Line Height %">
+              <select class="ctrl-input" id="propTextTrim" title="text-box-trim">
+                <option value="">No trim</option>
+                <option value="trim-both">trim-both</option>
+              </select>
+            </div>
+          </div>
+          <div class="ctrl-row">
+            <div class="ctrl-label">Text Align</div>
+            <select class="ctrl-input" id="propTextAlign">
+              <option value="">(inherit)</option>
+              <option value="left">left</option>
+              <option value="center">center</option>
+              <option value="right">right</option>
+              <option value="justify">justify</option>
+            </select>
+          </div>
+          <div class="ctrl-row">
+            <div class="ctrl-label">Color</div>
+            <input type="text" class="ctrl-input" id="propColor" placeholder="Color">
+          </div>
+          <div class="ctrl-row" style="margin-top: 8px;">
+            <div class="ctrl-label">Текст</div>
+            <textarea class="ctrl-input" id="propTextContent" rows="3" style="resize:vertical"></textarea>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="panel-section">
+          <button id="btnDelete" class="tool-btn" style="width: 100%; border-color: var(--danger); color: var(--danger);">Удалить элемент</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- History Modal -->
+<div id="modalHistory" class="modal">
+  <div class="modal-content">
+    <h3 style="margin-bottom: 16px;">История версий файла</h3>
+    <div id="historyList"></div>
+    <div style="margin-top: 16px; text-align: right;">
+      <button class="tool-btn" onclick="document.getElementById('modalHistory').style.display='none'">Закрыть</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const EDITOR_SERVER_ORIGIN = 'http://127.0.0.1:8081';
+  const API_URL = location.port === '8081' ? `${location.origin}/api` : `${EDITOR_SERVER_ORIGIN}/api`;
+  const STATIC_ORIGIN = location.protocol.startsWith('http') ? location.origin : EDITOR_SERVER_ORIGIN;
+  let iframe = document.getElementById('iframe');
+  let iframeDoc = null;
+  let iframeWin = null;
+  let selectedEl = null;
+  const EDITOR_WORKSPACE_KEY = 'uniVendEditorWorkspace';
+  const savedWorkspace = JSON.parse(localStorage.getItem(EDITOR_WORKSPACE_KEY) || '{}');
+  let currentFile = savedWorkspace.file || 'visual.html';
+  
+  // Elements
+  const overlay = document.getElementById('overlay');
+  const bpSelect = document.getElementById('bpSelect');
+  const canvasWrapper = document.getElementById('canvasWrapper');
+  const layersPanel = document.getElementById('layersPanel');
+  
+  // Props
+  const propsContainer = document.getElementById('propsContainer');
+  const noSelMsg = document.getElementById('noSelMsg');
+
+  // Load API
+  async function loadFileList() {
+    const fallbackFiles = ['visual.html', 'index.html'];
+    const sel = document.getElementById('pageSelect');
+
+    function renderFiles(files) {
+      sel.innerHTML = '';
+      files.filter(f => f.endsWith('.html')).forEach(f => {
+        const opt = document.createElement('option');
+        opt.value = f;
+        opt.textContent = f;
+        sel.appendChild(opt);
+      });
+      sel.value = currentFile;
+    }
+
+    try {
+      const res = await fetch(`${API_URL}/files`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const files = await res.json();
+      renderFiles(files);
+    } catch (e) {
+      console.error('API Error', e);
+      renderFiles(fallbackFiles);
+    }
+  }
+
+  function getStaticFileUrl(file) {
+    return `${STATIC_ORIGIN}/${encodeURI(file)}?_t=${Date.now()}`;
+  }
+
+  function getElementPath(el) {
+    if (!el || !iframeDoc || el === iframeDoc.body || el === iframeDoc.documentElement) return '';
+    const parts = [];
+    let node = el;
+    while (node && node !== iframeDoc.body && node.nodeType === 1) {
+      const parent = node.parentElement;
+      if (!parent) break;
+      const sameTagSiblings = Array.from(parent.children).filter(child => child.tagName === node.tagName);
+      const index = sameTagSiblings.indexOf(node) + 1;
+      parts.unshift(`${node.tagName.toLowerCase()}:nth-of-type(${index})`);
+      node = parent;
+    }
+    return parts.join('>');
+  }
+
+  function getElementByPath(path) {
+    if (!path || !iframeDoc) return null;
+    try { return iframeDoc.body.querySelector(path); }
+    catch (e) { return null; }
+  }
+
+  function saveEditorWorkspaceState() {
+    const canvasCont = document.getElementById('canvasContainer');
+    const selectedPath = selectedEl ? getElementPath(selectedEl) : '';
+    localStorage.setItem(EDITOR_WORKSPACE_KEY, JSON.stringify({
+      file: currentFile,
+      breakpoint: bpSelect.value,
+      zoom,
+      scrollLeft: canvasCont ? canvasCont.scrollLeft : 0,
+      scrollTop: canvasCont ? canvasCont.scrollTop : 0,
+      iframeScrollX: iframeWin ? iframeWin.scrollX : 0,
+      iframeScrollY: iframeWin ? iframeWin.scrollY : 0,
+      selectedPath
+    }));
+  }
+
+  async function loadPage(file, keepWorkspace = false) {
+    if (!file) return;
+    currentFile = file;
+    selectedEl = null;
+    selectedEls = [];
+    overlay.style.display = 'none';
+    layersPanel.innerHTML = '';
+    const sel = document.getElementById('pageSelect');
+    if (sel.value !== file) sel.value = file;
+    iframe.src = getStaticFileUrl(file);
+    if (!keepWorkspace) saveEditorWorkspaceState();
+  }
+
+  // Init
+  if (savedWorkspace.breakpoint) {
+    bpSelect.value = savedWorkspace.breakpoint;
+    canvasWrapper.style.width = savedWorkspace.breakpoint + 'px';
+  }
+  loadFileList();
+  if (currentFile !== 'visual.html') loadPage(currentFile, true);
+  document.getElementById('btnLoad').onclick = () => loadPage(document.getElementById('pageSelect').value);
+  document.getElementById('pageSelect').onchange = e => loadPage(e.target.value);
+  
+  function getCurrentBreakpoint() {
+    const bp = parseInt(bpSelect.value, 10);
+    if (bp >= 1920) return { key: 'desktop', cls: 'editor-bp-desktop', x: '--x', y: '--y', grid: 32 };
+    if (bp >= 1440) return { key: 'laptop', cls: 'editor-bp-laptop', x: '--x-laptop', y: '--y-laptop', grid: 32 };
+    if (bp >= 1194) return { key: 'tablet-l', cls: 'editor-bp-tablet-l', x: '--x-tablet-l', y: '--y-tablet-l', grid: 24 };
+    if (bp >= 834) return { key: 'tablet-p', cls: 'editor-bp-tablet-p', x: '--x-tablet-p', y: '--y-tablet-p', grid: 16 };
+    return { key: 'mobile', cls: 'editor-bp-mobile', x: '--x-mobile', y: '--y-mobile', grid: 16 };
+  }
+
+  function getGridSize() {
+    return getCurrentBreakpoint().grid;
+  }
+
+  function getBreakpointProp(axis) {
+    const bp = getCurrentBreakpoint();
+    return axis === 'x' ? bp.x : bp.y;
+  }
+
+  function getBreakpointStyleProp(cssProp) {
+    const bp = getCurrentBreakpoint();
+    return `--${cssProp}-${bp.key}`;
+  }
+
+  function isBreakpointScopedElement(el) {
+    return isWorkAreaElement(el);
+  }
+
+  function getResponsiveStyleValue(el, cssProp, cs = iframeWin.getComputedStyle(el)) {
+    if (!isBreakpointScopedElement(el)) return cs[cssProp] || '';
+    const scopedProp = getBreakpointStyleProp(cssProp);
+    const inlineScoped = el.style.getPropertyValue(scopedProp).trim();
+    const computedScoped = cs.getPropertyValue(scopedProp).trim();
+    if (inlineScoped || computedScoped) return inlineScoped || computedScoped;
+    return cs[cssProp] || '';
+  }
+
+  function setResponsiveStyleValue(el, cssProp, value) {
+    if (!isBreakpointScopedElement(el)) {
+      el.style[cssProp] = value;
+      return;
+    }
+    const scopedProp = getBreakpointStyleProp(cssProp);
+    if (value) el.style.setProperty(scopedProp, value);
+    else el.style.removeProperty(scopedProp);
+  }
+
+  // =============================================
+  // RESPONSIVE PROPERTIES ENGINE
+  // =============================================
+
+  const BREAKPOINTS = [
+    { key: 'desktop',  minWidth: 1920, maxWidth: null, label: 'Desktop 1920px', order: 0 },
+    { key: 'laptop',   minWidth: 1440, maxWidth: 1919, label: 'Laptop 1440px',  order: 1 },
+    { key: 'tablet-l', minWidth: 1194, maxWidth: 1439, label: 'Tablet L 1194px', order: 2 },
+    { key: 'tablet-p', minWidth: 834,  maxWidth: 1193, label: 'Tablet P 834px',  order: 3 },
+    { key: 'mobile',   minWidth: null, maxWidth: 833,  label: 'Mobile 375px',    order: 4 },
+  ];
+
+  const WORK_AREA_SELECTORS = '.visual-section__work, .hero__work';
+
+  const WORK_AREA_INDEPENDENT_PROPS = [
+    'position', 'top', 'right', 'bottom', 'left', 'transform', 'width', 'height', 'min-width', 'min-height', 'max-width', 'max-height',
+    'display', 'flex-direction', 'flex-wrap', 'justify-content', 'align-items', 'align-content', 'gap', 'row-gap', 'column-gap',
+    'margin-top', 'margin-right', 'margin-bottom', 'margin-left', 'padding-top', 'padding-right', 'padding-bottom', 'padding-left'
+  ];
+
+  function isWorkAreaElement(el) {
+    return !!(el && el.matches && el.matches(WORK_AREA_SELECTORS));
+  }
+
+  const RESPONSIVE_PROPS = new Set([
+    // position
+    'position', 'top', 'right', 'bottom', 'left', 'transform',
+    // size
+    'width', 'height', 'min-width', 'min-height', 'max-width', 'max-height',
+    // layout container
+    'display', 'flex-direction', 'flex-wrap', 'justify-content', 'align-items',
+    'align-content', 'justify-items', 'grid-template-columns', 'grid-template-rows',
+    'grid-auto-flow', 'grid-auto-columns', 'grid-auto-rows', 'gap', 'row-gap', 'column-gap',
+    // layout item
+    'flex', 'flex-grow', 'flex-shrink', 'flex-basis', 'order',
+    'align-self', 'justify-self', 'grid-column', 'grid-row', 'grid-area',
+    // spacing
+    'margin-top', 'margin-right', 'margin-bottom', 'margin-left',
+    'padding-top', 'padding-right', 'padding-bottom', 'padding-left',
+    // typography
+    'font-size', 'font-weight', 'line-height', 'text-align', 'color',
+    // custom properties for grid and layout
+    '--x', '--y', '--left', '--top', '--width', '--height'
+  ]);
+
+  function cssPropToJs(prop) {
+    return prop.replace(/-([a-z])/g, (_, c) => c.toUpperCase());
+  }
+
+  function getResponsiveVarName(cssProp, bpKey) {
+    return `--editor-${cssProp}-${bpKey}`;
+  }
+
+  function getResponsiveBaseVarName(cssProp) {
+    return `--editor-base-${cssProp}`;
+  }
+
+  function getInlineStyleValue(el, cssProp) {
+    const isCustomProp = cssProp.startsWith('--');
+    const jsProp = isCustomProp ? cssProp : cssPropToJs(cssProp);
+    return (isCustomProp ? el.style.getPropertyValue(cssProp) : el.style[jsProp] || '').trim();
+  }
+
+  function setInlineStyleValue(el, cssProp, value) {
+    const isCustomProp = cssProp.startsWith('--');
+    const jsProp = isCustomProp ? cssProp : cssPropToJs(cssProp);
+    if (value) {
+      if (isCustomProp) el.style.setProperty(cssProp, value);
+      else if (cssProp === 'transform') el.style.setProperty(cssProp, value, 'important');
+      else el.style[jsProp] = value;
+    } else {
+      if (isCustomProp) el.style.removeProperty(cssProp);
+      else el.style.removeProperty(cssProp);
+    }
+  }
+
+  function getStoredResponsiveBaseValue(el, cssProp) {
+    const baseVal = el.style.getPropertyValue(getResponsiveBaseVarName(cssProp)).trim();
+    if (baseVal === '__empty__') return { hasBase: true, value: '' };
+    if (baseVal) return { hasBase: true, value: baseVal };
+    return { hasBase: false, value: '' };
+  }
+
+  function getComputedStyleValue(el, cssProp) {
+    if (!iframeWin) return '';
+    const isCustomProp = cssProp.startsWith('--');
+    const jsProp = isCustomProp ? cssProp : cssPropToJs(cssProp);
+    const cs = iframeWin.getComputedStyle(el);
+    return (isCustomProp ? cs.getPropertyValue(cssProp) : cs[jsProp] || '').trim();
+  }
+
+  function getCurrentStyleSnapshot(el, cssProp) {
+    return getInlineStyleValue(el, cssProp) || getComputedStyleValue(el, cssProp);
+  }
+
+  function getBreakpointPreviewWidth(bp) {
+    if (!bp) return parseInt(bpSelect.value, 10) || 1920;
+    if (bp.key === 'desktop') return 1920;
+    if (bp.key === 'laptop') return 1440;
+    if (bp.key === 'tablet-l') return 1194;
+    if (bp.key === 'tablet-p') return 834;
+    return 375;
+  }
+
+  function getBreakpointClassName(bpKey) {
+    return `editor-bp-${bpKey}`;
+  }
+
+  function withTemporaryBreakpointContext(bpKey, callback) {
+    if (!iframeDoc || !canvasWrapper) return callback();
+    const bp = BREAKPOINTS.find(b => b.key === bpKey);
+    const width = getBreakpointPreviewWidth(bp) + 'px';
+    const prevWidth = canvasWrapper.style.width;
+    const prevTransition = canvasWrapper.style.transition;
+    const prevIframeWidth = iframe ? iframe.style.width : '';
+    const bpClasses = BREAKPOINTS.map(b => getBreakpointClassName(b.key));
+    const hadClasses = new Set(bpClasses.filter(cls => iframeDoc.body.classList.contains(cls)));
+
+    canvasWrapper.style.transition = 'none';
+    canvasWrapper.style.width = width;
+    if (iframe) iframe.style.width = width;
+    iframeDoc.body.classList.remove(...bpClasses);
+    iframeDoc.body.classList.add(getBreakpointClassName(bpKey));
+    void canvasWrapper.offsetWidth;
+    void iframe.offsetWidth;
+    void iframeDoc.documentElement.offsetWidth;
+
+    const result = callback();
+
+    canvasWrapper.style.width = prevWidth;
+    canvasWrapper.style.transition = prevTransition;
+    if (iframe) iframe.style.width = prevIframeWidth;
+    iframeDoc.body.classList.remove(...bpClasses);
+    hadClasses.forEach(cls => iframeDoc.body.classList.add(cls));
+    void canvasWrapper.offsetWidth;
+    void iframeDoc.documentElement.offsetWidth;
+    return result;
+  }
+
+  function getBreakpointStyleSnapshot(el, cssProp, bpKey, preferInline = true) {
+    return withTemporaryBreakpointContext(bpKey, () => {
+      if (preferInline) {
+        const inlineVal = getInlineStyleValue(el, cssProp);
+        if (inlineVal) return inlineVal;
+      }
+      return getComputedStyleValue(el, cssProp);
+    });
+  }
+
+  function snapshotWorkAreaBreakpointProps(el, bpKey) {
+    const saved = WORK_AREA_INDEPENDENT_PROPS.map(cssProp => ({
+      cssProp,
+      value: el.style.getPropertyValue(cssProp),
+      priority: el.style.getPropertyPriority(cssProp)
+    }));
+
+    WORK_AREA_INDEPENDENT_PROPS.forEach(cssProp => el.style.removeProperty(cssProp));
+    void iframeDoc.documentElement.offsetWidth;
+
+    const snapshot = new Map();
+    withTemporaryBreakpointContext(bpKey, () => {
+      WORK_AREA_INDEPENDENT_PROPS.forEach(cssProp => {
+        snapshot.set(cssProp, getComputedStyleValue(el, cssProp));
+      });
+    });
+
+    saved.forEach(({ cssProp, value, priority }) => {
+      if (value) el.style.setProperty(cssProp, value, priority);
+      else el.style.removeProperty(cssProp);
+    });
+    void iframeDoc.documentElement.offsetWidth;
+
+    return snapshot;
+  }
+
+  function ensureResponsiveBaseValue(el, cssProp) {
+    const baseVar = getResponsiveBaseVarName(cssProp);
+    if (el.style.getPropertyValue(baseVar).trim()) return;
+    const current = getInlineStyleValue(el, cssProp);
+    el.style.setProperty(baseVar, current || '__empty__');
+  }
+
+  function ensureIndependentBreakpointValues(el, cssProp, opts = {}) {
+    const inlineSnapshot = getInlineStyleValue(el, cssProp);
+    const hasAnyExactValue = BREAKPOINTS.some(bp => el.style.getPropertyValue(getResponsiveVarName(cssProp, bp.key)).trim());
+    const forceAll = !!opts.forceAll;
+    const shouldCapturePerBreakpoint = isWorkAreaElement(el) || !inlineSnapshot || hasAnyExactValue;
+
+    BREAKPOINTS.forEach(bp => {
+      const varName = getResponsiveVarName(cssProp, bp.key);
+      if (forceAll || !el.style.getPropertyValue(varName).trim()) {
+        const snapshot = shouldCapturePerBreakpoint
+          ? getBreakpointStyleSnapshot(el, cssProp, bp.key, !hasAnyExactValue && !isWorkAreaElement(el))
+          : inlineSnapshot;
+        el.style.setProperty(varName, snapshot || '__empty__');
+      }
+    });
+  }
+
+  function ensureIndependentWorkAreaValues(root = iframeDoc, opts = {}) {
+    if (!root) return;
+    root.querySelectorAll(WORK_AREA_SELECTORS).forEach(el => {
+      WORK_AREA_INDEPENDENT_PROPS.forEach(cssProp => ensureResponsiveBaseValue(el, cssProp));
+
+      BREAKPOINTS.forEach(bp => {
+        const needsSnapshot = opts.forceAll || WORK_AREA_INDEPENDENT_PROPS.some(cssProp =>
+          !el.style.getPropertyValue(getResponsiveVarName(cssProp, bp.key)).trim()
+        );
+        if (!needsSnapshot) return;
+
+        const snapshot = snapshotWorkAreaBreakpointProps(el, bp.key);
+        WORK_AREA_INDEPENDENT_PROPS.forEach(cssProp => {
+          const varName = getResponsiveVarName(cssProp, bp.key);
+          if (opts.forceAll || !el.style.getPropertyValue(varName).trim()) {
+            const value = (snapshot.get(cssProp) || '').trim();
+            el.style.setProperty(varName, value || '__empty__');
+          }
+        });
+      });
+    });
+  }
+
+  function getBreakpointMediaQuery(bp) {
+    const conditions = [];
+    if (bp.minWidth !== null && bp.minWidth !== undefined) conditions.push(`(min-width: ${bp.minWidth}px)`);
+    if (bp.maxWidth !== null && bp.maxWidth !== undefined) conditions.push(`(max-width: ${bp.maxWidth}px)`);
+    return conditions.length ? `@media ${conditions.join(' and ')}` : '';
+  }
+
+  /**
+   * Read the value for a CSS property on one exact breakpoint.
+   * Breakpoints are intentionally isolated: no desktop → tablet/mobile cascade.
+   * Returns { value, inherited, source }.
+   */
+  function getResponsivePropValue(el, cssProp, targetBpKey = null) {
+    const bpKey = targetBpKey || getCurrentBreakpoint().key;
+    const varName = getResponsiveVarName(cssProp, bpKey);
+    const exactVal = el.style.getPropertyValue(varName).trim();
+    if (exactVal === '__empty__') return { value: '', inherited: false, source: bpKey };
+    if (exactVal) return { value: exactVal, inherited: false, source: bpKey };
+
+    // Work areas must never inherit the previous breakpoint's inline preview.
+    // If the current breakpoint has no explicit editor value, read the clean CSS
+    // state for this exact breakpoint with all work-area preview props removed.
+    if (isWorkAreaElement(el) && WORK_AREA_INDEPENDENT_PROPS.includes(cssProp)) {
+      const cleanValue = (snapshotWorkAreaBreakpointProps(el, bpKey).get(cssProp) || '').trim();
+      return { value: cleanValue, inherited: false, source: 'computed' };
+    }
+
+    const base = getStoredResponsiveBaseValue(el, cssProp);
+    if (base.hasBase) return { value: base.value, inherited: false, source: 'base' };
+
+    const inlineVal = getInlineStyleValue(el, cssProp);
+    if (inlineVal) return { value: inlineVal, inherited: false, source: 'inline' };
+
+    const computedVal = getComputedStyleValue(el, cssProp);
+    if (computedVal) return { value: computedVal, inherited: false, source: 'computed' };
+
+    return { value: '', inherited: false, source: 'none' };
+  }
+
+  /**
+   * Check if element has an explicit value for cssProp on the current breakpoint
+   * (not inherited from a higher breakpoint).
+   */
+  function hasExplicitBpValue(el, cssProp) {
+    const bp = getCurrentBreakpoint();
+    const varName = getResponsiveVarName(cssProp, bp.key);
+    return el.style.getPropertyValue(varName).trim() !== '';
+  }
+
+  /**
+   * Write a CSS property value for the current breakpoint only.
+   * Other breakpoints are snapshotted before the write, so future edits stay isolated.
+   */
+  function setResponsivePropValue(el, cssProp, value) {
+    const bp = getCurrentBreakpoint();
+    ensureResponsiveBaseValue(el, cssProp);
+    if (!isWorkAreaElement(el)) ensureIndependentBreakpointValues(el, cssProp);
+
+    const varName = getResponsiveVarName(cssProp, bp.key);
+
+    if (value === '' || value === null || value === undefined) {
+      el.style.removeProperty(varName);
+    } else {
+      el.style.setProperty(varName, value);
+    }
+
+    const resolved = getResponsivePropValue(el, cssProp);
+    setInlineStyleValue(el, cssProp, resolved.value);
+  }
+
+  /**
+   * Check if an element has any responsive custom properties at all.
+   */
+  function hasAnyResponsiveProps(el) {
+    const style = el.getAttribute('style') || '';
+    return style.includes('--editor-');
+  }
+
+  /**
+   * Generate a short stable editor ID for an element.
+   */
+  function generateEditorId() {
+    return 'e' + Math.random().toString(36).substr(2, 8);
+  }
+
+  /**
+   * Apply responsive preview: set inline styles to match the current breakpoint.
+   * This is needed because the iframe width doesn't trigger real @media queries.
+   */
+  function applyWorkAreaResponsivePreview(currentBpKey) {
+    if (!iframeDoc) return;
+    iframeDoc.querySelectorAll(WORK_AREA_SELECTORS).forEach(el => {
+      const cleanSnapshot = snapshotWorkAreaBreakpointProps(el, currentBpKey);
+
+      WORK_AREA_INDEPENDENT_PROPS.forEach(cssProp => {
+        const exactVal = el.style.getPropertyValue(getResponsiveVarName(cssProp, currentBpKey)).trim();
+        const value = exactVal
+          ? (exactVal === '__empty__' ? '' : exactVal)
+          : ((cleanSnapshot.get(cssProp) || '').trim());
+        setInlineStyleValue(el, cssProp, value);
+      });
+    });
+  }
+
+  function cleanupWorkAreaPreviewInlineStyles(root = iframeDoc) {
+    if (!root) return;
+    root.querySelectorAll(WORK_AREA_SELECTORS).forEach(el => {
+      WORK_AREA_INDEPENDENT_PROPS.forEach(cssProp => el.style.removeProperty(cssProp));
+    });
+  }
+
+  function applyResponsivePreview(targetBpKey = null) {
+    if (!iframeDoc) return;
+    const currentBpKey = targetBpKey || getCurrentBreakpoint().key;
+
+    applyWorkAreaResponsivePreview(currentBpKey);
+
+    iframeDoc.querySelectorAll('[style]').forEach(el => {
+      if (isWorkAreaElement(el)) return;
+
+      const style = el.getAttribute('style') || '';
+      if (!style.includes('--editor-')) return;
+
+      RESPONSIVE_PROPS.forEach(cssProp => {
+        const hasResponsive = BREAKPOINTS.some(b =>
+          el.style.getPropertyValue(getResponsiveVarName(cssProp, b.key)).trim()
+        ) || el.style.getPropertyValue(getResponsiveBaseVarName(cssProp)).trim();
+        if (!hasResponsive) return;
+
+        const { value } = getResponsivePropValue(el, cssProp, currentBpKey);
+        setInlineStyleValue(el, cssProp, value);
+      });
+    });
+  }
+
+  /**
+   * Generate the <style data-editor-responsive> block with real @media queries.
+   * Called before save to produce runtime CSS.
+   */
+  function generateResponsiveStyleBlock() {
+    if (!iframeDoc) return '';
+
+    const bpData = new Map(); // Map<editorId, Map<bpKey, Map<cssProp, value>>>
+
+    iframeDoc.querySelectorAll('[style]').forEach(el => {
+      const style = el.getAttribute('style') || '';
+      if (!style.includes('--editor-')) return;
+
+      // Ensure element has a stable data-editor-id
+      if (!el.getAttribute('data-editor-id')) {
+        el.setAttribute('data-editor-id', generateEditorId());
+      }
+      const eid = el.getAttribute('data-editor-id');
+
+      const propMap = new Map();
+      BREAKPOINTS.forEach(bp => {
+        const bpProps = new Map();
+        RESPONSIVE_PROPS.forEach(cssProp => {
+          const varName = getResponsiveVarName(cssProp, bp.key);
+          const val = el.style.getPropertyValue(varName).trim();
+          if (val && val !== '__empty__') bpProps.set(cssProp, val);
+        });
+        if (bpProps.size > 0) propMap.set(bp.key, bpProps);
+      });
+
+      if (propMap.size > 0) bpData.set(eid, propMap);
+    });
+
+    if (bpData.size === 0) return '';
+
+    // Build CSS string
+    let css = '\n/* Editor Responsive Styles — Auto-generated */\n';
+
+    // For each breakpoint, emit only exact values for that breakpoint.
+    // This prevents a Desktop edit from changing Tablet/Mobile and vice versa.
+    BREAKPOINTS.forEach(bp => {
+      const rules = [];
+      bpData.forEach((propMap, eid) => {
+        const exactProps = propMap.get(bp.key);
+        if (!exactProps || exactProps.size === 0) return;
+        const declarations = Array.from(exactProps.entries())
+          .map(([prop, val]) => `  ${prop}: ${val} !important;`)
+          .join('\n');
+        rules.push(`[data-editor-id="${eid}"] {\n${declarations}\n}`);
+      });
+
+      if (rules.length === 0) return;
+
+      const mediaQuery = getBreakpointMediaQuery(bp);
+      if (!mediaQuery) {
+        css += rules.join('\n') + '\n';
+      } else {
+        css += `${mediaQuery} {\n${rules.join('\n')}\n}\n`;
+      }
+    });
+
+    return css;
+  }
+
+  /**
+   * Update the breakpoint indicator UI.
+   */
+  function updateBpIndicator() {
+    const indicator = document.getElementById('bpIndicator');
+    const label = document.getElementById('bpIndicatorLabel');
+    if (!indicator || !label) return;
+
+    const bp = getCurrentBreakpoint();
+    const bpInfo = BREAKPOINTS.find(b => b.key === bp.key);
+    label.textContent = bpInfo ? bpInfo.label : bp.key;
+
+    // Show indicator when an element is selected
+    indicator.style.display = selectedEl ? 'block' : 'none';
+  }
+
+  // =============================================
+  // END RESPONSIVE PROPERTIES ENGINE
+  // =============================================
+
+  function hasAnyCurrentBreakpointCoord(el) {
+    return true;
+  }
+
+  function getRenderedGridCoord(el, axis) {
+    if (!iframeWin || !el) return 0;
+    const gridSize = getGridSize();
+    const rect = el.getBoundingClientRect();
+    const parent = el.closest('.visual-section__work, .hero__work') || el.offsetParent || iframeDoc.body;
+    const parentRect = parent.getBoundingClientRect();
+    const px = axis === 'x' ? rect.left - parentRect.left : rect.top - parentRect.top;
+    return Math.round(px / gridSize) || 0;
+  }
+
+  function getSnapCoord(el, axis) {
+    const prop = `--${axis}`;
+    const resolved = getResponsivePropValue(el, prop);
+    if (resolved.value !== '') return parseInt(resolved.value, 10) || 0;
+    return 0;
+  }
+
+  function syncEditorPlacedElement(el) {
+    if (!el || !el.classList || !el.classList.contains('snap')) return;
+    if (hasAnyCurrentBreakpointCoord(el)) el.classList.add('editor-bp-placed');
+    else el.classList.remove('editor-bp-placed');
+  }
+
+  function syncEditorPlacementParents() {
+    if (!iframeDoc) return;
+    iframeDoc.querySelectorAll('.editor-bp-has-placed').forEach(el => el.classList.remove('editor-bp-has-placed'));
+    iframeDoc.querySelectorAll('.editor-bp-placed').forEach(el => {
+      const parent = el.closest('.visual-section__work, .hero__work');
+      if (parent) parent.classList.add('editor-bp-has-placed');
+    });
+  }
+
+  function syncEditorPlacedElements() {
+    if (!iframeDoc) return;
+    iframeDoc.querySelectorAll('.editor-bp-placed').forEach(el => el.classList.remove('editor-bp-placed'));
+    iframeDoc.querySelectorAll('.snap').forEach(syncEditorPlacedElement);
+    syncEditorPlacementParents();
+  }
+
+  function setSnapCoord(el, axis, value) {
+    const prop = `--${axis}`;
+    setResponsivePropValue(el, prop, value);
+    syncEditorPlacedElement(el);
+    syncEditorPlacementParents();
+  }
+
+  function applyEditorBreakpointMode() {
+    if (!iframeDoc || !iframeDoc.body) return;
+    const bp = getCurrentBreakpoint();
+    iframeDoc.body.classList.add('editor-editing');
+    iframeDoc.body.classList.remove('editor-bp-desktop', 'editor-bp-laptop', 'editor-bp-tablet-l', 'editor-bp-tablet-p', 'editor-bp-mobile');
+    iframeDoc.body.classList.add(bp.cls);
+  }
+
+  function forceEditorRevealVisible(root = iframeDoc) {
+    if (!root) return;
+    root.querySelectorAll('.reveal').forEach(el => {
+      el.classList.add('is-visible');
+      el.classList.remove('is-passed');
+    });
+  }
+
+  function injectEditorStyles() {
+    if (!iframeDoc) return;
+    iframeDoc.querySelectorAll('[data-editor-style="true"]').forEach(style => style.remove());
+    const style = iframeDoc.createElement('style');
+    style.setAttribute('data-editor-style', 'true');
+    style.innerHTML = `
+      body.editor-editing, body.editor-editing * { user-select: none !important; }
+      body.editor-editing .snap,
+      body.editor-editing .snap.reveal,
+      body.editor-editing .editor-bp-placed {
+        transition: none !important;
+        animation: none !important;
+        will-change: auto !important;
+      }
+      body.editor-editing .reveal {
+        opacity: 1 !important;
+        visibility: visible !important;
+      }
+      * { scrollbar-width: thin; scrollbar-color: #6b6b6b #1b1b1b; }
+      *::-webkit-scrollbar { width: 12px; height: 12px; }
+      *::-webkit-scrollbar-track { background: #1b1b1b; border-radius: 10px; }
+      *::-webkit-scrollbar-thumb { background: #5f6368; border: 3px solid #1b1b1b; border-radius: 10px; }
+      *::-webkit-scrollbar-thumb:hover { background: #7a7f86; }
+      *::-webkit-scrollbar-corner { background: #1b1b1b; }
+      .editor-hover { outline: 1px dashed rgba(0, 122, 204, 0.5) !important; outline-offset: -1px; }
+      .editor-hidden { opacity: 0.2 !important; outline: 1px solid red !important; }
+      .editor-selected { outline: 2px solid #0098ff !important; outline-offset: -2px; }
+    `;
+    iframeDoc.head.appendChild(style);
+  }
+
+  function clearNativeSelection() {
+    const docSel = document.getSelection && document.getSelection();
+    if (docSel) docSel.removeAllRanges();
+    if (iframeWin && iframeWin.getSelection) iframeWin.getSelection().removeAllRanges();
+  }
+
+  function getIframeDocCoords(e) {
+    const clientX = typeof e.clientX === 'number' ? e.clientX : 0;
+    const clientY = typeof e.clientY === 'number' ? e.clientY : 0;
+    const sourceDoc = e.view && e.view.document;
+
+    if (sourceDoc === iframeDoc) {
+      return {
+        x: clientX + iframeWin.scrollX,
+        y: clientY + iframeWin.scrollY
+      };
+    }
+
+    const iframeRect = iframe.getBoundingClientRect();
+    return {
+      x: ((clientX - iframeRect.left) / zoom) + iframeWin.scrollX,
+      y: ((clientY - iframeRect.top) / zoom) + iframeWin.scrollY
+    };
+  }
+
+  function renderMarqueeSelection(currentCoords) {
+    const x = Math.min(currentCoords.x, marqueeStartX);
+    const y = Math.min(currentCoords.y, marqueeStartY);
+    const w = Math.abs(currentCoords.x - marqueeStartX);
+    const h = Math.abs(currentCoords.y - marqueeStartY);
+    marqueeSelect.style.left = x + 'px';
+    marqueeSelect.style.top = y + 'px';
+    marqueeSelect.style.width = w + 'px';
+    marqueeSelect.style.height = h + 'px';
+  }
+
+  // Breakpoints
+  bpSelect.onchange = (e) => {
+    canvasWrapper.style.width = e.target.value + 'px';
+    applyEditorBreakpointMode();
+    syncEditorPlacedElements();
+    applyResponsivePreview();
+    if (selectedEl) populateProps(selectedEl);
+    updateBpIndicator();
+    updateScalerDimensions();
+    saveEditorWorkspaceState();
+    setTimeout(updateOverlay, 0);
+  };
+
+  iframe.onload = () => {
+    iframeWin = iframe.contentWindow;
+    iframeDoc = iframe.contentDocument;
+
+    // In editor mode the preview engine controls breakpoints itself.
+    // Remove saved generated media CSS to prevent stale @media rules from shifting other breakpoints.
+    iframeDoc.querySelectorAll('[data-editor-responsive="true"]').forEach(s => s.remove());
+    
+    // Migrate legacy responsive properties
+    iframeDoc.querySelectorAll('[style]').forEach(el => {
+       BREAKPOINTS.forEach(bp => {
+         ['x', 'y'].forEach(axis => {
+            const legacy = `--${axis}-${bp.key}`;
+            const val = el.style.getPropertyValue(legacy);
+            if (val) {
+               el.style.setProperty(`--editor---${axis}-${bp.key}`, val);
+               el.style.removeProperty(legacy);
+            }
+         });
+         ['left', 'top', 'width', 'height'].forEach(prop => {
+            const legacy = `--${prop}-${bp.key}`;
+            const val = el.style.getPropertyValue(legacy);
+            if (val) {
+               el.style.setProperty(`--editor-${prop}-${bp.key}`, val);
+               el.style.removeProperty(legacy);
+            }
+         });
+       });
+       ['--x', '--y'].forEach(prop => {
+          const val = el.style.getPropertyValue(prop);
+          if (val && !el.style.getPropertyValue(`--editor-${prop}-desktop`)) {
+             el.style.setProperty(`--editor-${prop}-desktop`, val);
+          }
+       });
+    });
+
+    // Inject editor styles into iframe to allow highlighting and grid editing without breaking saved layout
+    applyEditorBreakpointMode();
+    injectEditorStyles();
+    forceEditorRevealVisible();
+    syncEditorPlacedElements();
+
+    iframeDoc.body.addEventListener('click', onIframeClick, true);
+    iframeDoc.body.addEventListener('dblclick', onIframeDblClick, true);
+    iframeDoc.body.addEventListener('mousemove', onIframeHover, true);
+    iframeDoc.body.addEventListener('mouseout', onIframeHoverOut, true);
+    iframeDoc.body.addEventListener('mousedown', onIframeMouseDown, true);
+    iframeDoc.body.addEventListener('dragstart', e => e.preventDefault(), true);
+    iframeDoc.body.addEventListener('selectstart', e => e.preventDefault(), true);
+    iframeDoc.addEventListener('mousemove', handleEditorMouseMove, true);
+    iframeDoc.addEventListener('mouseup', handleEditorMouseUp, true);
+    
+    // Disable links
+    iframeDoc.body.addEventListener('click', e => {
+      if(e.target.closest('a')) e.preventDefault();
+    });
+
+    iframeWin.addEventListener('scroll', () => {
+      updateOverlay();
+      saveEditorWorkspaceState();
+    });
+    
+    // Zoom via Ctrl+Scroll inside iframe
+    iframeDoc.addEventListener('wheel', onCanvasWheel, { passive: false });
+    iframeDoc.addEventListener('keydown', preventBrowserZoomKeys, true);
+    
+    // Ctrl+Z Undo inside iframe
+    iframeDoc.addEventListener('keydown', onIframeKeyDown);
+    
+    // Sync height
+    const resizeObs = new ResizeObserver(() => {
+      canvasWrapper.style.height = iframeDoc.documentElement.scrollHeight + 'px';
+      updateScalerDimensions();
+    });
+    resizeObs.observe(iframeDoc.body);
+    
+    buildLayers();
+    restoreEditorWorkspaceState();
+    applyResponsivePreview();
+    setTimeout(saveHistoryState, 100); // Initial state
+  };
+
+  let zoom = 1;
+  const zoomValue = document.getElementById('zoomValue');
+  const canvasScaler = document.getElementById('canvasScaler');
+
+  function updateScalerDimensions() {
+     const w = canvasWrapper.offsetWidth;
+     const h = canvasWrapper.offsetHeight;
+     canvasScaler.style.width = (w * zoom) + 'px';
+     canvasScaler.style.height = (h * zoom) + 'px';
+  }
+
+  function preventBrowserZoomKeys(e) {
+    if ((e.ctrlKey || e.metaKey) && ['+', '=', '-', '_', '0'].includes(e.key)) {
+      e.preventDefault();
+      e.stopPropagation();
+      if (e.key === '+' || e.key === '=') setZoomAtCanvasCenter(zoom + 0.1);
+      if (e.key === '-' || e.key === '_') setZoomAtCanvasCenter(zoom - 0.1);
+      if (e.key === '0') setZoomAtCanvasCenter(1);
+    }
+  }
+
+  window.addEventListener('keydown', preventBrowserZoomKeys, true);
+  window.addEventListener('wheel', e => {
+    if (e.ctrlKey || e.metaKey) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+  }, { passive: false, capture: true });
+
+  function applyZoomValue(val) {
+    zoom = Math.max(0.1, Math.min(val, 5));
+    zoomValue.textContent = Math.round(zoom * 100) + '%';
+    canvasWrapper.style.transform = `scale(${zoom})`;
+    updateScalerDimensions();
+    updateOverlay();
+    if(hoveredEl) updateHoverOverlay(hoveredEl);
+    saveEditorWorkspaceState();
+  }
+
+  function setZoom(val) {
+    setZoomAtCanvasCenter(val);
+  }
+
+  function getZoomPointerFromEvent(e) {
+    if (e.view === iframeWin) {
+      const iframeRect = iframe.getBoundingClientRect();
+      return {
+        x: iframeRect.left + e.clientX * zoom,
+        y: iframeRect.top + e.clientY * zoom
+      };
+    }
+    return { x: e.clientX, y: e.clientY };
+  }
+
+  function setZoomAtPoint(val, clientX, clientY) {
+    const oldRect = canvasWrapper.getBoundingClientRect();
+    const contentX = (clientX - oldRect.left) / zoom;
+    const contentY = (clientY - oldRect.top) / zoom;
+
+    applyZoomValue(val);
+
+    const newRect = canvasWrapper.getBoundingClientRect();
+    canvasContainer.scrollLeft += (newRect.left + contentX * zoom) - clientX;
+    canvasContainer.scrollTop += (newRect.top + contentY * zoom) - clientY;
+    updateOverlay();
+    if(hoveredEl) updateHoverOverlay(hoveredEl);
+    saveEditorWorkspaceState();
+  }
+
+  function setZoomAtCanvasCenter(val) {
+    const rect = canvasContainer.getBoundingClientRect();
+    setZoomAtPoint(val, rect.left + rect.width / 2, rect.top + rect.height / 2);
+  }
+
+  function restoreEditorWorkspaceState() {
+    const state = JSON.parse(localStorage.getItem(EDITOR_WORKSPACE_KEY) || '{}');
+    if (!state || state.file !== currentFile) return;
+    if (state.breakpoint && bpSelect.value !== state.breakpoint) {
+      bpSelect.value = state.breakpoint;
+      canvasWrapper.style.width = state.breakpoint + 'px';
+      applyEditorBreakpointMode();
+      syncEditorPlacedElements();
+    }
+    if (state.zoom) applyZoomValue(parseFloat(state.zoom));
+    setTimeout(() => {
+      const canvasCont = document.getElementById('canvasContainer');
+      if (iframeWin) iframeWin.scrollTo(state.iframeScrollX || 0, state.iframeScrollY || 0);
+      if (canvasCont) canvasCont.scrollTo(state.scrollLeft || 0, state.scrollTop || 0);
+      if (state.selectedPath) {
+        const el = getElementByPath(state.selectedPath);
+        if (el) selectElement(el);
+      }
+      updateOverlay();
+    }, 80);
+  }
+
+  function onCanvasWheel(e) {
+    if (e.ctrlKey || e.metaKey) {
+      e.preventDefault();
+      e.stopPropagation();
+      const delta = e.deltaY > 0 ? -0.1 : 0.1;
+      const pointer = getZoomPointerFromEvent(e);
+      setZoomAtPoint(zoom + delta, pointer.x, pointer.y);
+    }
+  }
+
+  const canvasContainer = document.getElementById('canvasContainer');
+  // Zoom via Ctrl+Scroll on container
+  canvasContainer.addEventListener('wheel', onCanvasWheel, { passive: false });
+  canvasContainer.addEventListener('scroll', saveEditorWorkspaceState);
+  window.addEventListener('beforeunload', saveEditorWorkspaceState);
+
+  let hoveredEl = null;
+  let isMarqueeSelecting = false;
+  let ignoreNextIframeClick = false;
+  let marqueeStartX = 0;
+  let marqueeStartY = 0;
+  const marqueeSelect = document.getElementById('marqueeSelect');
+
+  // Selection
+  let placementMode = null;
+  let buttonPlacementVariant = 'primary';
+  function setPlacementMode(mode) {
+    placementMode = mode;
+    if (iframeDoc) iframeDoc.body.style.cursor = mode ? 'crosshair' : '';
+    document.querySelectorAll('.tool-btn').forEach(btn => btn.style.borderColor = '');
+    const toolBtn = mode ? document.getElementById('tool-' + mode) : null;
+    if (toolBtn) toolBtn.style.borderColor = 'var(--accent)';
+  }
+
+  function setButtonPlacementMode() {
+    const variant = prompt('Какую кнопку создать? primary / secondary', buttonPlacementVariant || 'primary');
+    if (variant === null) return;
+    buttonPlacementVariant = (variant || 'primary').toLowerCase().includes('secondary') ? 'secondary' : 'primary';
+    setPlacementMode('button');
+  }
+
+  function getSelectableClickTarget(target) {
+    if (!target || target === iframeDoc.body || target === iframeDoc.documentElement) return null;
+    if (target.closest && target.closest('input, textarea, select, button, a')) return null;
+
+    let t = target;
+    while (t && t !== iframeDoc.body && t.classList && t.classList.contains('editor-locked')) {
+       t = t.parentElement;
+    }
+    if (!t || t === iframeDoc.body || t === iframeDoc.documentElement) return null;
+
+    const snap = t.classList && t.classList.contains('snap') ? t : (t.closest ? t.closest('.snap') : null);
+    if (snap && !snap.classList.contains('editor-locked')) return snap;
+
+    const emptySelectors = '.site-page, main, section, .visual-section, .hero';
+    if (t.matches && t.matches(emptySelectors)) return null;
+
+    return t;
+  }
+
+  function onIframeClick(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    clearNativeSelection();
+    
+    if (isMarqueeSelecting || ignoreNextIframeClick) {
+      ignoreNextIframeClick = false;
+      return;
+    }
+    if (placementMode) {
+       placeElementAtCursor(e);
+       return;
+    }
+
+    const finalTarget = getSelectableClickTarget(e.target);
+    selectElement(finalTarget, e.shiftKey || e.ctrlKey || e.metaKey);
+  }
+  
+  function onIframeDblClick(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    let t = e.target;
+    while (t && t !== iframeDoc.body && t.classList.contains('editor-locked')) {
+       t = t.parentElement;
+    }
+    if (t === iframeDoc.body || t === iframeDoc.documentElement) {
+       selectElement(null);
+    } else {
+       selectElement(t, e.shiftKey || e.ctrlKey || e.metaKey);
+    }
+  }
+
+  function onIframeHover(e) {
+    if(isDragging) return;
+    let t = e.target;
+    
+    while (t && t !== iframeDoc.body && t.classList.contains('editor-locked')) {
+       t = t.parentElement;
+    }
+    
+    let snap = t.closest('.snap');
+    if (snap && snap.classList.contains('editor-locked')) {
+       snap = null;
+    }
+    
+    let finalTarget = snap || t;
+    if (finalTarget === iframeDoc.body || finalTarget === iframeDoc.documentElement) {
+       hoverOverlay.style.display = 'none';
+       hoveredEl = null;
+    } else {
+       updateHoverOverlay(finalTarget);
+    }
+  }
+
+  function onIframeHoverOut(e) {
+    hoveredEl = null;
+    hoverOverlay.style.display = 'none';
+  }
+
+  function onIframeMouseDown(e) {
+    if (placementMode || e.button !== 0) return;
+    const target = e.target;
+    if (target.closest && target.closest('input, textarea, select, button, a')) return;
+    const clickedSnap = target.classList && target.classList.contains('snap') ? target : target.closest('.snap');
+    if (clickedSnap && !e.altKey) return;
+
+    e.preventDefault();
+    e.stopPropagation();
+    clearNativeSelection();
+    isMarqueeSelecting = true;
+    const coords = getIframeDocCoords(e);
+    marqueeStartX = coords.x;
+    marqueeStartY = coords.y;
+    marqueeSelect.style.display = 'block';
+    renderMarqueeSelection(coords);
+  }
+  
+  function updateHoverOverlay(el) {
+    if(!el) { hoverOverlay.style.display = 'none'; return; }
+    const rect = el.getBoundingClientRect();
+    hoverOverlay.style.display = 'block';
+    hoverOverlay.style.top = (rect.top + iframeWin.scrollY) + 'px';
+    hoverOverlay.style.left = (rect.left + iframeWin.scrollX) + 'px';
+    hoverOverlay.style.width = rect.width + 'px';
+    hoverOverlay.style.height = rect.height + 'px';
+  }
+
+  function updateOverlay() {
+    if (!selectedEl) return;
+    const activeSelection = (selectedEls && selectedEls.length ? selectedEls : [selectedEl]).filter(el => el && el.isConnected);
+    if (!activeSelection.length) return;
+    const rects = activeSelection.map(el => el.getBoundingClientRect());
+    const left = Math.min(...rects.map(r => r.left));
+    const top = Math.min(...rects.map(r => r.top));
+    const right = Math.max(...rects.map(r => r.right));
+    const bottom = Math.max(...rects.map(r => r.bottom));
+    
+    overlay.style.display = 'block';
+    // Position overlay relative to the canvas wrapper; for multi-select this is the common bounding frame
+    overlay.style.top = (top + iframeWin.scrollY) + 'px';
+    overlay.style.left = (left + iframeWin.scrollX) + 'px';
+    overlay.style.width = (right - left) + 'px';
+    overlay.style.height = (bottom - top) + 'px';
+  }
+
+  // Sync Props to UI
+  function populateProps(el) {
+    const cs = iframeWin.getComputedStyle(el);
+    
+    // Helper: read responsive value for a CSS prop, return display string
+    function rv(cssProp, emptyValues = ['auto']) {
+      let val = getResponsivePropValue(el, cssProp).value;
+      if (!val && cs) {
+        const isCustomProp = cssProp.startsWith('--');
+        val = isCustomProp ? cs.getPropertyValue(cssProp) : cs[cssPropToJs(cssProp)];
+      }
+      val = (val || '').trim();
+      if (emptyValues.includes(val)) return '';
+      return val;
+    }
+    
+    document.getElementById('propId').value = el.id || '';
+    document.getElementById('propClass').value = (el.getAttribute && el.getAttribute('class')) || '';
+    const deviceSwitcherProps = document.getElementById('deviceSwitcherProps');
+    if (deviceSwitcherProps) deviceSwitcherProps.style.display = el.classList.contains('device-switcher') ? 'block' : 'none';
+    
+    // Custom properties for the currently selected breakpoint (snap coords use their own system)
+    if (el.classList.contains('snap')) {
+      document.getElementById('propGridX').value = getSnapCoord(el, 'x');
+      document.getElementById('propGridY').value = getSnapCoord(el, 'y');
+    } else {
+      document.getElementById('propGridX').value = el.style.getPropertyValue('--x') || cs.getPropertyValue('--x') || '';
+      document.getElementById('propGridY').value = el.style.getPropertyValue('--y') || cs.getPropertyValue('--y') || '';
+    }
+    
+    // Position
+    document.getElementById('propPosition').value = rv('position', ['static']);
+    document.getElementById('propTop').value = rv('top');
+    document.getElementById('propRight').value = rv('right');
+    document.getElementById('propBottom').value = rv('bottom');
+    document.getElementById('propLeft').value = rv('left');
+    document.getElementById('propTransform').value = getTransformForUi(el, cs);
+    const transformParts = readTransformParts(el);
+    document.getElementById('propTranslateX').value = transformParts.x;
+    document.getElementById('propTranslateY').value = transformParts.y;
+    document.getElementById('propScale').value = transformParts.scale;
+    document.getElementById('propRotate').value = transformParts.rotate;
+
+    // Size
+    document.getElementById('propWidth').value = rv('width');
+    document.getElementById('propHeight').value = rv('height');
+    document.getElementById('propMinWidth').value = rv('min-width', ['auto', '0px']);
+    document.getElementById('propMinHeight').value = rv('min-height', ['auto', '0px']);
+    document.getElementById('propMaxWidth').value = rv('max-width', ['none']);
+    document.getElementById('propMaxHeight').value = rv('max-height', ['none']);
+
+    // Layout container
+    document.getElementById('propDisplay').value = rv('display', []);
+    document.getElementById('propFlexDir').value = rv('flex-direction', []);
+    document.getElementById('propFlexWrap').value = rv('flex-wrap', []);
+    document.getElementById('propJustify').value = rv('justify-content', []);
+    document.getElementById('propAlign').value = rv('align-items', []);
+    document.getElementById('propJustifyItems').value = rv('justify-items', []);
+    document.getElementById('propAlignContent').value = rv('align-content', []);
+    const gapVal = rv('gap', ['normal', '0px']);
+    const rowGapVal = rv('row-gap', ['normal', '0px']);
+    const colGapVal = rv('column-gap', ['normal', '0px']);
+    document.getElementById('propGap').value = gapVal || (rowGapVal && rowGapVal === colGapVal ? rowGapVal : '');
+    document.getElementById('propRowGap').value = rowGapVal;
+    document.getElementById('propColumnGap').value = colGapVal;
+    
+    document.getElementById('propGridCols').value = rv('grid-template-columns', ['none']);
+    document.getElementById('propGridRows').value = rv('grid-template-rows', ['none']);
+    document.getElementById('propGridAutoFlow').value = rv('grid-auto-flow', []);
+    document.getElementById('propGridAutoCols').value = rv('grid-auto-columns', ['auto']);
+    document.getElementById('propGridAutoRows').value = rv('grid-auto-rows', ['auto']);
+
+    // Layout item
+    document.getElementById('propFlex').value = rv('flex', ['0 1 auto']);
+    document.getElementById('propFlexGrow').value = rv('flex-grow', []);
+    document.getElementById('propFlexShrink').value = rv('flex-shrink', []);
+    document.getElementById('propFlexBasis').value = rv('flex-basis', ['auto']);
+    document.getElementById('propOrder').value = rv('order', ['0']);
+    document.getElementById('propAlignSelf').value = rv('align-self', []);
+    document.getElementById('propJustifySelf').value = rv('justify-self', []);
+    document.getElementById('propGridColumn').value = rv('grid-column', ['auto', 'auto / auto']);
+    document.getElementById('propGridRow').value = rv('grid-row', ['auto', 'auto / auto']);
+    document.getElementById('propGridArea').value = rv('grid-area', ['auto', 'auto / auto / auto / auto']);
+    
+    // Spacing
+    document.getElementById('propMt').value = rv('margin-top', ['0px']);
+    document.getElementById('propMr').value = rv('margin-right', ['0px']);
+    document.getElementById('propMb').value = rv('margin-bottom', ['0px']);
+    document.getElementById('propMl').value = rv('margin-left', ['0px']);
+    
+    document.getElementById('propPt').value = rv('padding-top', ['0px']);
+    document.getElementById('propPr').value = rv('padding-right', ['0px']);
+    document.getElementById('propPb').value = rv('padding-bottom', ['0px']);
+    document.getElementById('propPl').value = rv('padding-left', ['0px']);
+    
+    // Typography
+    document.getElementById('propFontSize').value = rv('font-size', []);
+    document.getElementById('propFontWeight').value = rv('font-weight', []);
+    document.getElementById('propLineHeight').value = getLineHeightPercent(el, cs);
+    document.getElementById('propTextAlign').value = rv('text-align', ['start']);
+    document.getElementById('propColor').value = rv('color', []);
+    
+    const txtTrim = cs.getPropertyValue('text-box-trim') || '';
+    document.getElementById('propTextTrim').value = txtTrim;
+
+    // Text content - only if it has text node children
+    const isTextNode = Array.from(el.childNodes).some(n => n.nodeType === 3 && n.textContent.trim() !== '');
+    if (isTextNode && el.children.length === 0) {
+      document.getElementById('propTextContent').value = el.textContent;
+      document.getElementById('propTextContent').disabled = false;
+    } else {
+      document.getElementById('propTextContent').value = '(Contains HTML elements)';
+      document.getElementById('propTextContent').disabled = true;
+    }
+    
+    // Update breakpoint indicator
+    updateBpIndicator();
+  }
+
+  function getLineHeightPercent(el, cs = iframeWin.getComputedStyle(el)) {
+    const inlineValue = el.style.lineHeight.trim();
+    if (inlineValue.endsWith('%')) return inlineValue;
+    if (cs.lineHeight === 'normal') return '';
+    const lineHeight = parseFloat(cs.lineHeight);
+    const fontSize = parseFloat(cs.fontSize);
+    if (!lineHeight || !fontSize) return cs.lineHeight || '';
+    return Math.round((lineHeight / fontSize) * 10000) / 100 + '%';
+  }
+
+  function normalizeLineHeightValue(value) {
+    const v = value.trim();
+    if (!v || v.includes('calc') || v.includes('var(') || v.endsWith('%')) return v;
+    if (/^-?\d+(\.\d+)?$/.test(v)) return v + '%';
+    return v;
+  }
+
+  function isIdentityMatrixTransform(value) {
+    const v = (value || '').replace(/\s+/g, '');
+    return v === 'matrix(1,0,0,1,0,0)' || v === 'matrix3d(1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1)' || v === 'none';
+  }
+
+  function getTransformForUi(el, cs = iframeWin.getComputedStyle(el)) {
+    const inlineTransform = el.style.transform || '';
+    if (inlineTransform && !isIdentityMatrixTransform(inlineTransform)) return inlineTransform;
+    const computedTransform = cs.transform || '';
+    if (!computedTransform || computedTransform === 'none') return '';
+    return computedTransform;
+  }
+
+  function zeroMatrixTranslation(value) {
+    const raw = (value || '').trim();
+    const matrix = raw.match(/^matrix\(([^)]+)\)$/i);
+    if (matrix) {
+      const parts = matrix[1].split(',').map(v => v.trim());
+      if (parts.length !== 6) return '';
+      if ((parseFloat(parts[4]) || 0) === 0 && (parseFloat(parts[5]) || 0) === 0) return raw;
+      parts[4] = '0';
+      parts[5] = '0';
+      return `matrix(${parts.join(', ')})`;
+    }
+    const matrix3d = raw.match(/^matrix3d\(([^)]+)\)$/i);
+    if (matrix3d) {
+      const parts = matrix3d[1].split(',').map(v => v.trim());
+      if (parts.length !== 16) return '';
+      if ((parseFloat(parts[12]) || 0) === 0 && (parseFloat(parts[13]) || 0) === 0 && (parseFloat(parts[14]) || 0) === 0) return raw;
+      parts[12] = '0';
+      parts[13] = '0';
+      parts[14] = '0';
+      return `matrix3d(${parts.join(', ')})`;
+    }
+    return '';
+  }
+
+  function resetMatrixTranslation(el) {
+    const cs = iframeWin.getComputedStyle(el);
+    const source = getResponsivePropValue(el, 'transform').value || el.style.transform || cs.transform || '';
+    const zeroed = zeroMatrixTranslation(source);
+    if (!zeroed || zeroed === source) return false;
+    setResponsivePropValue(el, 'transform', zeroed);
+    return true;
+  }
+
+  function readTransformParts(el) {
+    const raw = getTransformForUi(el);
+    const parts = { x: '', y: '', scale: '', rotate: '' };
+    const tx = raw.match(/translateX\(([^)]+)\)/);
+    const ty = raw.match(/translateY\(([^)]+)\)/);
+    const txy = raw.match(/translate\(\s*([^,\s)]+)\s*(?:,\s*([^)]+))?\)/);
+    const scale = raw.match(/scale\(([^)]+)\)/);
+    const rotate = raw.match(/rotate\(([^)]+)\)/);
+    if (txy) {
+      parts.x = txy[1] || '';
+      parts.y = txy[2] || '0px';
+    }
+    if (tx) parts.x = tx[1];
+    if (ty) parts.y = ty[1];
+    if (scale) parts.scale = scale[1];
+    if (rotate) parts.rotate = rotate[1];
+    return parts;
+  }
+
+  function composeTransformFromParts() {
+    const x = document.getElementById('propTranslateX').value.trim();
+    const y = document.getElementById('propTranslateY').value.trim();
+    const scale = document.getElementById('propScale').value.trim();
+    const rotate = document.getElementById('propRotate').value.trim();
+    const transforms = [];
+    if (x || y) transforms.push(`translate(${x || '0px'}, ${y || '0px'})`);
+    if (scale) transforms.push(`scale(${scale})`);
+    if (rotate) transforms.push(`rotate(${rotate})`);
+    return transforms.join(' ');
+  }
+
+  function syncSelectedPropsRealtime() {
+    if (!selectedEl || !iframeWin) return;
+    const cs = iframeWin.getComputedStyle(selectedEl);
+    const gridXInput = document.getElementById('propGridX');
+    const gridYInput = document.getElementById('propGridY');
+    const topInput = document.getElementById('propTop');
+    const rightInput = document.getElementById('propRight');
+    const bottomInput = document.getElementById('propBottom');
+    const leftInput = document.getElementById('propLeft');
+
+    if (selectedEl.classList.contains('snap')) {
+      gridXInput.value = getSnapCoord(selectedEl, 'x');
+      gridYInput.value = getSnapCoord(selectedEl, 'y');
+    }
+
+    const topValue = getResponsivePropValue(selectedEl, 'top').value;
+    const leftValue = getResponsivePropValue(selectedEl, 'left').value;
+    const widthValue = getResponsivePropValue(selectedEl, 'width').value;
+    const heightValue = getResponsivePropValue(selectedEl, 'height').value;
+    topInput.value = topValue === 'auto' ? '' : topValue;
+    rightInput.value = cs.right === 'auto' ? '' : cs.right;
+    bottomInput.value = cs.bottom === 'auto' ? '' : cs.bottom;
+    leftInput.value = leftValue === 'auto' ? '' : leftValue;
+    document.getElementById('propWidth').value = widthValue === 'auto' ? '' : widthValue;
+    document.getElementById('propHeight').value = heightValue === 'auto' ? '' : heightValue;
+
+    const transformValue = getTransformForUi(selectedEl, cs);
+    document.getElementById('propTransform').value = transformValue;
+    const transformParts = readTransformParts(selectedEl);
+    document.getElementById('propTranslateX').value = transformParts.x;
+    document.getElementById('propTranslateY').value = transformParts.y;
+    document.getElementById('propScale').value = transformParts.scale;
+    document.getElementById('propRotate').value = transformParts.rotate;
+  }
+
+  function syncLinkedPositionFields(changedId = '') {
+    if (!selectedEl || !iframeWin) return;
+    const cs = iframeWin.getComputedStyle(selectedEl);
+    const gridSize = getGridSize();
+    const left = cs.left === 'auto' ? 0 : parseFloat(cs.left) || 0;
+    const top = cs.top === 'auto' ? 0 : parseFloat(cs.top) || 0;
+    const width = parseFloat(cs.width) || 0;
+    const height = parseFloat(cs.height) || 0;
+    const parent = selectedEl.offsetParent || selectedEl.parentElement;
+    const parentCs = parent ? iframeWin.getComputedStyle(parent) : null;
+    const parentWidth = parent ? parseFloat(parentCs.width) || 0 : 0;
+    const parentHeight = parent ? parseFloat(parentCs.height) || 0 : 0;
+
+    if (changedId !== 'propGridX' && selectedEl.classList.contains('snap')) document.getElementById('propGridX').value = getSnapCoord(selectedEl, 'x');
+    if (changedId !== 'propGridY' && selectedEl.classList.contains('snap')) document.getElementById('propGridY').value = getSnapCoord(selectedEl, 'y');
+    const leftValue = getResponsivePropValue(selectedEl, 'left').value;
+    const topValue = getResponsivePropValue(selectedEl, 'top').value;
+    const widthValue = getResponsivePropValue(selectedEl, 'width').value;
+    const heightValue = getResponsivePropValue(selectedEl, 'height').value;
+    if (changedId !== 'propLeft') document.getElementById('propLeft').value = leftValue === 'auto' ? '' : leftValue;
+    if (changedId !== 'propTop') document.getElementById('propTop').value = topValue === 'auto' ? '' : topValue;
+    if (changedId !== 'propRight') document.getElementById('propRight').value = parentWidth ? Math.round(parentWidth - left - width) + 'px' : (cs.right === 'auto' ? '' : cs.right);
+    if (changedId !== 'propBottom') document.getElementById('propBottom').value = parentHeight ? Math.round(parentHeight - top - height) + 'px' : (cs.bottom === 'auto' ? '' : cs.bottom);
+    if (changedId !== 'propWidth') document.getElementById('propWidth').value = widthValue === 'auto' ? '' : widthValue;
+    if (changedId !== 'propHeight') document.getElementById('propHeight').value = heightValue === 'auto' ? '' : heightValue;
+  }
+
+  // Map for layers
+  let elementToLayerItem = new WeakMap();
+
+  const unitlessNumericInputIds = new Set(['propFlexGrow', 'propFlexShrink', 'propOrder', 'propScale']);
+  const degreeNumericInputIds = new Set(['propRotate']);
+
+  function getDefaultNumericUnit(inputId) {
+    if (unitlessNumericInputIds.has(inputId) || inputId.includes('Grid')) return '';
+    if (degreeNumericInputIds.has(inputId)) return 'deg';
+    if (inputId.includes('LineHeight')) return '%';
+    return 'px';
+  }
+
+  // Make input evaluate math and handle Up/Down arrows
+  function makeNumericInput(input) {
+    if (!input) return;
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+        let valStr = input.value.trim() || '0';
+        if (valStr.includes('calc') || valStr.includes('var(')) return; // Do not touch complex css
+        e.preventDefault();
+
+        let unitMatch = valStr.match(/[a-zA-Z%]+/);
+        let unit = unitMatch ? unitMatch[0] : '';
+        if (!unit) unit = getDefaultNumericUnit(input.id);
+
+        let numStr = valStr.replace(/[a-zA-Z%]/g, '').trim();
+        let num = 0;
+        try { num = new Function('return ' + (numStr || '0'))(); } catch(err){}
+
+        let step = e.shiftKey ? 10 : 1;
+        if (e.key === 'ArrowDown') step = -step;
+
+        num += step;
+        num = Math.round(num * 100) / 100;
+        input.value = num + unit;
+        input.dispatchEvent(new Event('input'));
+      }
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        evaluateMath(input);
+        input.blur();
+      }
+    });
+
+    input.addEventListener('blur', () => {
+      evaluateMath(input);
+    });
+
+    function evaluateMath(inp) {
+      let val = inp.value.trim();
+      if (!val || val.includes('calc') || val.includes('var(')) return;
+      
+      let unitMatch = val.match(/[a-zA-Z%]+/);
+      let unit = unitMatch ? unitMatch[0] : '';
+      if (!unit) unit = getDefaultNumericUnit(inp.id);
+      
+      let expr = val.replace(/[a-zA-Z%]/g, '').trim();
+      try {
+        let result = new Function('return ' + expr)();
+        if (typeof result === 'number' && !isNaN(result)) {
+           result = Math.round(result * 100) / 100;
+           let finalVal = result + unit;
+           if (val !== finalVal) {
+             inp.value = finalVal;
+             inp.dispatchEvent(new Event('input'));
+           }
+        }
+      } catch (err) {}
+    }
+  }
+
+  // Handle Prop changes
+  let propChangeTimeout = null;
+  function bindProp(id, cb, opts = {}) {
+    document.getElementById(id).addEventListener('input', e => {
+      if (!selectedEl) return;
+      const originalSelectedEl = selectedEl;
+      const targets = opts.single ? [selectedEl] : (selectedEls.length ? selectedEls : [selectedEl]);
+      targets.filter(el => el && el.isConnected).forEach(el => {
+        selectedEl = el;
+        cb(e.target.value, id, el);
+      });
+      selectedEl = originalSelectedEl && originalSelectedEl.isConnected ? originalSelectedEl : (targets.find(el => el && el.isConnected) || null);
+      syncLinkedPositionFields(id);
+      updateOverlay();
+      
+      saveEditorWorkspaceState();
+      // Debounce saving history on prop change
+      clearTimeout(propChangeTimeout);
+      propChangeTimeout = setTimeout(saveHistoryState, 600);
+    });
+  }
+
+  bindProp('propId', v => selectedEl.id = v, { single: true });
+  bindProp('propClass', v => selectedEl.setAttribute('class', v));
+  
+  bindProp('propGridX', v => {
+    if (selectedEl.classList.contains('snap')) setSnapCoord(selectedEl, 'x', v);
+    else setResponsivePropValue(selectedEl, '--x', v);
+  });
+  bindProp('propGridY', v => {
+    if (selectedEl.classList.contains('snap')) setSnapCoord(selectedEl, 'y', v);
+    else setResponsivePropValue(selectedEl, '--y', v);
+  });
+  
+  bindProp('propPosition', v => setResponsivePropValue(selectedEl, 'position', v));
+  bindProp('propTop', v => { setResponsivePropValue(selectedEl, 'top', v); });
+  bindProp('propRight', v => { setResponsivePropValue(selectedEl, 'right', v); });
+  bindProp('propBottom', v => { setResponsivePropValue(selectedEl, 'bottom', v); });
+  bindProp('propLeft', v => { setResponsivePropValue(selectedEl, 'left', v); });
+  
+  function setTransformStyle(el, value) {
+    const normalizedValue = isIdentityMatrixTransform(value) ? '' : value;
+    setResponsivePropValue(el, 'transform', normalizedValue);
+  }
+
+  bindProp('propTranslatePreset', v => {
+      setTransformStyle(selectedEl, v);
+      document.getElementById('propTransform').value = getTransformForUi(selectedEl);
+      syncSelectedPropsRealtime();
+  });
+  bindProp('propTransform', v => { setTransformStyle(selectedEl, v); syncSelectedPropsRealtime(); });
+  bindProp('propTranslateX', () => { setTransformStyle(selectedEl, composeTransformFromParts()); document.getElementById('propTransform').value = getTransformForUi(selectedEl); });
+  bindProp('propTranslateY', () => { setTransformStyle(selectedEl, composeTransformFromParts()); document.getElementById('propTransform').value = getTransformForUi(selectedEl); });
+  bindProp('propScale', () => { setTransformStyle(selectedEl, composeTransformFromParts()); document.getElementById('propTransform').value = getTransformForUi(selectedEl); });
+  bindProp('propRotate', () => { setTransformStyle(selectedEl, composeTransformFromParts()); document.getElementById('propTransform').value = getTransformForUi(selectedEl); });
+  
+  bindProp('propWidth', v => setResponsivePropValue(selectedEl, 'width', v));
+  bindProp('propHeight', v => setResponsivePropValue(selectedEl, 'height', v));
+  bindProp('propMinWidth', v => setResponsivePropValue(selectedEl, 'min-width', v));
+  bindProp('propMinHeight', v => setResponsivePropValue(selectedEl, 'min-height', v));
+  bindProp('propMaxWidth', v => setResponsivePropValue(selectedEl, 'max-width', v));
+  bindProp('propMaxHeight', v => setResponsivePropValue(selectedEl, 'max-height', v));
+
+  const layoutDisplays = new Set(['flex', 'inline-flex', 'grid', 'inline-grid']);
+  const flexLayoutDisplays = new Set(['flex', 'inline-flex']);
+  const gridLayoutDisplays = new Set(['grid', 'inline-grid']);
+
+  function rememberLayoutChildStyle(child) {
+    if (!child.hasAttribute('data-editor-layout-original-style')) {
+      child.setAttribute('data-editor-layout-original-style', child.getAttribute('style') || '');
+    }
+  }
+
+  function restoreLayoutChildStyle(child) {
+    if (!child.hasAttribute('data-editor-layout-original-style')) return;
+    const originalStyle = child.getAttribute('data-editor-layout-original-style');
+    if (originalStyle) child.setAttribute('style', originalStyle);
+    else child.removeAttribute('style');
+    child.removeAttribute('data-editor-layout-original-style');
+  }
+
+  function restoreResponsiveLayoutChildren(el) {
+    if (!el) return;
+    Array.from(el.children).forEach(child => restoreLayoutChildStyle(child));
+  }
+
+  function applyResponsiveLayoutElement(el) {
+    if (!el || !iframeWin) return;
+    const display = (el.style.display || iframeWin.getComputedStyle(el).display || '').trim();
+
+    if (!layoutDisplays.has(display)) {
+      restoreResponsiveLayoutChildren(el);
+      return;
+    }
+
+    el.style.boxSizing = el.style.boxSizing || 'border-box';
+    el.style.minWidth = el.style.minWidth || '0';
+    if (!el.style.width) el.style.width = '100%';
+    if (!el.style.gap && !el.style.rowGap && !el.style.columnGap) el.style.gap = '16px';
+
+    if (flexLayoutDisplays.has(display)) {
+      if (!el.style.flexDirection) el.style.flexDirection = 'row';
+      if (!el.style.flexWrap) el.style.flexWrap = 'wrap';
+      if (!el.style.alignItems) el.style.alignItems = 'flex-start';
+      if (!el.style.justifyContent) el.style.justifyContent = 'flex-start';
+      el.style.gridTemplateColumns = '';
+      el.style.gridTemplateRows = '';
+    }
+
+    if (gridLayoutDisplays.has(display)) {
+      if (!el.style.gridTemplateColumns) el.style.gridTemplateColumns = 'repeat(auto-fit, minmax(160px, 1fr))';
+      if (!el.style.gridAutoRows) el.style.gridAutoRows = 'auto';
+      if (!el.style.alignItems) el.style.alignItems = 'start';
+      if (!el.style.justifyItems) el.style.justifyItems = 'start';
+      el.style.flexWrap = '';
+      el.style.flexDirection = '';
+    }
+
+    // Не переводим snap-детей в static/flex/grid-поток: блоки должны оставаться
+    // независимыми и иметь возможность пересекать границы друг друга.
+  }
+
+  bindProp('propDisplay', v => { setResponsivePropValue(selectedEl, 'display', v); applyResponsiveLayoutElement(selectedEl); });
+  bindProp('propFlexDir', v => { setResponsivePropValue(selectedEl, 'flex-direction', v); applyResponsiveLayoutElement(selectedEl); });
+  bindProp('propFlexWrap', v => { setResponsivePropValue(selectedEl, 'flex-wrap', v); applyResponsiveLayoutElement(selectedEl); });
+  bindProp('propGridCols', v => { setResponsivePropValue(selectedEl, 'grid-template-columns', v); applyResponsiveLayoutElement(selectedEl); });
+  bindProp('propGridRows', v => { setResponsivePropValue(selectedEl, 'grid-template-rows', v); applyResponsiveLayoutElement(selectedEl); });
+  bindProp('propGridAutoFlow', v => { setResponsivePropValue(selectedEl, 'grid-auto-flow', v); applyResponsiveLayoutElement(selectedEl); });
+  bindProp('propGridAutoCols', v => { setResponsivePropValue(selectedEl, 'grid-auto-columns', v); applyResponsiveLayoutElement(selectedEl); });
+  bindProp('propGridAutoRows', v => { setResponsivePropValue(selectedEl, 'grid-auto-rows', v); applyResponsiveLayoutElement(selectedEl); });
+  bindProp('propJustify', v => { setResponsivePropValue(selectedEl, 'justify-content', v); applyResponsiveLayoutElement(selectedEl); });
+  bindProp('propAlign', v => { setResponsivePropValue(selectedEl, 'align-items', v); applyResponsiveLayoutElement(selectedEl); });
+  bindProp('propJustifyItems', v => { setResponsivePropValue(selectedEl, 'justify-items', v); applyResponsiveLayoutElement(selectedEl); });
+  bindProp('propAlignContent', v => { setResponsivePropValue(selectedEl, 'align-content', v); applyResponsiveLayoutElement(selectedEl); });
+  bindProp('propGap', v => { setResponsivePropValue(selectedEl, 'gap', v); applyResponsiveLayoutElement(selectedEl); });
+  bindProp('propRowGap', v => { setResponsivePropValue(selectedEl, 'row-gap', v); applyResponsiveLayoutElement(selectedEl); });
+  bindProp('propColumnGap', v => { setResponsivePropValue(selectedEl, 'column-gap', v); applyResponsiveLayoutElement(selectedEl); });
+
+  bindProp('propFlex', v => setResponsivePropValue(selectedEl, 'flex', v));
+  bindProp('propFlexGrow', v => setResponsivePropValue(selectedEl, 'flex-grow', v));
+  bindProp('propFlexShrink', v => setResponsivePropValue(selectedEl, 'flex-shrink', v));
+  bindProp('propFlexBasis', v => setResponsivePropValue(selectedEl, 'flex-basis', v));
+  bindProp('propOrder', v => setResponsivePropValue(selectedEl, 'order', v));
+  bindProp('propAlignSelf', v => setResponsivePropValue(selectedEl, 'align-self', v));
+  bindProp('propJustifySelf', v => setResponsivePropValue(selectedEl, 'justify-self', v));
+  bindProp('propGridColumn', v => setResponsivePropValue(selectedEl, 'grid-column', v));
+  bindProp('propGridRow', v => setResponsivePropValue(selectedEl, 'grid-row', v));
+  bindProp('propGridArea', v => setResponsivePropValue(selectedEl, 'grid-area', v));
+
+  bindProp('propMt', v => setResponsivePropValue(selectedEl, 'margin-top', v));
+  bindProp('propMr', v => setResponsivePropValue(selectedEl, 'margin-right', v));
+  bindProp('propMb', v => setResponsivePropValue(selectedEl, 'margin-bottom', v));
+  bindProp('propMl', v => setResponsivePropValue(selectedEl, 'margin-left', v));
+
+  bindProp('propPt', v => setResponsivePropValue(selectedEl, 'padding-top', v));
+  bindProp('propPr', v => setResponsivePropValue(selectedEl, 'padding-right', v));
+  bindProp('propPb', v => setResponsivePropValue(selectedEl, 'padding-bottom', v));
+  bindProp('propPl', v => setResponsivePropValue(selectedEl, 'padding-left', v));
+
+  bindProp('propFontSize', v => setResponsivePropValue(selectedEl, 'font-size', v));
+  bindProp('propFontWeight', v => setResponsivePropValue(selectedEl, 'font-weight', v));
+  bindProp('propLineHeight', v => setResponsivePropValue(selectedEl, 'line-height', normalizeLineHeightValue(v)));
+  bindProp('propTextAlign', v => setResponsivePropValue(selectedEl, 'text-align', v));
+  bindProp('propColor', v => setResponsivePropValue(selectedEl, 'color', v));
+  
+  // Apply math and arrow keys to numeric fields
+  [
+    'propGridX', 'propGridY', 'propTop', 'propRight', 'propBottom', 'propLeft',
+    'propTranslateX', 'propTranslateY', 'propScale', 'propRotate',
+    'propWidth', 'propHeight', 'propMinWidth', 'propMinHeight', 'propMaxWidth', 'propMaxHeight',
+    'propGap', 'propRowGap', 'propColumnGap', 'propGridAutoCols', 'propGridAutoRows',
+    'propFlexGrow', 'propFlexShrink', 'propFlexBasis', 'propOrder',
+    'propMt', 'propMr', 'propMb', 'propMl',
+    'propPt', 'propPr', 'propPb', 'propPl',
+    'propFontSize', 'propLineHeight'
+  ].forEach(id => {
+    makeNumericInput(document.getElementById(id));
+  });
+  
+  bindProp('propTextTrim', v => {
+    if(v) {
+      selectedEl.style.setProperty('text-box-trim', v);
+      selectedEl.style.setProperty('text-box-edge', 'cap alphabetic');
+    } else {
+      selectedEl.style.removeProperty('text-box-trim');
+      selectedEl.style.removeProperty('text-box-edge');
+    }
+  });
+
+  bindProp('propTextContent', v => {
+    if (!document.getElementById('propTextContent').disabled) {
+      selectedEl.textContent = v;
+    }
+  }, { single: true });
+
+  function addDeviceSwitcherButton(target = selectedEl) {
+    if (!target || !target.classList || !target.classList.contains('device-switcher') || !iframeDoc) return;
+    const count = target.querySelectorAll('.device-switcher__button').length + 1;
+    const btn = iframeDoc.createElement('button');
+    btn.className = 'hero__button device-switcher__button';
+    btn.type = 'button';
+    btn.textContent = `Кнопка ${count}`;
+    target.appendChild(btn);
+    buildLayers();
+    updateOverlay();
+    saveEditorWorkspaceState();
+    saveHistoryState();
+  }
+
+  document.getElementById('btnAddDeviceSwitcherButton').onclick = () => addDeviceSwitcherButton();
+
+  document.getElementById('btnDelete').onclick = () => {
+    if(selectedEl && confirm('Удалить элемент?')) {
+      selectedEl.remove();
+      selectElement(null);
+      buildLayers();
+      saveHistoryState();
+    }
+  };
+
+  // Breakpoint indicator buttons
+  document.getElementById('btnCopyDesktopToBp').onclick = () => {
+    if (!selectedEl) return;
+    const bp = getCurrentBreakpoint();
+    if (bp.key === 'desktop') { alert('Уже на Desktop'); return; }
+    RESPONSIVE_PROPS.forEach(cssProp => {
+      ensureResponsiveBaseValue(selectedEl, cssProp);
+      ensureIndependentBreakpointValues(selectedEl, cssProp);
+      const desktopVar = getResponsiveVarName(cssProp, 'desktop');
+      const val = selectedEl.style.getPropertyValue(desktopVar).trim();
+      const bpVar = getResponsiveVarName(cssProp, bp.key);
+      if (val) selectedEl.style.setProperty(bpVar, val);
+      else selectedEl.style.removeProperty(bpVar);
+    });
+    applyResponsivePreview();
+    populateProps(selectedEl);
+    updateOverlay();
+    saveHistoryState();
+  };
+
+  document.getElementById('btnClearBpValues').onclick = () => {
+    if (!selectedEl) return;
+    const bp = getCurrentBreakpoint();
+    if (bp.key === 'desktop') {
+      if (!confirm('Очистить все Desktop responsive-значения?')) return;
+    }
+    RESPONSIVE_PROPS.forEach(cssProp => {
+      const varName = getResponsiveVarName(cssProp, bp.key);
+      selectedEl.style.removeProperty(varName);
+    });
+    applyResponsivePreview();
+    populateProps(selectedEl);
+    updateOverlay();
+    saveHistoryState();
+  };
+
+  // Drag & Drop for positioning
+  let isDragging = false;
+  let isResizing = false;
+  let resizeDir = '';
+  let dragStartX = 0, dragStartY = 0;
+  let dragPointerOffsetX = 0, dragPointerOffsetY = 0;
+  let resizeWasMoved = false;
+  
+  let dragStartStates = new Map();
+  let resizeStartStates = new Map();
+  
+  const dragShield = document.createElement('div');
+  dragShield.style.position = 'fixed';
+  dragShield.style.inset = '0';
+  dragShield.style.zIndex = '99999';
+  dragShield.style.cursor = 'move';
+  dragShield.style.display = 'none';
+  document.body.appendChild(dragShield);
+  
+  function getCanvasCoords(e) {
+     const rect = canvasWrapper.getBoundingClientRect();
+     return {
+        x: (e.clientX - rect.left) / zoom,
+        y: (e.clientY - rect.top) / zoom
+     };
+  }
+
+  function getSelectedDocOrigin() {
+     const activeSelection = (selectedEls && selectedEls.length ? selectedEls : [selectedEl]).filter(el => el && el.isConnected);
+     if (!activeSelection.length) return { x: 0, y: 0 };
+     const rects = activeSelection.map(el => el.getBoundingClientRect());
+     return {
+        x: Math.min(...rects.map(r => r.left)) + iframeWin.scrollX,
+        y: Math.min(...rects.map(r => r.top)) + iframeWin.scrollY
+     };
+  }
+
+  function getElementDocRect(el) {
+     const r = el.getBoundingClientRect();
+     return {
+       left: r.left + iframeWin.scrollX,
+       top: r.top + iframeWin.scrollY,
+       right: r.left + iframeWin.scrollX + r.width,
+       bottom: r.top + iframeWin.scrollY + r.height,
+       width: r.width,
+       height: r.height
+     };
+  }
+
+  function snapSizeToGrid(value, mode = 'nearest') {
+     const gridSize = getGridSize();
+     const numeric = Number.isFinite(value) ? value : 0;
+     const snapped = mode === 'ceil'
+       ? Math.ceil(numeric / gridSize) * gridSize
+       : Math.round(numeric / gridSize) * gridSize;
+     return Math.max(gridSize, Math.round(snapped));
+  }
+
+  function normalizeFrameSize(value, snapToGrid = false, mode = 'nearest') {
+     if (snapToGrid) return snapSizeToGrid(value, mode);
+     return Math.max(1, Math.round(Number.isFinite(value) ? value : 0));
+  }
+
+  function isTextFrame(el) {
+     if (!el || el.children.length) return false;
+     if (!el.textContent || !el.textContent.trim()) return false;
+     return el.matches('p, h1, h2, h3, h4, h5, h6, span, a, button, label, div, li, blockquote, figcaption') || el.classList.contains('new-text');
+  }
+
+  function fitTextFrameToGrid(el, dir = 'se') {
+     if (!isTextFrame(el)) return false;
+     const rect = getElementDocRect(el);
+     const cs = iframeWin.getComputedStyle(el);
+     const clone = el.cloneNode(true);
+     clone.removeAttribute('id');
+     clone.style.position = 'absolute';
+     clone.style.left = '-100000px';
+     clone.style.top = '0';
+     clone.style.right = 'auto';
+     clone.style.bottom = 'auto';
+     clone.style.visibility = 'hidden';
+     clone.style.pointerEvents = 'none';
+     clone.style.transform = 'none';
+     clone.style.maxWidth = 'none';
+     clone.style.height = 'auto';
+     clone.style.minWidth = '0';
+     clone.style.minHeight = '0';
+     clone.style.overflow = 'visible';
+     clone.style.whiteSpace = cs.whiteSpace;
+     clone.style.width = Math.max(1, Math.round(rect.width)) + 'px';
+     el.ownerDocument.body.appendChild(clone);
+
+     const cloneRect = clone.getBoundingClientRect();
+     const range = el.ownerDocument.createRange();
+     range.selectNodeContents(clone);
+     const rangeRect = range.getBoundingClientRect();
+     const lineRects = Array.from(range.getClientRects()).filter(lineRect => lineRect.width > 0 || lineRect.height > 0);
+     range.detach();
+
+     const occupied = lineRects.length ? {
+       left: Math.min(...lineRects.map(lineRect => lineRect.left)),
+       top: Math.min(...lineRects.map(lineRect => lineRect.top)),
+       right: Math.max(...lineRects.map(lineRect => lineRect.right)),
+       bottom: Math.max(...lineRects.map(lineRect => lineRect.bottom))
+     } : rangeRect;
+     const measuredWidth = Math.max(1, (occupied.right || cloneRect.right) - (occupied.left || cloneRect.left));
+     const measuredHeight = Math.max(1, cloneRect.height || rangeRect.height || clone.scrollHeight);
+     const targetWidth = snapSizeToGrid(measuredWidth, 'ceil');
+     const targetHeight = Math.max(1, Math.ceil(measuredHeight));
+     clone.remove();
+
+     let changed = false;
+     if (dir.includes('e') && Math.abs(targetWidth - rect.width) > 0.5) {
+       setResponsivePropValue(el, 'width', targetWidth + 'px');
+       changed = true;
+     }
+     if (dir.includes('s') && Math.abs(targetHeight - rect.height) > 0.5) {
+       setResponsivePropValue(el, 'height', targetHeight + 'px');
+       changed = true;
+     }
+     return changed;
+  }
+
+  function fitElementFrameToChildren(el, dir = 'se') {
+     if (!el || !iframeWin) return false;
+     if (fitTextFrameToGrid(el, dir)) return true;
+     const children = Array.from(el.children).filter(child => {
+       if (child.matches && child.matches('script, style')) return false;
+       const rect = child.getBoundingClientRect();
+       return rect.width > 0 || rect.height > 0;
+     });
+     if (!children.length) return false;
+
+     const parentRect = getElementDocRect(el);
+     const childRects = children.map(child => getElementDocRect(child));
+     const maxRight = Math.max(...childRects.map(r => r.right));
+     const maxBottom = Math.max(...childRects.map(r => r.bottom));
+     const minLeft = Math.min(...childRects.map(r => r.left));
+     const minTop = Math.min(...childRects.map(r => r.top));
+
+     let changed = false;
+     if (dir.includes('e')) {
+       const targetWidth = normalizeFrameSize(maxRight - parentRect.left);
+       if (Math.abs(targetWidth - parentRect.width) > 0.5) {
+         setResponsivePropValue(el, 'width', targetWidth + 'px');
+         changed = true;
+       }
+     }
+     if (dir.includes('s')) {
+       const targetHeight = normalizeFrameSize(maxBottom - parentRect.top);
+       if (Math.abs(targetHeight - parentRect.height) > 0.5) {
+         setResponsivePropValue(el, 'height', targetHeight + 'px');
+         changed = true;
+       }
+     }
+
+     if (!dir.includes('e') && minLeft < parentRect.left) {
+       setResponsivePropValue(el, 'width', normalizeFrameSize(parentRect.right - minLeft) + 'px');
+       changed = true;
+     }
+     if (!dir.includes('s') && minTop < parentRect.top) {
+       setResponsivePropValue(el, 'height', normalizeFrameSize(parentRect.bottom - minTop) + 'px');
+       changed = true;
+     }
+
+     return changed;
+  }
+
+  function fitSelectedFramesToChildren(dir) {
+     let changed = false;
+     selectedEls.forEach(el => {
+       if (fitElementFrameToChildren(el, dir)) changed = true;
+     });
+     if (changed) {
+       if (selectedEl) {
+         const widthValue = getResponsivePropValue(selectedEl, 'width').value;
+         const heightValue = getResponsivePropValue(selectedEl, 'height').value;
+         document.getElementById('propWidth').value = widthValue === 'auto' ? '' : widthValue;
+         document.getElementById('propHeight').value = heightValue === 'auto' ? '' : heightValue;
+       }
+       updateOverlay();
+       buildLayers();
+     }
+     return changed;
+  }
+  
+  document.getElementById('dragHandle').onmousedown = e => {
+    if(!selectedEl) return;
+    isDragging = true;
+    dragShield.style.display = 'block';
+    dragShield.style.cursor = 'move';
+    
+    const coords = getCanvasCoords(e);
+    const selectedOrigin = getSelectedDocOrigin();
+    dragStartX = selectedOrigin.x;
+    dragStartY = selectedOrigin.y;
+    dragPointerOffsetX = coords.x - selectedOrigin.x;
+    dragPointerOffsetY = coords.y - selectedOrigin.y;
+    
+    dragStartStates.clear();
+    selectedEls.forEach(el => {
+       const cs = iframeWin.getComputedStyle(el);
+       const bp = getCurrentBreakpoint();
+       const isSnap = el.classList.contains('snap');
+       let xVar = isSnap ? getSnapCoord(el, 'x') : 0;
+       let yVar = isSnap ? getSnapCoord(el, 'y') : 0;
+       let left = parseInt(cs.left) || 0;
+       let top = parseInt(cs.top) || 0;
+       
+       if (!el.classList.contains('snap')) {
+         if (cs.position !== 'absolute' && cs.position !== 'fixed' && cs.position !== 'relative') {
+            el.style.position = 'relative';
+            left = 0; top = 0;
+         }
+       }
+       
+       dragStartStates.set(el, { xVar, yVar, left, top });
+    });
+    
+    e.preventDefault();
+  };
+
+  function initResize(id, dir) {
+    document.getElementById(id).onmousedown = e => {
+      if(!selectedEl) return;
+      isResizing = true;
+      resizeWasMoved = false;
+      resizeDir = dir;
+      dragShield.style.display = 'block';
+      dragShield.style.cursor = dir + '-resize';
+      
+      const coords = getCanvasCoords(e);
+      dragStartX = coords.x;
+      dragStartY = coords.y;
+      
+      resizeStartStates.clear();
+      selectedEls.forEach(el => {
+         const cs = iframeWin.getComputedStyle(el);
+         resizeStartStates.set(el, {
+            w: parseFloat(cs.width) || 0,
+            h: parseFloat(cs.height) || 0
+         });
+      });
+      
+      e.preventDefault();
+      e.stopPropagation();
+    };
+  }
+  
+  initResize('resizeE', 'e');
+  initResize('resizeS', 's');
+  initResize('resizeSE', 'se');
+
+  function handleEditorMouseMove(e) {
+    if (isMarqueeSelecting) {
+      e.preventDefault();
+      clearNativeSelection();
+      const coords = getIframeDocCoords(e);
+      renderMarqueeSelection(coords);
+      return;
+    }
+
+    if(!isDragging && !isResizing) return;
+    if(selectedEls.length === 0) return;
+    clearNativeSelection();
+    
+    const coords = getCanvasCoords(e);
+    const dx = isDragging ? (coords.x - dragPointerOffsetX - dragStartX) : (coords.x - dragStartX);
+    const dy = isDragging ? (coords.y - dragPointerOffsetY - dragStartY) : (coords.y - dragStartY);
+    
+    const gridSize = getGridSize();
+
+    if (isResizing) {
+      if (Math.abs(dx) > 2 || Math.abs(dy) > 2) resizeWasMoved = true;
+      selectedEls.forEach(el => {
+         const state = resizeStartStates.get(el);
+         if (!state) return;
+         const snapToGrid = e.ctrlKey || e.metaKey;
+         const nextW = normalizeFrameSize(state.w + dx, snapToGrid);
+         const nextH = normalizeFrameSize(state.h + dy, snapToGrid);
+         if (resizeDir.includes('e')) setResponsivePropValue(el, 'width', nextW + 'px');
+         if (resizeDir.includes('s')) setResponsivePropValue(el, 'height', nextH + 'px');
+      });
+      updateOverlay();
+      syncSelectedPropsRealtime();
+      return;
+    }
+    
+    selectedEls.forEach(el => {
+       const state = dragStartStates.get(el);
+       if (!state) return;
+       
+       if (el.classList.contains('snap')) {
+          const dGridX = Math.round(dx / gridSize);
+          const dGridY = Math.round(dy / gridSize);
+          const newX = state.xVar + dGridX;
+          const newY = state.yVar + dGridY;
+          setSnapCoord(el, 'x', newX);
+          setSnapCoord(el, 'y', newY);
+          
+          if (el === selectedEl) {
+             document.getElementById('propGridX').value = newX;
+             document.getElementById('propGridY').value = newY;
+          }
+       } else {
+         const dGridX = Math.round(dx / gridSize) * gridSize;
+         const dGridY = Math.round(dy / gridSize) * gridSize;
+         setResponsivePropValue(el, 'left', (state.left + dGridX) + 'px');
+         setResponsivePropValue(el, 'top', (state.top + dGridY) + 'px');
+       }
+    });
+    
+    updateOverlay();
+    syncSelectedPropsRealtime();
+    if (hoveredEl) updateHoverOverlay(hoveredEl);
+  }
+
+  function handleEditorMouseUp(e) {
+    if (isMarqueeSelecting) {
+      e.preventDefault();
+      e.stopPropagation();
+      isMarqueeSelecting = false;
+      marqueeSelect.style.display = 'none';
+      clearNativeSelection();
+
+      const coords = getIframeDocCoords(e);
+      const x1 = Math.min(coords.x, marqueeStartX);
+      const y1 = Math.min(coords.y, marqueeStartY);
+      const x2 = Math.max(coords.x, marqueeStartX);
+      const y2 = Math.max(coords.y, marqueeStartY);
+      const minSize = 4;
+      const isRealMarquee = Math.abs(x2 - x1) > minSize || Math.abs(y2 - y1) > minSize;
+
+      if (isRealMarquee) {
+        ignoreNextIframeClick = true;
+        const found = Array.from(iframeDoc.querySelectorAll('.snap')).filter(el => {
+          if (el.classList.contains('editor-locked')) return false;
+          const r = el.getBoundingClientRect();
+          const elX1 = r.left + iframeWin.scrollX;
+          const elY1 = r.top + iframeWin.scrollY;
+          const elX2 = elX1 + r.width;
+          const elY2 = elY1 + r.height;
+          return elX1 < x2 && elX2 > x1 && elY1 < y2 && elY2 > y1;
+        });
+        selectElements(found);
+      } else {
+        ignoreNextIframeClick = false;
+        selectElement(null);
+      }
+      return;
+    }
+
+    if (isDragging || isResizing) {
+      const wasResizing = isResizing;
+      const dir = resizeDir;
+      isDragging = false;
+      isResizing = false;
+      dragShield.style.display = 'none';
+      if (wasResizing && !resizeWasMoved) fitSelectedFramesToChildren(dir);
+      saveHistoryState();
+      resizeWasMoved = false;
+    }
+  }
+
+  document.addEventListener('mousemove', handleEditorMouseMove);
+  document.addEventListener('mouseup', handleEditorMouseUp);
+
+  // Layers Tree
+  function buildLayers() {
+    layersPanel.innerHTML = '';
+    if (!iframeDoc) return;
+    
+    function createNode(el, depth) {
+      if (el.nodeType !== 1) return null; // Only elements
+      if (el.tagName === 'SCRIPT' || el.tagName === 'STYLE') return null;
+      
+      const div = document.createElement('div');
+      
+      let tagStr = el.tagName.toLowerCase();
+      if (el.id) tagStr += '#' + el.id;
+      if (el.className && typeof el.className === 'string') {
+        const cls = el.className.split(' ').filter(c => c && c !== 'editor-hover')[0];
+        if (cls) tagStr += '.' + cls;
+      }
+      
+      const hasChildren = Array.from(el.children).some(c => c.nodeType === 1 && c.tagName !== 'SCRIPT');
+      
+      const isLocked = el.classList.contains('editor-locked');
+      const isHidden = el.classList.contains('editor-hidden');
+      
+      div.innerHTML = `
+        <div class="layer-item ${isLocked ? 'is-locked' : ''} ${isHidden ? 'is-hidden' : ''}" style="padding-left: ${depth * 12 + 4}px" data-uid="${Math.random()}">
+          <span class="layer-toggle">${hasChildren ? '▼' : '&nbsp;'}</span>
+          <span class="layer-name">${tagStr}</span>
+          <div class="layer-actions">
+            <span class="layer-action btn-lock" title="Заблокировать">🔒</span>
+            <span class="layer-action btn-hide" title="Скрыть">👁</span>
+          </div>
+        </div>
+      `;
+      
+      const item = div.querySelector('.layer-item');
+      item.elRef = el;
+      el._layerItem = item;
+      
+      const btnLock = item.querySelector('.btn-lock');
+      btnLock.onclick = (e) => {
+        e.stopPropagation();
+        el.classList.toggle('editor-locked');
+        item.classList.toggle('is-locked');
+        saveHistoryState();
+      };
+      
+      const btnHide = item.querySelector('.btn-hide');
+      btnHide.onclick = (e) => {
+        e.stopPropagation();
+        el.classList.toggle('editor-hidden');
+        item.classList.toggle('is-hidden');
+        saveHistoryState();
+      };
+      
+      item.onclick = (e) => {
+        e.stopPropagation();
+        if(!el.classList.contains('editor-locked')) {
+           selectElement(el, e.shiftKey || e.ctrlKey || e.metaKey);
+           
+           // Scroll canvas container to element
+           const rect = el.getBoundingClientRect();
+           const canvasCont = document.getElementById('canvasContainer');
+           if (canvasCont) {
+             const targetTop = (rect.top + iframeWin.scrollY) * zoom - canvasCont.clientHeight / 2 + (rect.height * zoom) / 2;
+             const targetLeft = (rect.left + iframeWin.scrollX) * zoom - canvasCont.clientWidth / 2 + (rect.width * zoom) / 2;
+             canvasCont.scrollTo({ top: targetTop, left: targetLeft, behavior: 'smooth' });
+           }
+        }
+      };
+      
+      item.ondblclick = (e) => {
+        e.stopPropagation();
+        if (el.classList.contains('editor-locked')) return;
+        
+        const nameSpan = item.querySelector('.layer-name');
+        const input = document.createElement('input');
+        input.type = 'text';
+        const classes = Array.from(el.classList).filter(c => !c.startsWith('editor-')).join(' ');
+        input.value = classes;
+        input.style.width = '100%';
+        input.style.color = '#000';
+        input.style.padding = '2px 4px';
+        input.style.boxSizing = 'border-box';
+        
+        nameSpan.replaceWith(input);
+        input.focus();
+        
+        const saveEdit = () => {
+           const editorClasses = Array.from(el.classList).filter(c => c.startsWith('editor-'));
+           el.className = input.value;
+           editorClasses.forEach(c => el.classList.add(c));
+           buildLayers();
+           saveHistoryState();
+        };
+        
+        input.onblur = saveEdit;
+        input.onkeydown = ev => {
+           if (ev.key === 'Enter') saveEdit();
+           if (ev.key === 'Escape') buildLayers();
+           ev.stopPropagation();
+        };
+      };
+      
+      item.onmouseover = (e) => { 
+        e.stopPropagation(); 
+        if(!el.classList.contains('editor-locked')) {
+           updateHoverOverlay(el); 
+        }
+      };
+      item.onmouseout = (e) => { e.stopPropagation(); hoverOverlay.style.display = 'none'; };
+      
+      const container = document.createElement('div');
+      container.appendChild(div);
+      
+      if (hasChildren) {
+        const childrenDiv = document.createElement('div');
+        for (const child of el.children) {
+          const childNode = createNode(child, depth + 1);
+          if (childNode) childrenDiv.appendChild(childNode);
+        }
+        container.appendChild(childrenDiv);
+        
+        const toggle = div.querySelector('.layer-toggle');
+        toggle.onclick = (e) => {
+          e.stopPropagation();
+          const isHidden = childrenDiv.style.display === 'none';
+          childrenDiv.style.display = isHidden ? 'block' : 'none';
+          toggle.textContent = isHidden ? '▼' : '▶';
+        };
+      }
+      return container;
+    }
+    
+    // Start from body's first main container
+    const main = iframeDoc.querySelector('main') || iframeDoc.body;
+    for (const child of main.children) {
+      const node = createNode(child, 0);
+      if (node) layersPanel.appendChild(node);
+    }
+  }
+
+  // Selected Element
+  let selectedEls = [];
+
+  function selectElements(els) {
+    selectedEls = Array.from(new Set((els || []).filter(Boolean)));
+    selectedEl = selectedEls[0] || null;
+    if (iframeDoc) {
+      iframeDoc.querySelectorAll('.editor-selected').forEach(e => e.classList.remove('editor-selected'));
+      selectedEls.forEach(e => e.classList.add('editor-selected'));
+    }
+    if (selectedEl) {
+      document.getElementById('propsPanel').style.opacity = '1';
+      propsContainer.style.display = 'block';
+      noSelMsg.style.display = 'none';
+      populateProps(selectedEl);
+      updateOverlay();
+    } else {
+      overlay.style.display = 'none';
+      document.getElementById('propsPanel').style.opacity = '0.5';
+      propsContainer.style.display = 'none';
+      noSelMsg.style.display = 'block';
+    }
+    updateLayersHighlight();
+  }
+
+  function selectElement(el, multi = false) {
+    if (!el) {
+      selectedEls = [];
+      selectedEl = null;
+      overlay.style.display = 'none';
+      document.getElementById('propsPanel').style.opacity = '0.5';
+      propsContainer.style.display = 'none';
+      noSelMsg.style.display = 'block';
+      updateBpIndicator();
+      updateLayersHighlight();
+      return;
+    }
+    
+    if (multi) {
+      if (!selectedEls.includes(el)) {
+         selectedEls.push(el);
+      } else {
+         selectedEls = selectedEls.filter(e => e !== el);
+      }
+      selectedEl = selectedEls.length > 0 ? selectedEls[0] : null;
+    } else {
+      selectedEls = [el];
+      selectedEl = el;
+    }
+    
+    if (iframeDoc) {
+      iframeDoc.querySelectorAll('.editor-selected').forEach(e => e.classList.remove('editor-selected'));
+      selectedEls.forEach(e => e.classList.add('editor-selected'));
+    }
+    
+    if (selectedEl) {
+      document.getElementById('propsPanel').style.opacity = '1';
+      propsContainer.style.display = 'block';
+      noSelMsg.style.display = 'none';
+      populateProps(selectedEl);
+      updateOverlay();
+    } else {
+      overlay.style.display = 'none';
+      document.getElementById('propsPanel').style.opacity = '0.5';
+      propsContainer.style.display = 'none';
+      noSelMsg.style.display = 'block';
+    }
+    
+    updateLayersHighlight();
+  }
+  
+  function updateLayersHighlight() {
+    document.querySelectorAll('.layer-item.selected, .layer-item.selected-child').forEach(i => i.classList.remove('selected', 'selected-child'));
+    selectedEls.forEach(el => {
+       if (el._layerItem) {
+         el._layerItem.classList.add('selected');
+         el.querySelectorAll('*').forEach(child => {
+           if (child._layerItem) child._layerItem.classList.add('selected-child');
+         });
+       }
+    });
+
+    if (selectedEl && selectedEl._layerItem) {
+      let layerItem = selectedEl._layerItem;
+      // Expand parents
+      let parent = layerItem.parentElement;
+      while(parent && parent.id !== 'layersPanel') {
+         if(parent.style && parent.style.display === 'none') {
+            parent.style.display = 'block';
+            if (parent.previousElementSibling) {
+               const toggleBtn = parent.previousElementSibling.querySelector('.layer-toggle');
+               if(toggleBtn) toggleBtn.textContent = '▼';
+            }
+         }
+         parent = parent.parentElement;
+      }
+      
+      // Scroll layer into view
+      layerItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }
+
+  // Add Elements
+  function createTemplateElement(type) {
+    const wrap = iframeDoc.createElement('div');
+
+    if (type === 'button') {
+      const btn = iframeDoc.createElement('button');
+      btn.className = buttonPlacementVariant === 'primary' ? 'hero__button hero__button--primary snap' : 'hero__button snap';
+      btn.type = 'button';
+      btn.innerHTML = buttonPlacementVariant === 'primary' ? 'Кнопка <span class="hero__button-arrow" aria-hidden="true"></span>' : 'Кнопка';
+      return btn;
+    }
+
+    if (type === 'device-switcher') {
+      wrap.className = 'device-switcher snap';
+      wrap.style.display = 'flex';
+      wrap.style.gap = '12px';
+      wrap.style.alignItems = 'center';
+      wrap.innerHTML = `
+        <button class="hero__button hero__button--primary device-switcher__button is-active" type="button">Кнопка 1</button>
+        <button class="hero__button device-switcher__button" type="button">Кнопка 2</button>
+      `;
+      return wrap;
+    }
+
+    return null;
+  }
+
+  function generateIndexPageTemplate(title = 'Новая страница') {
+    return `<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>${title}</title>
+  <link rel="stylesheet" href="hero.css">
+</head>
+<body>
+  <div id="allrecords" class="site-page">
+    <main class="hero" id="home" aria-label="${title}">
+      <nav class="hero__nav" aria-label="Навигация">
+        <ul class="hero__ticks snap" style="--y: 8;">
+          <li><a class="hero__nav-dot is-active" href="#home" aria-current="page"><span class="hero__tooltip">${title}</span></a></li>
+          <li><a class="hero__nav-dot" href="index.html"><span class="hero__tooltip">Главная</span></a></li>
+          <li><a class="hero__nav-dot" href="visual.html"><span class="hero__tooltip">Визуальный блок</span></a></li>
+        </ul>
+      </nav>
+      <section class="hero__work" aria-label="Рабочая зона">
+        <h1 class="hero__title snap" style="--x: 0; --y: 3;">${title}</h1>
+        <p class="hero__lead snap snap-bottom" style="--x: 0; --y: 16;">Описание новой страницы.</p>
+        <button class="hero__button hero__button--primary snap" type="button" style="--x: 0; --y: 20;">Кнопка <span class="hero__button-arrow" aria-hidden="true"></span></button>
+      </section>
+    </main>
+  </div>
+  <div class="page-transition" id="page-transition" aria-hidden="true">
+    <div class="page-transition__panel"></div><div class="page-transition__panel"></div><div class="page-transition__panel"></div><div class="page-transition__panel"></div>
+    <span class="page-transition__label">УниВенд</span>
+  </div>
+  <script>
+    (function () {
+      let grid = document.getElementById('grid-32-underlay');
+      if (!grid) { grid = document.createElement('div'); grid.id = 'grid-32-underlay'; document.body.insertBefore(grid, document.body.firstChild); }
+      function updateGridHeight() {
+        const allRecords = document.getElementById('allrecords');
+        const contentBottom = allRecords ? allRecords.getBoundingClientRect().bottom + window.pageYOffset : document.documentElement.clientHeight;
+        grid.style.height = Math.ceil(Math.max(contentBottom, window.innerHeight)) + 'px';
+      }
+      function updateGrid() { document.body.style.setProperty('padding-top', '0', 'important'); document.body.style.setProperty('overflow-x', 'hidden', 'important'); grid.style.setProperty('display', 'block', 'important'); updateGridHeight(); }
+      window.addEventListener('load', updateGrid); window.addEventListener('resize', updateGrid); setTimeout(updateGrid, 200); setTimeout(updateGrid, 800);
+    })();
+  <\/script>
+</body>
+</html>
+`;
+  }
+
+  async function createIndexPageTemplate() {
+    const nameRaw = prompt('Имя новой страницы (.html добавится автоматически):', 'new-page');
+    if (!nameRaw) return;
+    const safeName = nameRaw.trim().replace(/\.html$/i, '').replace(/[^a-zA-Z0-9_-]/g, '-').replace(/-+/g, '-') || 'new-page';
+    const fileName = `${safeName}.html`;
+    const title = prompt('Заголовок страницы:', 'Новая страница') || 'Новая страница';
+    try {
+      const res = await fetch(`${API_URL}/file`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ path: fileName, content: generateIndexPageTemplate(title) })
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      currentFile = fileName;
+      await loadFileList();
+      loadPage(fileName);
+    } catch (err) {
+      alert('Не удалось создать страницу. Запусти editor-server.js и открой редактор через http://127.0.0.1:8081/editor.html');
+      console.error(err);
+    }
+  }
+
+  function placeElementAtCursor(e) {
+    if (!iframeDoc || !placementMode) return;
+    
+    let parent = e.target.closest('div, section, main') || iframeDoc.body;
+    const parentRect = parent.getBoundingClientRect();
+    
+    // Calculate coordinates relative to the parent element
+    const relX = Math.max(0, e.clientX - parentRect.left);
+    const relY = Math.max(0, e.clientY - parentRect.top);
+    
+    let newEl;
+    
+    if (placementMode === 'div' || placementMode === 'grid' || placementMode === 'flex') {
+      newEl = iframeDoc.createElement('div');
+      newEl.style.minHeight = placementMode === 'div' ? '100px' : '160px';
+      newEl.style.minWidth = '100px';
+      newEl.style.boxSizing = 'border-box';
+      newEl.style.backgroundColor = 'rgba(200,200,200,0.2)';
+      if (placementMode === 'grid') {
+        newEl.style.display = 'grid';
+        newEl.style.width = '100%';
+        newEl.style.gap = '16px';
+        newEl.style.gridTemplateColumns = 'repeat(auto-fit, minmax(160px, 1fr))';
+        newEl.style.gridAutoRows = 'auto';
+        newEl.style.alignItems = 'start';
+        newEl.style.justifyItems = 'start';
+      }
+      if (placementMode === 'flex') {
+        newEl.style.display = 'flex';
+        newEl.style.width = '100%';
+        newEl.style.gap = '16px';
+        newEl.style.flexDirection = 'row';
+        newEl.style.flexWrap = 'wrap';
+        newEl.style.alignItems = 'flex-start';
+        newEl.style.justifyContent = 'flex-start';
+      }
+      newEl.className = placementMode === 'div' ? 'new-block snap' : `new-${placementMode}-container snap`;
+    } else if (placementMode === 'button' || placementMode === 'device-switcher') {
+      newEl = createTemplateElement(placementMode);
+    } else if (placementMode === 'text') {
+      newEl = iframeDoc.createElement('p');
+      newEl.textContent = 'Новый текст';
+      newEl.style.fontSize = '16px';
+      newEl.style.lineHeight = '120%';
+      newEl.style.width = 'fit-content';
+      newEl.style.minWidth = 'auto';
+      newEl.style.minHeight = 'auto';
+      newEl.style.display = 'inline-block';
+      newEl.className = 'new-text snap';
+    } else if (placementMode === 'image') {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = 'image/*';
+      input.onchange = evInput => {
+        const file = evInput.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = evFile => {
+            newEl = iframeDoc.createElement('img');
+            newEl.src = evFile.target.result;
+            newEl.style.maxWidth = '100%';
+            newEl.className = 'new-image snap';
+            finalizePlacement(newEl, parent, relX, relY);
+          };
+          reader.readAsDataURL(file);
+        }
+      };
+      input.click();
+      setPlacementMode(null);
+      return;
+    }
+    
+    finalizePlacement(newEl, parent, relX, relY);
+  }
+  
+  function finalizePlacement(newEl, parent, x, y) {
+    const gridSize = getGridSize();
+    
+    setSnapCoord(newEl, 'x', Math.round(x / gridSize));
+    setSnapCoord(newEl, 'y', Math.round(y / gridSize));
+    newEl.style.position = '';
+    
+    parent.appendChild(newEl);
+    setPlacementMode(null);
+    buildLayers();
+    selectElement(newEl);
+    saveHistoryState();
+  }
+
+  // Undo / Redo system
+  let domHistory = [];
+  let domHistoryIndex = -1;
+
+  function saveHistoryState() {
+    if (!iframeDoc) return;
+    const clone = iframeDoc.body.cloneNode(true);
+    clone.querySelectorAll('.editor-selected').forEach(e => e.classList.remove('editor-selected'));
+    clone.querySelectorAll('.editor-hover').forEach(e => e.classList.remove('editor-hover'));
+    clone.querySelectorAll('.editor-bp-placed').forEach(e => e.classList.remove('editor-bp-placed'));
+    clone.querySelectorAll('.editor-bp-has-placed').forEach(e => e.classList.remove('editor-bp-has-placed'));
+    cleanupWorkAreaPreviewInlineStyles(clone);
+    const state = clone.innerHTML;
+    
+    if (domHistoryIndex < domHistory.length - 1) {
+      domHistory = domHistory.slice(0, domHistoryIndex + 1);
+    }
+    
+    if (domHistory.length > 0 && domHistory[domHistoryIndex] === state) return;
+    
+    domHistory.push(state);
+    if (domHistory.length > 50) domHistory.shift();
+    else domHistoryIndex++;
+  }
+
+  function restoreDomHistoryState() {
+    iframeDoc.body.innerHTML = domHistory[domHistoryIndex];
+    applyEditorBreakpointMode();
+    injectEditorStyles();
+    forceEditorRevealVisible();
+    applyResponsivePreview();
+    syncEditorPlacedElements();
+    selectElement(null);
+    buildLayers();
+    updateScalerDimensions();
+    updateOverlay();
+    saveEditorWorkspaceState();
+  }
+
+  function performUndo() {
+    if (domHistoryIndex > 0) {
+      domHistoryIndex--;
+      restoreDomHistoryState();
+    }
+  }
+
+  function performRedo() {
+    if (domHistoryIndex < domHistory.length - 1) {
+      domHistoryIndex++;
+      restoreDomHistoryState();
+    }
+  }
+
+  function handleDelete(e) {
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') return;
+    if (e.key === 'Delete' || e.key === 'Backspace') {
+      if (selectedEls.length > 0) {
+        e.preventDefault();
+        selectedEls.forEach(el => el.remove());
+        selectElement(null);
+        buildLayers();
+        saveHistoryState();
+      }
+    }
+  }
+
+  let groupCounter = 1;
+  function getDocRect(el) {
+     const r = el.getBoundingClientRect();
+     return {
+       left: r.left + iframeWin.scrollX,
+       top: r.top + iframeWin.scrollY,
+       width: r.width,
+       height: r.height,
+       right: r.left + iframeWin.scrollX + r.width,
+       bottom: r.top + iframeWin.scrollY + r.height
+     };
+  }
+
+  function groupSelectedElements() {
+     const groupItems = selectedEls.filter(el => el && el.parentElement && el !== iframeDoc.body && el !== iframeDoc.documentElement);
+     if (groupItems.length < 1) return;
+
+     const parent = groupItems[0].parentElement;
+     if (!groupItems.every(el => el.parentElement === parent)) {
+       alert('Группировать можно только элементы с одним общим родителем. Так позиция и размер не будут ломаться.');
+       return;
+     }
+
+     const itemRects = groupItems.map(el => ({ el, rect: getDocRect(el), style: el.getAttribute('style') || '' }));
+     const minLeft = Math.min(...itemRects.map(i => i.rect.left));
+     const minTop = Math.min(...itemRects.map(i => i.rect.top));
+     const maxRight = Math.max(...itemRects.map(i => i.rect.right));
+     const maxBottom = Math.max(...itemRects.map(i => i.rect.bottom));
+     const parentRect = getDocRect(parent);
+     const gridSize = getGridSize();
+
+     const newDiv = iframeDoc.createElement('div');
+     newDiv.className = 'group' + groupCounter++ + ' snap';
+     newDiv.style.position = 'absolute';
+     newDiv.style.left = Math.round(minLeft - parentRect.left) + 'px';
+     newDiv.style.top = Math.round(minTop - parentRect.top) + 'px';
+     newDiv.style.width = Math.max(1, Math.round(maxRight - minLeft)) + 'px';
+     newDiv.style.height = Math.max(1, Math.round(maxBottom - minTop)) + 'px';
+     newDiv.style.boxSizing = 'border-box';
+     newDiv.style.transform = 'none';
+     setSnapCoord(newDiv, 'x', Math.round((minLeft - parentRect.left) / gridSize));
+     setSnapCoord(newDiv, 'y', Math.round((minTop - parentRect.top) / gridSize));
+
+     parent.insertBefore(newDiv, groupItems[0]);
+
+     itemRects.forEach(({ el, rect, style }) => {
+        el.setAttribute('style', style);
+        el.style.position = 'absolute';
+        el.style.left = Math.round(rect.left - minLeft) + 'px';
+        el.style.top = Math.round(rect.top - minTop) + 'px';
+        el.style.width = Math.max(1, Math.round(rect.width)) + 'px';
+        el.style.height = Math.max(1, Math.round(rect.height)) + 'px';
+        el.style.right = '';
+        el.style.bottom = '';
+        el.style.transform = 'none';
+        if (el.classList.contains('snap')) {
+          setSnapCoord(el, 'x', 0);
+          setSnapCoord(el, 'y', 0);
+        }
+        newDiv.appendChild(el);
+     });
+     
+     selectElement(newDiv);
+     buildLayers();
+     saveHistoryState();
+  }
+
+  function onIframeKeyDown(e) {
+    const isFormField = e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT';
+    if ((e.ctrlKey || e.metaKey) && (e.code === 'KeyZ' || e.code === 'KeyY')) {
+      e.preventDefault();
+      e.stopPropagation();
+      if (e.code === 'KeyZ') e.shiftKey ? performRedo() : performUndo();
+      else performRedo();
+      return;
+    }
+
+    handleDelete(e);
+    if (isFormField) return;
+    
+    // Escape placement mode
+    if (e.key === 'Escape' && placementMode) {
+      setPlacementMode(null);
+    }
+    
+    if (e.ctrlKey || e.metaKey) {
+      if (e.code === 'KeyG') {
+        e.preventDefault();
+        groupSelectedElements();
+      }
+    }
+  }
+  document.addEventListener('keydown', onIframeKeyDown);
+
+  function resetAllTransformMatrices() {
+    if (!iframeDoc) return;
+    let changed = 0;
+    const workAreas = iframeDoc.querySelectorAll('.visual-section__work, .hero__work');
+    const roots = workAreas.length ? Array.from(workAreas) : [];
+    roots.forEach(root => {
+      if (resetMatrixTranslation(root)) changed++;
+      root.querySelectorAll('*').forEach(el => {
+        if (resetMatrixTranslation(el)) changed++;
+      });
+    });
+    if (selectedEl) syncSelectedPropsRealtime();
+    updateOverlay();
+    buildLayers();
+    if (changed) saveHistoryState();
+    alert(changed ? `Обнулено смещение в transform matrix: ${changed}` : 'Matrix со смещением не найдены');
+  }
+
+  document.getElementById('btnResetTransforms').onclick = resetAllTransformMatrices;
+
+  // Save changes via API
+  document.getElementById('btnSave').onclick = async () => {
+    if (!iframeDoc) return;
+    
+    // Ensure inline styles are stable before serialization.
+    // Work-area preview inline styles are editor-only and must not be saved,
+    // otherwise Mobile values can become Desktop inline styles and vice versa.
+    applyResponsivePreview('desktop');
+    cleanupWorkAreaPreviewInlineStyles();
+
+    const responsiveCss = generateResponsiveStyleBlock();
+    iframeDoc.querySelectorAll('[data-editor-responsive="true"]').forEach(s => s.remove());
+    if (responsiveCss) {
+      const styleEl = iframeDoc.createElement('style');
+      styleEl.setAttribute('data-editor-responsive', 'true');
+      styleEl.textContent = responsiveCss;
+      iframeDoc.head.appendChild(styleEl);
+    }
+
+    // Clean up editor specific attributes and classes before serialization
+    document.querySelectorAll('.layer-item').forEach(i => {
+      if(i.elRef) delete i.elRef._layerItem;
+    });
+    iframeDoc.body.classList.remove('editor-editing', 'editor-bp-desktop', 'editor-bp-laptop', 'editor-bp-tablet-l', 'editor-bp-tablet-p', 'editor-bp-mobile');
+    iframeDoc.querySelectorAll('.editor-selected').forEach(el => el.classList.remove('editor-selected'));
+    iframeDoc.querySelectorAll('.editor-hover').forEach(el => el.classList.remove('editor-hover'));
+    iframeDoc.querySelectorAll('.editor-bp-placed').forEach(el => el.classList.remove('editor-bp-placed'));
+    iframeDoc.querySelectorAll('.editor-bp-has-placed').forEach(el => el.classList.remove('editor-bp-has-placed'));
+    iframeDoc.querySelectorAll('[data-editor-style="true"]').forEach(style => style.remove());
+    // Keep data-editor-layout-original-style out of saved HTML
+    iframeDoc.querySelectorAll('[data-editor-layout-original-style]').forEach(el => el.removeAttribute('data-editor-layout-original-style'));
+    
+    const htmlContent = '<!DOCTYPE html>\n' + iframeDoc.documentElement.outerHTML;
+
+    // Keep generated responsive CSS only in the saved HTML, not in the live editor preview.
+    iframeDoc.querySelectorAll('[data-editor-responsive="true"]').forEach(s => s.remove());
+
+    // Revert inline styles to the currently active breakpoint preview
+    applyResponsivePreview();
+    
+    try {
+      const res = await fetch(`${API_URL}/file`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ path: currentFile, content: htmlContent })
+      });
+      applyEditorBreakpointMode();
+      injectEditorStyles();
+      forceEditorRevealVisible();
+      syncEditorPlacedElements();
+      updateOverlay();
+
+      if (res.ok) {
+        alert('Успешно сохранено!');
+        buildLayers(); // reconnect refs
+      } else {
+        const errText = await res.text();
+        alert(`Ошибка сохранения: ${res.status} ${errText}`);
+      }
+    } catch(e) {
+      console.error(e);
+      alert(`Ошибка соединения с editor-server. Для сохранения запусти: node editor-server.js и открой ${EDITOR_SERVER_ORIGIN}/editor.html`);
+    }
+  };
+
+  // History functionality
+  document.getElementById('btnHistory').onclick = async () => {
+    try {
+      const res = await fetch(`${API_URL}/history?path=${currentFile}`);
+      const history = await res.json();
+      
+      const list = document.getElementById('historyList');
+      list.innerHTML = '';
+      
+      if(history.length === 0) {
+        list.innerHTML = '<p>Нет истории для этого файла.</p>';
+      }
+      
+      history.forEach(h => {
+        const div = document.createElement('div');
+        div.className = 'history-item';
+        div.innerHTML = `
+          <div>
+            <strong>${h.time}</strong>
+          </div>
+          <button class="tool-btn">Восстановить</button>
+        `;
+        div.querySelector('button').onclick = async () => {
+          if(confirm('Восстановить эту версию? Текущие изменения будут сохранены в истории.')) {
+            const rRes = await fetch(`${API_URL}/restore`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ path: currentFile, historyFile: h.path })
+            });
+            if(rRes.ok) {
+              alert('Восстановлено!');
+              document.getElementById('modalHistory').style.display = 'none';
+              loadPage(currentFile);
+            }
+          }
+        };
+        list.appendChild(div);
+      });
+      
+      document.getElementById('modalHistory').style.display = 'flex';
+    } catch(e) { console.error(e); }
+  };
+
+</script>
+</body>
+</html>

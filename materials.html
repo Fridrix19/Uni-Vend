@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Материалы</title>
+  <link rel="stylesheet" href="hero.css">
+</head>
+<body>
+  <div id="allrecords" class="site-page">
+    <main class="hero" id="home" aria-label="Материалы">
+      <nav class="hero__nav" aria-label="Навигация">
+        <ul class="hero__ticks snap" style="--y: 8;">
+          <li><a class="hero__nav-dot is-active" href="#home" aria-current="page"><span class="hero__tooltip">Материалы</span></a></li>
+          <li><a class="hero__nav-dot" href="index.html"><span class="hero__tooltip">Главная</span></a></li>
+          <li><a class="hero__nav-dot" href="visual.html"><span class="hero__tooltip">Визуальный блок</span></a></li>
+        </ul>
+      </nav>
+      <section class="hero__work" aria-label="Рабочая зона">
+        <h1 class="hero__title snap" style="--x: 0; --y: 3;">Материалы</h1>
+        <p class="hero__lead snap snap-bottom" style="--x: 0; --y: 16;">Описание новой страницы.</p>
+        <button class="hero__button hero__button--primary snap" type="button" style="--x: 0; --y: 20;">Кнопка <span class="hero__button-arrow" aria-hidden="true"></span></button>
+      </section>
+    </main>
+  </div>
+  <div class="page-transition" id="page-transition" aria-hidden="true">
+    <div class="page-transition__panel"></div><div class="page-transition__panel"></div><div class="page-transition__panel"></div><div class="page-transition__panel"></div>
+    <span class="page-transition__label">УниВенд</span>
+  </div>
+  <script>
+    (function () {
+      let grid = document.getElementById('grid-32-underlay');
+      if (!grid) { grid = document.createElement('div'); grid.id = 'grid-32-underlay'; document.body.insertBefore(grid, document.body.firstChild); }
+      function updateGridHeight() {
+        const allRecords = document.getElementById('allrecords');
+        const contentBottom = allRecords ? allRecords.getBoundingClientRect().bottom + window.pageYOffset : document.documentElement.clientHeight;
+        grid.style.height = Math.ceil(Math.max(contentBottom, window.innerHeight)) + 'px';
+      }
+      function updateGrid() { document.body.style.setProperty('padding-top', '0', 'important'); document.body.style.setProperty('overflow-x', 'hidden', 'important'); grid.style.setProperty('display', 'block', 'important'); updateGridHeight(); }
+      window.addEventListener('load', updateGrid); window.addEventListener('resize', updateGrid); setTimeout(updateGrid, 200); setTimeout(updateGrid, 800);
+    })();
+  </script>
+</body>
+</html>
