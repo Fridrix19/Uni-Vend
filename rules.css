@@ -1,6 +1,6 @@
 /* Стили страницы «Универсальные правила» */
 .rules-section.subpage-section {
-  min-height: max(100vh, calc(var(--site-grid-size) * 110));
+  min-height: max(100vh, calc(var(--site-grid-size) * 66));
 }
 
 .rules-section .visual-section__subnav {
