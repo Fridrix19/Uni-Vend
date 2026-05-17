@@ -230,3 +230,292 @@
 
   targets.forEach(function (el) { obs.observe(el); });
 })();
+
+(function () {
+  const tabs = Array.from(document.querySelectorAll('[data-video-use-tab]'));
+  const panels = Array.from(document.querySelectorAll('[data-video-use-panel]'));
+  if (!tabs.length || !panels.length) return;
+
+  function syncVideo(panel, active) {
+    panel.querySelectorAll('video').forEach(function (video) {
+      if (active) {
+        video.play().catch(function () {});
+      } else {
+        video.pause();
+      }
+    });
+  }
+
+  function setActive(name) {
+    tabs.forEach(function (tab) {
+      const active = tab.dataset.videoUseTab === name;
+      tab.classList.toggle('is-active', active);
+      tab.setAttribute('aria-selected', active ? 'true' : 'false');
+    });
+
+    panels.forEach(function (panel) {
+      const active = panel.dataset.videoUsePanel === name;
+      panel.classList.toggle('is-active', active);
+      panel.hidden = !active;
+      syncVideo(panel, active);
+    });
+  }
+
+  tabs.forEach(function (tab) {
+    tab.addEventListener('click', function () {
+      setActive(tab.dataset.videoUseTab);
+    });
+  });
+
+  const initial = tabs.find(function (tab) { return tab.classList.contains('is-active'); }) || tabs[0];
+  setActive(initial.dataset.videoUseTab);
+})();
+
+(function () {
+  const root =
+    document.querySelector('section.video-structure[data-structure-tab]') ||
+    document.querySelector('section.video-structure');
+  const tabs = Array.from(document.querySelectorAll('[data-video-structure-tab]'));
+  const panels = Array.from(document.querySelectorAll('[data-video-structure-panel]'));
+  const previewVideos = Array.from(document.querySelectorAll('.video-structure__preview-video'));
+  if (!tabs.length || !panels.length || !previewVideos.length || !root) return;
+
+  var flowStep = 0;
+  var progressRoot = document.getElementById('video-structure-progress');
+  var progressLabel = progressRoot && progressRoot.querySelector('.video-structure__progress-label');
+  var progressBar = progressRoot && progressRoot.querySelector('.video-structure__progress-bar');
+
+  var hintEl = document.getElementById('video-structure-preview-hint');
+  var hintTextEl = hintEl && hintEl.querySelector('.video-structure__preview-hint-text');
+
+  function updateStructureProgress() {
+    if (!progressRoot || !progressLabel || !progressBar) return;
+    if (flowStep >= 3) {
+      progressLabel.textContent = 'Видео готово';
+      progressBar.style.setProperty('--progress', '100%');
+      progressRoot.classList.add('video-structure__progress--complete');
+      return;
+    }
+    progressRoot.classList.remove('video-structure__progress--complete');
+    progressLabel.textContent = 'Прогресс готовности видео';
+    var pct = flowStep === 0 ? '5%' : flowStep === 1 ? '33%' : '66%';
+    progressBar.style.setProperty('--progress', pct);
+  }
+
+  function canAccessTab(name) {
+    if (name === 'plaque') return true;
+    if (name === 'logo') return flowStep >= 1;
+    if (name === 'subtitles') return flowStep >= 2;
+    return true;
+  }
+
+  function toastIfTabBlocked(name) {
+    if (name === 'logo' && flowStep < 1) return 'Вы не добавили плашку';
+    if (name === 'subtitles' && flowStep < 1) return 'Вы не добавили плашку';
+    if (name === 'subtitles' && flowStep < 2) return 'Вы не добавили логотип';
+    return null;
+  }
+
+  function syncStructureTabs() {
+    tabs.forEach(function (tab) {
+      var id = tab.dataset.videoStructureTab;
+      var locked = !canAccessTab(id);
+      tab.classList.toggle('is-locked', locked);
+      tab.setAttribute('aria-disabled', locked ? 'true' : 'false');
+    });
+  }
+
+  function updatePreviewHint() {
+    if (!hintEl || !hintTextEl) return;
+    var name = root.getAttribute('data-structure-tab') || 'plaque';
+    var msg = '';
+    if (name === 'plaque' && flowStep < 1) msg = 'Вы не добавили плашку';
+    else if (name === 'logo' && flowStep < 2) msg = 'Вы не добавили логотип';
+    else if (name === 'subtitles' && flowStep < 3) msg = 'Вы не добавили субтитры';
+
+    if (msg) {
+      hintTextEl.textContent = msg;
+      hintEl.hidden = false;
+    } else {
+      hintEl.hidden = true;
+      hintTextEl.textContent = '';
+    }
+  }
+
+  previewVideos.forEach(function (v) {
+    v.muted = true;
+    var initial = v.play();
+    if (initial && typeof initial.catch === 'function') initial.catch(function () {});
+  });
+
+  function setActive(name) {
+    root.setAttribute('data-structure-tab', name);
+
+    tabs.forEach(function (tab) {
+      const on = tab.dataset.videoStructureTab === name;
+      tab.classList.toggle('is-active', on);
+      tab.setAttribute('aria-selected', on ? 'true' : 'false');
+    });
+
+    panels.forEach(function (panel) {
+      const on = panel.dataset.videoStructurePanel === name;
+      panel.hidden = !on;
+      panel.classList.toggle('is-active', on);
+    });
+
+    var syncTime = 0;
+    previewVideos.forEach(function (video) {
+      if (!video.classList.contains('is-hidden') && isFinite(video.currentTime)) {
+        syncTime = video.currentTime;
+      }
+    });
+    if (!syncTime && previewVideos[0] && isFinite(previewVideos[0].currentTime)) {
+      syncTime = previewVideos[0].currentTime;
+    }
+
+    previewVideos.forEach(function (video) {
+      const on = video.dataset.videoStructureClip === name;
+      video.classList.toggle('is-hidden', !on);
+    });
+
+    previewVideos.forEach(function (video) {
+      if (isFinite(syncTime)) {
+        try {
+          video.currentTime = syncTime;
+        } catch (e) {}
+      }
+      var p = video.play();
+      if (p && typeof p.catch === 'function') p.catch(function () {});
+    });
+    updateStructureProgress();
+    syncStructureTabs();
+    updatePreviewHint();
+  }
+
+  const nextAfterAction = { plaque: 'logo', logo: 'subtitles' };
+  const toastAfterAction = {
+    plaque: 'Вы добавили плашку',
+    logo: 'Вы добавили логотип',
+    subtitles: 'Вы добавили субтитры',
+  };
+  const subtitlesSrcDefault = 'video-content/swap/notitle.mp4';
+  const subtitlesSrcDone = 'video-content/swap/done.mp4';
+  const subtitlesLabelAdd = 'Добавить субтитры на видео';
+  const subtitlesLabelRetry = 'Попробовать еще раз';
+
+  var subsPreviewVideo = null;
+  previewVideos.forEach(function (v) {
+    if (v.dataset.videoStructureClip === 'subtitles') subsPreviewVideo = v;
+  });
+
+  function readSyncTime() {
+    var t = 0;
+    previewVideos.forEach(function (video) {
+      if (!video.classList.contains('is-hidden') && isFinite(video.currentTime)) {
+        t = video.currentTime;
+      }
+    });
+    if (!t && previewVideos[0] && isFinite(previewVideos[0].currentTime)) {
+      t = previewVideos[0].currentTime;
+    }
+    return t;
+  }
+
+  function applySrcAndSync(video, url, syncTime) {
+    video.src = url;
+    video.load();
+    video.addEventListener(
+      'loadeddata',
+      function () {
+        try {
+          if (isFinite(syncTime) && isFinite(video.duration)) {
+            video.currentTime = Math.min(syncTime, Math.max(0, video.duration - 0.05));
+          }
+        } catch (e) {}
+        var p = video.play();
+        if (p && typeof p.catch === 'function') p.catch(function () {});
+      },
+      { once: true }
+    );
+  }
+  var toastEl = document.getElementById('video-structure-video-toast');
+  var toastTextEl = toastEl && toastEl.querySelector('.video-structure__video-toast-text');
+  var toastHideTimer = null;
+  var toastTransitionTimer = null;
+
+  function showVideoStructureToast(text) {
+    if (!toastEl || !toastTextEl) return;
+    if (toastHideTimer) clearTimeout(toastHideTimer);
+    if (toastTransitionTimer) clearTimeout(toastTransitionTimer);
+    toastTextEl.textContent = text;
+    toastEl.hidden = false;
+    requestAnimationFrame(function () {
+      toastEl.classList.add('is-visible');
+    });
+    toastHideTimer = setTimeout(function () {
+      toastEl.classList.remove('is-visible');
+      toastTransitionTimer = setTimeout(function () {
+        toastEl.hidden = true;
+        toastHideTimer = null;
+        toastTransitionTimer = null;
+      }, 520);
+    }, 1000);
+  }
+
+  tabs.forEach(function (tab) {
+    tab.addEventListener('click', function () {
+      var name = tab.dataset.videoStructureTab;
+      var blocked = toastIfTabBlocked(name);
+      if (blocked) {
+        showVideoStructureToast(blocked);
+        return;
+      }
+      setActive(name);
+    });
+  });
+
+  root.querySelectorAll('.video-structure__button').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var panel = btn.closest('[data-video-structure-panel]');
+      if (!panel) return;
+      var step = panel.dataset.videoStructurePanel;
+
+      if (step === 'subtitles') {
+        if (!subsPreviewVideo) return;
+        if (btn.classList.contains('video-structure__button--retry')) {
+          flowStep = 0;
+          btn.classList.remove('video-structure__button--retry');
+          btn.textContent = subtitlesLabelAdd;
+          var syncBack = readSyncTime();
+          applySrcAndSync(subsPreviewVideo, subtitlesSrcDefault, syncBack);
+          setActive('plaque');
+          return;
+        }
+        flowStep = 3;
+        var syncDone = readSyncTime();
+        applySrcAndSync(subsPreviewVideo, subtitlesSrcDone, syncDone);
+        btn.classList.add('video-structure__button--retry');
+        btn.textContent = subtitlesLabelRetry;
+        updateStructureProgress();
+        syncStructureTabs();
+        updatePreviewHint();
+        if (toastAfterAction.subtitles) showVideoStructureToast(toastAfterAction.subtitles);
+        return;
+      }
+
+      var next = nextAfterAction[step];
+      if (!next) return;
+      if (step === 'plaque') flowStep = 1;
+      if (step === 'logo') flowStep = 2;
+      setActive(next);
+      var msg = toastAfterAction[step];
+      if (msg) showVideoStructureToast(msg);
+    });
+  });
+
+  const initial =
+    tabs.find(function (tab) {
+      return tab.classList.contains('is-active');
+    }) || tabs[0];
+  setActive(initial.dataset.videoStructureTab);
+})();

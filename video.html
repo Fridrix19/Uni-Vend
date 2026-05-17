@@ -58,9 +58,9 @@
         </ul>
 
         <ul class="visual-section__subnav snap" style="--y: 8;">
-          <li class="is-current" data-target="block-1">Блок 1</li>
-          <li data-target="block-2">Блок 2</li>
-          <li data-target="block-3">Блок 3</li>
+          <li class="is-current" data-target="block-1">Использование</li>
+          <li data-target="block-2">Форматы</li>
+          <li data-target="block-3">Структура</li>
           <li data-target="block-4">Блок 4</li>
         </ul>
       </nav>
@@ -68,17 +68,215 @@
       <section class="visual-section__work" aria-label="Рабочая зона">
         <h1 class="visual-section__title snap" style="--x: 0; --y: 3;">Видео-контент</h1>
 
-        <p class="visual-section__lead snap" style="--x: 0; --y: 6;">Видео-контент — основной канал внимания: короткие ролики, обзоры, истории и развлекательные форматы, через которые бренд показывает работу автомата, процесс покупки и характер УниВенда.</p>
+        <p class="visual-section__lead snap" style="--x: 0; --y: 6;">Самостоятельный тип контента бренда «УниВенд», который объединяет визуальный ряд, фирменные текстовые плашки, анимированный логотип‑водяной знак, звуки 
+и  авторскую музыку. Он используется для захвата внимания в ленте, объяснения формата сервиса и демонстрации продукта в реальной среде — от коротких вертикальных роликов до развёрнутых горизонтальных видео для RuTube</p>
 
         <label class="hero__search visual-section__search">
           <img class="hero__search-icon" src="heropage/img/sertch.svg" alt="" aria-hidden="true">
           <input type="search" placeholder="...шаблон">
         </label>
 
-        <h2 id="block-1" class="visual-section__block-title types-block-title snap" style="--x: 0; --y: 13;">Блок 1</h2>
-        <h2 id="block-2" class="visual-section__block-title types-block-title snap" style="--x: 0; --y: 40;">Блок 2</h2>
-        <h2 id="block-3" class="visual-section__block-title types-block-title snap" style="--x: 0; --y: 67;">Блок 3</h2>
-        <h2 id="block-4" class="visual-section__block-title types-block-title snap" style="--x: 0; --y: 94;">Блок 4</h2>
+        <h2 id="block-1" class="visual-section__block-title types-block-title snap" style="--x: 0; --y: 13;">Использование</h2>
+
+        <section class="video-use snap" style="--x: 0; --y: 14;" aria-label="Использование видео-контента">
+          <div class="video-use__tabs" role="tablist" aria-label="Платформы видео-контента">
+            <button class="video-use__tab is-active" type="button" role="tab" aria-selected="true" data-video-use-tab="vk">Вконтакте</button>
+            <button class="video-use__tab" type="button" role="tab" aria-selected="false" data-video-use-tab="telegram">Telegram</button>
+            <button class="video-use__tab" type="button" role="tab" aria-selected="false" data-video-use-tab="rutube">RuTube</button>
+            <button class="video-use__tab" type="button" role="tab" aria-selected="false" data-video-use-tab="shorts">RuTube Shorts</button>
+          </div>
+
+          <div class="video-use__panel is-active" data-video-use-panel="vk" role="tabpanel">
+            <div class="video-use__phones">
+              <div class="video-use__media video-use__media--phone">
+                <video src="video-content/video-block/vk/vk1.mp4" autoplay muted loop playsinline preload="auto"></video>
+              </div>
+              <div class="video-use__media video-use__media--phone">
+                <video src="video-content/video-block/vk/vk2.mp4" autoplay muted loop playsinline preload="auto"></video>
+              </div>
+              <div class="video-use__media video-use__media--phone">
+                <video src="video-content/video-block/vk/vk3.mp4" autoplay muted loop playsinline preload="auto"></video>
+              </div>
+            </div>
+            <div class="video-use__side">
+              <div class="video-use__note">
+                <span class="video-use__bullet" aria-hidden="true"></span>
+                <p>Вертикальные 9:16 ролики, клипы, мемы, ASMR, анонсы горизонтальных видео</p>
+              </div>
+              <a class="video-use__link" href="https://vk.com/club236949504" target="_blank" rel="noopener">Перейти в соц.сеть</a>
+            </div>
+          </div>
+
+          <div class="video-use__panel" data-video-use-panel="telegram" role="tabpanel" hidden>
+            <div class="video-use__phones">
+              <div class="video-use__media video-use__media--phone">
+                <video src="video-content/video-block/telegram/tg1.mp4" autoplay muted loop playsinline preload="auto"></video>
+              </div>
+              <div class="video-use__media video-use__media--phone">
+                <video src="video-content/video-block/telegram/tg2.mp4" autoplay muted loop playsinline preload="auto"></video>
+              </div>
+              <div class="video-use__media video-use__media--phone">
+                <video src="video-content/video-block/telegram/tg3.mp4" autoplay muted loop playsinline preload="auto"></video>
+              </div>
+            </div>
+            <div class="video-use__side">
+              <div class="video-use__note">
+                <span class="video-use__bullet" aria-hidden="true"></span>
+                <p>Короткие вертикальные видео для постов, анонсов, быстрых объяснений и вовлекающих рубрик</p>
+              </div>
+              <a class="video-use__link" href="https://t.me/UniVendspb" target="_blank" rel="noopener">Перейти в соц.сеть</a>
+            </div>
+          </div>
+
+          <div class="video-use__panel video-use__panel--rutube" data-video-use-panel="rutube" role="tabpanel" hidden>
+            <div class="video-use__media video-use__media--laptop">
+              <video src="type/video/videocont/vid.webm" autoplay muted loop playsinline preload="auto"></video>
+              <img class="video-use__frame" src="type/video/videocont/pc.png" alt="" aria-hidden="true">
+            </div>
+            <div class="video-use__side">
+              <div class="video-use__note">
+                <span class="video-use__bullet" aria-hidden="true"></span>
+                <p>Горизонтальные 16:9 ролики: обзоры, инструкции, длинные истории и полное раскрытие сценария</p>
+              </div>
+              <a class="video-use__link" href="https://rutube.ru/channel/78265070/" target="_blank" rel="noopener">Перейти в соц.сеть</a>
+            </div>
+          </div>
+
+          <div class="video-use__panel" data-video-use-panel="shorts" role="tabpanel" hidden>
+            <div class="video-use__phones">
+              <div class="video-use__media video-use__media--phone">
+                <video src="video-content/video-block/rutubeshorts/rt1.mp4" autoplay muted loop playsinline preload="auto"></video>
+              </div>
+              <div class="video-use__media video-use__media--phone">
+                <video src="video-content/video-block/rutubeshorts/rt2.mp4" autoplay muted loop playsinline preload="auto"></video>
+              </div>
+              <div class="video-use__media video-use__media--phone">
+                <video src="video-content/video-block/rutubeshorts/rt3.mp4" autoplay muted loop playsinline preload="auto"></video>
+              </div>
+            </div>
+            <div class="video-use__side">
+              <div class="video-use__note">
+                <span class="video-use__bullet" aria-hidden="true"></span>
+                <p>Вертикальные shorts-ролики для быстрого захвата внимания и перехода к полному видео</p>
+              </div>
+              <a class="video-use__link" href="https://rutube.ru/channel/78265070/" target="_blank" rel="noopener">Перейти в соц.сеть</a>
+            </div>
+          </div>
+        </section>
+
+        <h2 id="block-2" class="visual-section__block-title types-block-title snap" style="--x: 0; --y: 42;">Форматы видео</h2>
+
+        <div class="video-formats snap" style="--x: 0; --y: 45;" role="table" aria-label="Форматы видео">
+          <div class="video-formats__row video-formats__row--head" role="row">
+            <div role="columnheader">Тип</div>
+            <div role="columnheader">Соотношение сторон</div>
+            <div role="columnheader">Разрешение</div>
+            <div role="columnheader">Где используется</div>
+            <div role="columnheader">Длительность</div>
+          </div>
+          <div class="video-formats__row" role="row">
+            <div role="cell">Вертикальный клип</div>
+            <div role="cell">9:16</div>
+            <div role="cell">1080 * 1920 px</div>
+            <div role="cell">VK, Telegram, RuTube Shorts</div>
+            <div role="cell">11–90 секунд</div>
+          </div>
+          <div class="video-formats__row" role="row">
+            <div role="cell">Stories / сторис</div>
+            <div role="cell">9:16</div>
+            <div role="cell">1080 * 1920 px</div>
+            <div role="cell">VK, Telegram</div>
+            <div role="cell">11–90 секунд</div>
+          </div>
+          <div class="video-formats__row" role="row">
+            <div role="cell">Горизонтальное</div>
+            <div role="cell">16:9</div>
+            <div role="cell">1920 * 1080 px</div>
+            <div role="cell">RuTube</div>
+            <div role="cell">3-10 минут</div>
+          </div>
+          <div class="video-formats__row" role="row">
+            <div role="cell">Product video</div>
+            <div role="cell">9:16 или 16:9</div>
+            <div role="cell">1080p / 1920p</div>
+            <div role="cell">VK, RuTube</div>
+            <div role="cell">11–600 секунд</div>
+          </div>
+        </div>
+
+        <h2 id="block-3" class="visual-section__block-title types-block-title snap" style="--x: 0; --y: 64;">Структура</h2>
+
+        <p class="video-structure__lead snap" style="--x: 0; --y: 66;">Во всех роликах используется единая визуально-смысловая структура</p>
+
+        <section class="video-structure snap" style="--x: 0; --y: 69;" aria-label="Структура видео" data-structure-tab="plaque">
+          <div class="video-structure__tabs" role="tablist" aria-label="Элементы структуры видео">
+            <button class="video-structure__tab is-active" type="button" role="tab" aria-selected="true" data-video-structure-tab="plaque">Плашка</button>
+            <button class="video-structure__tab" type="button" role="tab" aria-selected="false" data-video-structure-tab="logo">Логотип</button>
+            <button class="video-structure__tab" type="button" role="tab" aria-selected="false" data-video-structure-tab="subtitles">Субтитры</button>
+          </div>
+
+          <div class="video-structure__col1">
+            <div class="video-structure__panel is-active" data-video-structure-panel="plaque" role="tabpanel" aria-label="Плашка">
+              <div class="video-structure__tablets" aria-hidden="true">
+                <img src="video-content/swap/imgtablet/tab1.svg" alt="">
+                <img src="video-content/swap/imgtablet/tab2.svg" alt="">
+                <img src="video-content/swap/imgtablet/tab3.svg" alt="">
+              </div>
+              <div class="video-structure__copy video-structure__copy--plaque">
+                <span class="video-structure__bullet" aria-hidden="true"></span>
+                <p>В начале ролика и на протяжении всего хронометража в кадре присутствует текстовая плашка с коротким маркером формата.</p>
+              </div>
+              <button class="video-structure__button" type="button">Добавить плашку на видео</button>
+            </div>
+
+            <div class="video-structure__panel" data-video-structure-panel="logo" role="tabpanel" aria-label="Логотип" hidden>
+              <div class="video-structure__logo-row">
+                <div class="video-structure__copy video-structure__copy--logo">
+                  <span class="video-structure__bullet" aria-hidden="true"></span>
+                  <p>В правом нижнем углу каждого ролика расположен анимированный логотип UniVend, используемый как постоянный водяной знак.</p>
+                </div>
+                <div class="video-structure__logo-aside" aria-hidden="true">
+                  <img class="video-structure__logo-img" src="video-content/swap/logo/logo.svg" width="256" height="256" alt="Логотип UniVend">
+                </div>
+              </div>
+              <button class="video-structure__button" type="button">Добавить логотип на видео</button>
+            </div>
+
+            <div class="video-structure__panel" data-video-structure-panel="subtitles" role="tabpanel" aria-label="Субтитры" hidden>
+              <div class="video-structure__copy video-structure__copy--subtitles">
+                <span class="video-structure__bullet" aria-hidden="true"></span>
+                <p class="video-structure__subtitles-full">Во всех роликах, где присутствует речь (в кадре или закадровый голос), используются субтитры. Они дублируют ключевые реплики, делают контент понятным при просмотре без звука и поддерживают фирменную типографику: шрифт Gros Ventre, читаемый размер, контрастный цвет относительно фона. Субтитры и текст на плашке работают вместе: плашка задаёт общий контекст, а субтитры передают конкретные фразы и пояснения</p>
+                <p class="video-structure__subtitles-mobile">Во всех роликах, где присутствует речь (в кадре или закадровый голос), используются субтитры. Они дублируют ключевые реплики.</p>
+              </div>
+              <div class="video-structure__tablets video-structure__tablets--subtitles" aria-hidden="true">
+                <img src="video-content/swap/sabs/sab.svg" alt="">
+              </div>
+              <button class="video-structure__button" type="button">Добавить субтитры на видео</button>
+            </div>
+          </div>
+
+          <div class="video-structure__preview">
+            <div class="video-structure__preview-pane">
+              <div class="video-structure__progress" id="video-structure-progress">
+                <span class="video-structure__progress-label">Прогресс готовности видео</span>
+                <i class="video-structure__progress-bar" style="--progress: 5%;" aria-hidden="true"></i>
+              </div>
+              <div class="video-structure__preview-player">
+                <video class="video-structure__preview-video" data-video-structure-clip="plaque" src="video-content/swap/nologo-notitle-notablet.mp4" autoplay muted loop playsinline preload="auto"></video>
+                <video class="video-structure__preview-video is-hidden" data-video-structure-clip="logo" src="video-content/swap/nologo-notitle.mp4" autoplay muted loop playsinline preload="auto"></video>
+                <video class="video-structure__preview-video is-hidden" data-video-structure-clip="subtitles" src="video-content/swap/notitle.mp4" autoplay muted loop playsinline preload="auto"></video>
+                <div class="video-structure__preview-hint" id="video-structure-preview-hint" hidden>
+                  <p class="video-structure__preview-hint-text"></p>
+                </div>
+                <div class="video-structure__video-toast" id="video-structure-video-toast" hidden role="status" aria-live="polite">
+                  <span class="video-structure__video-toast-text"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <h2 id="block-4" class="visual-section__block-title types-block-title snap" style="--x: 0; --y: 102;">Блок 4</h2>
       </section>
     </main>
   </div>
