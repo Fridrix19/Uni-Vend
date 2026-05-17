@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ru">
+<html lang="ru" class="smart-collisions-pending" data-smart-collisions-enabled="true">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -27,17 +27,28 @@
     <div class="page-transition__panel"></div><div class="page-transition__panel"></div><div class="page-transition__panel"></div><div class="page-transition__panel"></div>
     <span class="page-transition__label">УниВенд</span>
   </div>
+  <script src="smart-collisions.js" data-smart-collisions-runtime="true" defer></script>
   <script>
     (function () {
       let grid = document.getElementById('grid-32-underlay');
       if (!grid) { grid = document.createElement('div'); grid.id = 'grid-32-underlay'; document.body.insertBefore(grid, document.body.firstChild); }
       function updateGridHeight() {
         const allRecords = document.getElementById('allrecords');
-        const contentBottom = allRecords ? allRecords.getBoundingClientRect().bottom + window.pageYOffset : document.documentElement.clientHeight;
+        let contentBottom = allRecords ? allRecords.getBoundingClientRect().bottom + window.pageYOffset : document.documentElement.clientHeight;
+        const workSections = document.querySelectorAll('.visual-section__work, .hero__work');
+        workSections.forEach(function (sec) {
+          const secBottom = sec.getBoundingClientRect().bottom + window.pageYOffset;
+          if (secBottom > contentBottom) contentBottom = secBottom;
+        });
         grid.style.height = Math.ceil(Math.max(contentBottom, window.innerHeight)) + 'px';
       }
       function updateGrid() { document.body.style.setProperty('padding-top', '0', 'important'); document.body.style.setProperty('overflow-x', 'hidden', 'important'); grid.style.setProperty('display', 'block', 'important'); updateGridHeight(); }
       window.addEventListener('load', updateGrid); window.addEventListener('resize', updateGrid); setTimeout(updateGrid, 200); setTimeout(updateGrid, 800);
+      if (typeof ResizeObserver !== 'undefined') {
+        const observer = new ResizeObserver(function () { updateGridHeight(); });
+        observer.observe(document.body);
+        document.querySelectorAll('.visual-section__work, .hero__work').forEach(function (work) { observer.observe(work); });
+      }
     })();
   </script>
 </body>

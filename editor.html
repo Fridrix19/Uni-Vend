@@ -663,10 +663,10 @@
   
   function getCurrentBreakpoint() {
     const bp = parseInt(bpSelect.value, 10);
-    if (bp >= 1920) return { key: 'desktop', cls: 'editor-bp-desktop', x: '--x', y: '--y', grid: 32 };
+    if (bp >= 1600) return { key: 'desktop', cls: 'editor-bp-desktop', x: '--x', y: '--y', grid: 32 };
     if (bp >= 1440) return { key: 'laptop', cls: 'editor-bp-laptop', x: '--x-laptop', y: '--y-laptop', grid: 32 };
     if (bp >= 1194) return { key: 'tablet-l', cls: 'editor-bp-tablet-l', x: '--x-tablet-l', y: '--y-tablet-l', grid: 24 };
-    if (bp >= 834) return { key: 'tablet-p', cls: 'editor-bp-tablet-p', x: '--x-tablet-p', y: '--y-tablet-p', grid: 16 };
+    if (bp >= 834) return { key: 'tablet-p', cls: 'editor-bp-tablet-p', x: '--x-tablet-p', y: '--y-tablet-p', grid: 24 };
     return { key: 'mobile', cls: 'editor-bp-mobile', x: '--x-mobile', y: '--y-mobile', grid: 16 };
   }
 
@@ -712,17 +712,18 @@
   // =============================================
 
   const BREAKPOINTS = [
-    { key: 'desktop',  minWidth: 1920, maxWidth: null, label: 'Desktop 1920px', order: 0 },
-    { key: 'laptop',   minWidth: 1440, maxWidth: 1919, label: 'Laptop 1440px',  order: 1 },
+    { key: 'desktop',  minWidth: 1600, maxWidth: null, label: 'Desktop 1600+ / preview 1920px', order: 0 },
+    { key: 'laptop',   minWidth: 1440, maxWidth: 1599, label: 'Laptop 1440px',  order: 1 },
     { key: 'tablet-l', minWidth: 1194, maxWidth: 1439, label: 'Tablet L 1194px', order: 2 },
     { key: 'tablet-p', minWidth: 834,  maxWidth: 1193, label: 'Tablet P 834px',  order: 3 },
     { key: 'mobile',   minWidth: null, maxWidth: 833,  label: 'Mobile 375px',    order: 4 },
   ];
 
   const WORK_AREA_SELECTORS = '.visual-section__work, .hero__work';
+  const EXPLICIT_SIZE_PROPS = new Set(['width', 'height', 'min-width', 'min-height', 'max-width', 'max-height']);
 
   const WORK_AREA_INDEPENDENT_PROPS = [
-    'position', 'top', 'right', 'bottom', 'left', 'transform', 'width', 'height', 'min-width', 'min-height', 'max-width', 'max-height',
+    'position', 'top', 'right', 'bottom', 'left', 'transform', 'width', 'height', 'min-width', 'min-height', 'max-width', 'max-height', 'box-sizing',
     'display', 'flex-direction', 'flex-wrap', 'justify-content', 'align-items', 'align-content', 'gap', 'row-gap', 'column-gap',
     'margin-top', 'margin-right', 'margin-bottom', 'margin-left', 'padding-top', 'padding-right', 'padding-bottom', 'padding-left'
   ];
@@ -731,11 +732,19 @@
     return !!(el && el.matches && el.matches(WORK_AREA_SELECTORS));
   }
 
+  function isMobileWorkAreaSizeProp(el, cssProp, bpKey = getCurrentBreakpoint().key) {
+    return false;
+  }
+
+  function cleanupMobileWorkAreaWidthOverrides(root = iframeDoc) {
+    // Width/height editing is allowed for every object, including mobile work areas.
+  }
+
   const RESPONSIVE_PROPS = new Set([
     // position
     'position', 'top', 'right', 'bottom', 'left', 'transform',
     // size
-    'width', 'height', 'min-width', 'min-height', 'max-width', 'max-height',
+    'box-sizing', 'width', 'height', 'min-width', 'min-height', 'max-width', 'max-height',
     // layout container
     'display', 'flex-direction', 'flex-wrap', 'justify-content', 'align-items',
     'align-content', 'justify-items', 'grid-template-columns', 'grid-template-rows',
@@ -775,7 +784,7 @@
     const jsProp = isCustomProp ? cssProp : cssPropToJs(cssProp);
     if (value) {
       if (isCustomProp) el.style.setProperty(cssProp, value);
-      else if (cssProp === 'transform') el.style.setProperty(cssProp, value, 'important');
+      else if (cssProp === 'transform' || EXPLICIT_SIZE_PROPS.has(cssProp)) el.style.setProperty(cssProp, value, 'important');
       else el.style[jsProp] = value;
     } else {
       if (isCustomProp) el.style.removeProperty(cssProp);
@@ -944,6 +953,12 @@
   function getResponsivePropValue(el, cssProp, targetBpKey = null) {
     const bpKey = targetBpKey || getCurrentBreakpoint().key;
     const varName = getResponsiveVarName(cssProp, bpKey);
+
+    if (isMobileWorkAreaSizeProp(el, cssProp, bpKey)) {
+      const cleanValue = (snapshotWorkAreaBreakpointProps(el, bpKey).get(cssProp) || '').trim();
+      return { value: cleanValue, inherited: false, source: 'computed' };
+    }
+
     const exactVal = el.style.getPropertyValue(varName).trim();
     if (exactVal === '__empty__') return { value: '', inherited: false, source: bpKey };
     if (exactVal) return { value: exactVal, inherited: false, source: bpKey };
@@ -1024,6 +1039,11 @@
       const cleanSnapshot = snapshotWorkAreaBreakpointProps(el, currentBpKey);
 
       WORK_AREA_INDEPENDENT_PROPS.forEach(cssProp => {
+        if (isMobileWorkAreaSizeProp(el, cssProp, currentBpKey)) {
+          el.style.removeProperty(cssProp);
+          return;
+        }
+
         const exactVal = el.style.getPropertyValue(getResponsiveVarName(cssProp, currentBpKey)).trim();
         const value = exactVal
           ? (exactVal === '__empty__' ? '' : exactVal)
@@ -1068,12 +1088,16 @@
    * Generate the <style data-editor-responsive> block with real @media queries.
    * Called before save to produce runtime CSS.
    */
-  function generateResponsiveStyleBlock() {
-    if (!iframeDoc) return '';
+  function isMatrixTransformValue(value) {
+    return /^matrix\(/i.test(String(value || '').trim());
+  }
+
+  function generateResponsiveStyleBlock(root = iframeDoc) {
+    if (!root) return '';
 
     const bpData = new Map(); // Map<editorId, Map<bpKey, Map<cssProp, value>>>
 
-    iframeDoc.querySelectorAll('[style]').forEach(el => {
+    root.querySelectorAll('[style]').forEach(el => {
       const style = el.getAttribute('style') || '';
       if (!style.includes('--editor-')) return;
 
@@ -1087,8 +1111,10 @@
       BREAKPOINTS.forEach(bp => {
         const bpProps = new Map();
         RESPONSIVE_PROPS.forEach(cssProp => {
+          if (isMobileWorkAreaSizeProp(el, cssProp, bp.key)) return;
           const varName = getResponsiveVarName(cssProp, bp.key);
           const val = el.style.getPropertyValue(varName).trim();
+          if (cssProp === 'transform' && isMatrixTransformValue(val)) return;
           if (val && val !== '__empty__') bpProps.set(cssProp, val);
         });
         if (bpProps.size > 0) propMap.set(bp.key, bpProps);
@@ -1101,6 +1127,50 @@
 
     // Build CSS string
     let css = '\n/* Editor Responsive Styles — Auto-generated */\n';
+    css += `@media (max-width: 833px) {
+.visual-section {
+  overflow: visible !important;
+  max-width: 100vw !important;
+}
+.visual-section__work {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 16px !important;
+  padding-top: calc(var(--site-grid-size) * 3) !important;
+  overflow: visible !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  height: auto !important;
+}
+.visual-section__work .snap:not(.mobile-free-placement) {
+  position: static !important;
+  left: auto !important;
+  top: auto !important;
+  right: auto !important;
+  transform: none !important;
+  translate: none !important;
+  order: var(--y, 0);
+}
+.visual-section__work .snap.mobile-free-placement {
+  position: relative !important;
+  left: var(--mobile-free-left, 0px) !important;
+  top: var(--mobile-free-top, 0px) !important;
+  right: auto !important;
+  transform: none !important;
+  translate: none !important;
+  order: var(--mobile-flow-order, var(--y, 0));
+}
+.visual-section__work .visual-section__search.snap {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  width: 100% !important;
+  z-index: 90 !important;
+  order: 0;
+}
+}
+`;
 
     // For each breakpoint, emit only exact values for that breakpoint.
     // This prevents a Desktop edit from changing Tablet/Mobile and vice versa.
@@ -1126,6 +1196,132 @@
     });
 
     return css;
+  }
+
+  function cleanStyleAttribute(el) {
+    if (!el || !el.style) return;
+    if (el.style.length === 0) el.removeAttribute('style');
+  }
+
+  function cleanupRuntimeGeneratedDom(root) {
+    if (!root) return;
+
+    root.querySelectorAll('#grid-32-underlay, .swatch__copy-hint, .sticker-ghost, .slider-shell__dots, .editor-frame-shield, [data-editor-style="true"]').forEach(el => el.remove());
+
+    root.querySelectorAll('[data-slider-init]').forEach(el => el.removeAttribute('data-slider-init'));
+    root.querySelectorAll('.slider-shell, .slider-shell--tabs').forEach(el => {
+      el.classList.remove('slider-shell', 'slider-shell--tabs');
+    });
+
+    root.querySelectorAll('.font-block').forEach(block => {
+      const slides = Array.from(block.querySelectorAll(':scope > .slider-shell__viewport > .font-block__slide, :scope > .font-block__slide'));
+      if (!slides.length) return;
+
+      const copy = root.createElement ? root.createElement('div') : block.ownerDocument.createElement('div');
+      copy.className = 'font-block__copy';
+      const seenCredits = new Set();
+
+      slides.forEach(slide => {
+        const slideCopy = slide.querySelector('.font-block__copy');
+        if (!slideCopy) return;
+        slideCopy.querySelectorAll('p').forEach(p => {
+          if (p.classList.contains('font-block__credit')) return;
+          copy.appendChild(p.cloneNode(true));
+        });
+        slideCopy.querySelectorAll('.font-block__credit').forEach(credit => {
+          const key = credit.textContent.trim();
+          if (seenCredits.has(key)) return;
+          seenCredits.add(key);
+          copy.appendChild(credit.cloneNode(true));
+        });
+      });
+
+      const samples = [];
+      slides.forEach(slide => slide.querySelectorAll('.font-sample').forEach(sample => samples.push(sample.cloneNode(true))));
+      if (!copy.children.length || !samples.length) return;
+
+      block.innerHTML = '';
+      block.appendChild(copy);
+      samples.forEach(sample => block.appendChild(sample));
+    });
+
+    root.querySelectorAll('.weights-block').forEach(block => {
+      const samples = Array.from(block.querySelectorAll('.weight-sample')).map(sample => sample.cloneNode(true));
+      if (!samples.length) return;
+      block.innerHTML = '';
+      samples.forEach(sample => block.appendChild(sample));
+    });
+
+    root.querySelectorAll('.slider-shell__viewport').forEach(viewport => {
+      const parent = viewport.parentElement;
+      if (!parent) return;
+      while (viewport.firstChild) parent.insertBefore(viewport.firstChild, viewport);
+      viewport.remove();
+    });
+
+    root.querySelectorAll('[data-copy-bound]').forEach(el => el.removeAttribute('data-copy-bound'));
+
+    root.querySelectorAll('[data-smart-collision-managed]').forEach(el => {
+      el.removeAttribute('data-smart-collision-managed');
+      el.style.removeProperty('--smart-collision-y');
+      el.style.removeProperty('translate');
+      cleanStyleAttribute(el);
+    });
+
+    root.querySelectorAll('[style]').forEach(el => {
+      el.style.removeProperty('translate');
+      ['desktop', 'laptop', 'tablet-l', 'tablet-p', 'mobile'].forEach(bpKey => {
+        const varName = getResponsiveVarName('transform', bpKey);
+        if (isMatrixTransformValue(el.style.getPropertyValue(varName))) el.style.removeProperty(varName);
+      });
+      if (isMatrixTransformValue(el.style.getPropertyValue(getResponsiveBaseVarName('transform')))) {
+        el.style.removeProperty(getResponsiveBaseVarName('transform'));
+      }
+      el.style.removeProperty('--smart-collision-y');
+      el.style.removeProperty('--editor-drag-left');
+      el.style.removeProperty('--editor-drag-top');
+      el.style.removeProperty('--editor-drag-width');
+      el.style.removeProperty('--editor-drag-order');
+      if (isIdentityMatrixTransform(el.style.transform)) el.style.removeProperty('transform');
+      else if (isMatrixTransformValue(el.style.transform)) el.style.removeProperty('transform');
+      cleanStyleAttribute(el);
+    });
+
+    root.querySelectorAll('.is-dragging, .is-copied, .is-entering, .is-leaving, .editor-selected, .editor-hover, .editor-drag-floating, .editor-bp-placed, .editor-bp-has-placed').forEach(el => {
+      el.classList.remove('is-dragging', 'is-copied', 'is-entering', 'is-leaving', 'editor-selected', 'editor-hover', 'editor-drag-floating', 'editor-bp-placed', 'editor-bp-has-placed');
+    });
+  }
+
+  function buildSerializableDocumentHtml() {
+    const docClone = iframeDoc.documentElement.cloneNode(true);
+    const head = docClone.querySelector('head');
+    const body = docClone.querySelector('body');
+
+    docClone.classList.remove('smart-collisions-ready', 'smart-collisions-pending');
+    docClone.removeAttribute('data-smart-collision-mode');
+    docClone.setAttribute('data-smart-collisions-enabled', 'true');
+    if (body) {
+      body.classList.remove('editor-editing', 'editor-bp-desktop', 'editor-bp-laptop', 'editor-bp-tablet-l', 'editor-bp-tablet-p', 'editor-bp-mobile');
+      body.removeAttribute('data-smart-collision-mode');
+      body.setAttribute('data-smart-collisions-enabled', 'true');
+    }
+
+    cleanupWorkAreaPreviewInlineStyles(docClone);
+    cleanupRuntimeGeneratedDom(docClone);
+
+    const responsiveCss = generateResponsiveStyleBlock(docClone);
+
+    docClone.querySelectorAll('[data-editor-responsive="true"]').forEach(style => style.remove());
+    if (head && responsiveCss) {
+      const styleEl = iframeDoc.createElement('style');
+      styleEl.setAttribute('data-editor-responsive', 'true');
+      styleEl.textContent = responsiveCss;
+      head.appendChild(styleEl);
+    }
+
+    docClone.querySelectorAll('[data-editor-layout-original-style]').forEach(el => el.removeAttribute('data-editor-layout-original-style'));
+
+    return '<!DOCTYPE html>\n' + docClone.outerHTML;
   }
 
   /**
@@ -1228,6 +1424,55 @@
         animation: none !important;
         will-change: auto !important;
       }
+      body.editor-editing.editor-bp-mobile .visual-section {
+        overflow: visible !important;
+        max-width: 100vw !important;
+      }
+      body.editor-editing.editor-bp-mobile .visual-section__work {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 16px !important;
+        padding-top: calc(var(--site-grid-size) * 3) !important;
+        overflow: visible !important;
+      }
+      body.editor-editing.editor-bp-mobile .visual-section__work .snap:not(.mobile-free-placement) {
+        position: static !important;
+        left: auto !important;
+        top: auto !important;
+        right: auto !important;
+        transform: none !important;
+        translate: none !important;
+        order: var(--y, 0) !important;
+      }
+      body.editor-editing.editor-bp-mobile .visual-section__work .snap.mobile-free-placement {
+        position: relative !important;
+        left: var(--mobile-free-left, 0px) !important;
+        top: var(--mobile-free-top, 0px) !important;
+        right: auto !important;
+        transform: none !important;
+        translate: none !important;
+        order: var(--mobile-flow-order, var(--y, 0)) !important;
+      }
+      body.editor-editing.editor-bp-mobile .visual-section__work .snap.editor-drag-floating {
+        position: relative !important;
+        left: var(--editor-drag-left, 0px) !important;
+        top: var(--editor-drag-top, 0px) !important;
+        right: auto !important;
+        width: var(--editor-drag-width, auto) !important;
+        max-width: none !important;
+        z-index: 2147482000 !important;
+        pointer-events: none !important;
+        order: var(--editor-drag-order, var(--y, 0)) !important;
+      }
+      body.editor-editing.editor-bp-mobile .visual-section__work .visual-section__search.snap {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        width: 100% !important;
+        z-index: 90 !important;
+        order: 0 !important;
+      }
       body.editor-editing .reveal {
         opacity: 1 !important;
         visibility: visible !important;
@@ -1241,6 +1486,15 @@
       .editor-hover { outline: 1px dashed rgba(0, 122, 204, 0.5) !important; outline-offset: -1px; }
       .editor-hidden { opacity: 0.2 !important; outline: 1px solid red !important; }
       .editor-selected { outline: 2px solid #0098ff !important; outline-offset: -2px; }
+      .editor-frame-shield {
+        position: absolute !important;
+        z-index: 2147483000 !important;
+        background: rgba(0, 152, 255, 0.001) !important;
+        border: 1px dashed rgba(0, 152, 255, 0.35) !important;
+        box-sizing: border-box !important;
+        cursor: pointer !important;
+        pointer-events: auto !important;
+      }
     `;
     iframeDoc.head.appendChild(style);
   }
@@ -1249,6 +1503,38 @@
     const docSel = document.getSelection && document.getSelection();
     if (docSel) docSel.removeAllRanges();
     if (iframeWin && iframeWin.getSelection) iframeWin.getSelection().removeAllRanges();
+  }
+
+  function syncEditorFrameShields() {
+    if (!iframeDoc || !iframeWin) return;
+    iframeDoc.querySelectorAll('.editor-frame-shield').forEach(shield => shield.remove());
+
+    iframeDoc.querySelectorAll('iframe.snap').forEach(frame => {
+      if (!frame.isConnected || frame.classList.contains('editor-locked')) return;
+      if (!frame.getAttribute('data-editor-id')) frame.setAttribute('data-editor-id', generateEditorId());
+      const rect = frame.getBoundingClientRect();
+      if (rect.width <= 0 || rect.height <= 0) return;
+
+      const shield = iframeDoc.createElement('div');
+      shield.className = 'editor-frame-shield';
+      shield.setAttribute('data-editor-frame-target', frame.getAttribute('data-editor-id'));
+      shield.style.left = (rect.left + iframeWin.scrollX) + 'px';
+      shield.style.top = (rect.top + iframeWin.scrollY) + 'px';
+      shield.style.width = rect.width + 'px';
+      shield.style.height = rect.height + 'px';
+      iframeDoc.body.appendChild(shield);
+    });
+  }
+
+  function getFrameShieldTarget(target) {
+    if (!target || !target.classList || !target.classList.contains('editor-frame-shield')) return null;
+    const id = target.getAttribute('data-editor-frame-target');
+    if (!id) return null;
+    try {
+      return iframeDoc.querySelector(`[data-editor-id="${CSS.escape(id)}"]`);
+    } catch (_) {
+      return iframeDoc.querySelector('[data-editor-id="' + id.replace(/"/g, '\\"') + '"]');
+    }
   }
 
   function getIframeDocCoords(e) {
@@ -1329,30 +1615,39 @@
           }
        });
     });
+    cleanupMobileWorkAreaWidthOverrides(iframeDoc);
 
     // Inject editor styles into iframe to allow highlighting and grid editing without breaking saved layout
     applyEditorBreakpointMode();
     injectEditorStyles();
     forceEditorRevealVisible();
     syncEditorPlacedElements();
+    setDragCollisionMode(dragCollisionMode);
+    syncEditorFrameShields();
 
     iframeDoc.body.addEventListener('click', onIframeClick, true);
     iframeDoc.body.addEventListener('dblclick', onIframeDblClick, true);
     iframeDoc.body.addEventListener('mousemove', onIframeHover, true);
     iframeDoc.body.addEventListener('mouseout', onIframeHoverOut, true);
     iframeDoc.body.addEventListener('mousedown', onIframeMouseDown, true);
+    iframeDoc.body.addEventListener('contextmenu', onIframeContextMenu, true);
     iframeDoc.body.addEventListener('dragstart', e => e.preventDefault(), true);
     iframeDoc.body.addEventListener('selectstart', e => e.preventDefault(), true);
     iframeDoc.addEventListener('mousemove', handleEditorMouseMove, true);
     iframeDoc.addEventListener('mouseup', handleEditorMouseUp, true);
+    iframeDoc.addEventListener('touchmove', handleEditorMouseMove, { capture: true, passive: false });
+    iframeDoc.addEventListener('touchend', handleEditorMouseUp, true);
+    iframeDoc.addEventListener('touchcancel', handleEditorMouseUp, true);
     
-    // Disable links
+    // Disable real link navigation while still allowing editor pass-through
+    // synthetic clicks (ПКМ) to activate interactive controls inside iframe.
     iframeDoc.body.addEventListener('click', e => {
-      if(e.target.closest('a')) e.preventDefault();
+      if (!isEditorPassthroughAction && e.target.closest('a')) e.preventDefault();
     });
 
     iframeWin.addEventListener('scroll', () => {
       updateOverlay();
+      syncEditorFrameShields();
       saveEditorWorkspaceState();
     });
     
@@ -1367,12 +1662,14 @@
     const resizeObs = new ResizeObserver(() => {
       canvasWrapper.style.height = iframeDoc.documentElement.scrollHeight + 'px';
       updateScalerDimensions();
+      syncEditorFrameShields();
     });
     resizeObs.observe(iframeDoc.body);
     
     buildLayers();
     restoreEditorWorkspaceState();
     applyResponsivePreview();
+    syncEditorFrameShields();
     setTimeout(saveHistoryState, 100); // Initial state
   };
 
@@ -1491,6 +1788,7 @@
   let hoveredEl = null;
   let isMarqueeSelecting = false;
   let ignoreNextIframeClick = false;
+  let isEditorPassthroughAction = false;
   let marqueeStartX = 0;
   let marqueeStartY = 0;
   const marqueeSelect = document.getElementById('marqueeSelect');
@@ -1515,6 +1813,8 @@
 
   function getSelectableClickTarget(target) {
     if (!target || target === iframeDoc.body || target === iframeDoc.documentElement) return null;
+    const frameTarget = getFrameShieldTarget(target);
+    if (frameTarget) return frameTarget;
     if (target.closest && target.closest('input, textarea, select, button, a')) return null;
 
     let t = target;
@@ -1526,13 +1826,16 @@
     const snap = t.classList && t.classList.contains('snap') ? t : (t.closest ? t.closest('.snap') : null);
     if (snap && !snap.classList.contains('editor-locked')) return snap;
 
-    const emptySelectors = '.site-page, main, section, .visual-section, .hero';
+    if (t.matches && t.matches(WORK_AREA_SELECTORS) && !t.classList.contains('editor-locked')) return t;
+
+    const emptySelectors = '.site-page, main, section:not(.visual-section__work):not(.hero__work), .visual-section, .hero';
     if (t.matches && t.matches(emptySelectors)) return null;
 
     return t;
   }
 
   function onIframeClick(e) {
+    if (isEditorPassthroughAction) return;
     e.preventDefault();
     e.stopPropagation();
     clearNativeSelection();
@@ -1566,6 +1869,11 @@
 
   function onIframeHover(e) {
     if(isDragging) return;
+    const frameTarget = getFrameShieldTarget(e.target);
+    if (frameTarget) {
+      updateHoverOverlay(frameTarget);
+      return;
+    }
     let t = e.target;
     
     while (t && t !== iframeDoc.body && t.classList.contains('editor-locked')) {
@@ -1591,12 +1899,75 @@
     hoverOverlay.style.display = 'none';
   }
 
+  function getEditorPassthroughTarget(target) {
+    if (!target || !target.closest) return null;
+    return target.closest('button, [role="button"], a[href], input, select, textarea, label, summary, [data-palette-target], [data-target], [data-action]');
+  }
+
+  function runEditorPassthroughAction(target, sourceEvent) {
+    if (!target || !iframeWin) return;
+    isEditorPassthroughAction = true;
+    try {
+      const eventInit = {
+        bubbles: true,
+        cancelable: true,
+        view: iframeWin,
+        button: 0,
+        buttons: 1,
+        clientX: sourceEvent.clientX,
+        clientY: sourceEvent.clientY,
+        screenX: sourceEvent.screenX,
+        screenY: sourceEvent.screenY,
+        ctrlKey: sourceEvent.ctrlKey,
+        shiftKey: sourceEvent.shiftKey,
+        altKey: sourceEvent.altKey,
+        metaKey: sourceEvent.metaKey
+      };
+      target.dispatchEvent(new iframeWin.MouseEvent('mousedown', eventInit));
+      target.dispatchEvent(new iframeWin.MouseEvent('mouseup', Object.assign({}, eventInit, { buttons: 0 })));
+      target.dispatchEvent(new iframeWin.MouseEvent('click', Object.assign({}, eventInit, { buttons: 0 })));
+    } finally {
+      isEditorPassthroughAction = false;
+    }
+    setTimeout(() => {
+      forceEditorRevealVisible();
+      updateOverlay();
+      syncEditorFrameShields();
+      if (hoveredEl && hoveredEl.isConnected) updateHoverOverlay(hoveredEl);
+    }, 0);
+  }
+
+  function onIframeContextMenu(e) {
+    if (placementMode) return;
+    const actionTarget = getEditorPassthroughTarget(e.target);
+    if (!actionTarget) return;
+    e.preventDefault();
+    e.stopPropagation();
+    ignoreNextIframeClick = true;
+    clearNativeSelection();
+    runEditorPassthroughAction(actionTarget, e);
+  }
+
   function onIframeMouseDown(e) {
+    if (isEditorPassthroughAction) return;
     if (placementMode || e.button !== 0) return;
     const target = e.target;
+    const frameTarget = getFrameShieldTarget(target);
+    if (frameTarget) {
+      e.preventDefault();
+      e.stopPropagation();
+      clearNativeSelection();
+      selectElement(frameTarget, e.shiftKey || e.ctrlKey || e.metaKey);
+      return;
+    }
     if (target.closest && target.closest('input, textarea, select, button, a')) return;
     const clickedSnap = target.classList && target.classList.contains('snap') ? target : target.closest('.snap');
     if (clickedSnap && !e.altKey) return;
+    const clickedWorkArea = target.matches && target.matches(WORK_AREA_SELECTORS) ? target : null;
+    if (clickedWorkArea && !e.altKey) {
+      if (selectedEls.includes(clickedWorkArea) || selectedEl === clickedWorkArea) beginDrag(e);
+      return;
+    }
 
     e.preventDefault();
     e.stopPropagation();
@@ -2040,12 +2411,25 @@
   bindProp('propScale', () => { setTransformStyle(selectedEl, composeTransformFromParts()); document.getElementById('propTransform').value = getTransformForUi(selectedEl); });
   bindProp('propRotate', () => { setTransformStyle(selectedEl, composeTransformFromParts()); document.getElementById('propTransform').value = getTransformForUi(selectedEl); });
   
-  bindProp('propWidth', v => setResponsivePropValue(selectedEl, 'width', v));
-  bindProp('propHeight', v => setResponsivePropValue(selectedEl, 'height', v));
-  bindProp('propMinWidth', v => setResponsivePropValue(selectedEl, 'min-width', v));
-  bindProp('propMinHeight', v => setResponsivePropValue(selectedEl, 'min-height', v));
-  bindProp('propMaxWidth', v => setResponsivePropValue(selectedEl, 'max-width', v));
-  bindProp('propMaxHeight', v => setResponsivePropValue(selectedEl, 'max-height', v));
+  function ensureExplicitSizeApplies(el) {
+    if (!el || !iframeWin) return;
+    const cs = iframeWin.getComputedStyle(el);
+    const display = (cs.display || '').trim();
+    if (display === 'inline') setResponsivePropValue(el, 'display', 'inline-block');
+    if (!getInlineStyleValue(el, 'box-sizing')) setResponsivePropValue(el, 'box-sizing', 'border-box');
+  }
+
+  function setExplicitSizeProp(el, cssProp, value) {
+    ensureExplicitSizeApplies(el);
+    setResponsivePropValue(el, cssProp, value);
+  }
+  
+  bindProp('propWidth', (v, _id, el) => setExplicitSizeProp(el, 'width', v));
+  bindProp('propHeight', (v, _id, el) => setExplicitSizeProp(el, 'height', v));
+  bindProp('propMinWidth', (v, _id, el) => setExplicitSizeProp(el, 'min-width', v));
+  bindProp('propMinHeight', (v, _id, el) => setExplicitSizeProp(el, 'min-height', v));
+  bindProp('propMaxWidth', (v, _id, el) => setExplicitSizeProp(el, 'max-width', v));
+  bindProp('propMaxHeight', (v, _id, el) => setExplicitSizeProp(el, 'max-height', v));
 
   const layoutDisplays = new Set(['flex', 'inline-flex', 'grid', 'inline-grid']);
   const flexLayoutDisplays = new Set(['flex', 'inline-flex']);
@@ -2243,6 +2627,7 @@
   // Drag & Drop for positioning
   let isDragging = false;
   let isResizing = false;
+  let dragCollisionMode = 'free';
   let resizeDir = '';
   let dragStartX = 0, dragStartY = 0;
   let dragPointerOffsetX = 0, dragPointerOffsetY = 0;
@@ -2250,6 +2635,8 @@
   
   let dragStartStates = new Map();
   let resizeStartStates = new Map();
+  let dragAffectedEls = new Set();
+  let dragFloatingStates = new Map();
   
   const dragShield = document.createElement('div');
   dragShield.style.position = 'fixed';
@@ -2257,14 +2644,280 @@
   dragShield.style.zIndex = '99999';
   dragShield.style.cursor = 'move';
   dragShield.style.display = 'none';
+  dragShield.style.touchAction = 'none';
+  dragShield.style.userSelect = 'none';
   document.body.appendChild(dragShield);
   
-  function getCanvasCoords(e) {
-     const rect = canvasWrapper.getBoundingClientRect();
+  function getEventClientPoint(e) {
+     const source = (e.touches && e.touches[0]) || (e.changedTouches && e.changedTouches[0]) || e;
      return {
-        x: (e.clientX - rect.left) / zoom,
-        y: (e.clientY - rect.top) / zoom
+        x: typeof source.clientX === 'number' ? source.clientX : 0,
+        y: typeof source.clientY === 'number' ? source.clientY : 0
      };
+  }
+
+  function getCanvasCoords(e) {
+     const point = getEventClientPoint(e);
+     const sourceDoc = e.view && e.view.document;
+
+     if (sourceDoc === iframeDoc) {
+       return {
+          x: point.x + iframeWin.scrollX,
+          y: point.y + iframeWin.scrollY
+       };
+     }
+
+     const iframeRect = iframe.getBoundingClientRect();
+     return {
+        x: ((point.x - iframeRect.left) / zoom) + iframeWin.scrollX,
+        y: ((point.y - iframeRect.top) / zoom) + iframeWin.scrollY
+     };
+  }
+
+  function isUsableDragCoord(coords) {
+     return coords && Number.isFinite(coords.x) && Number.isFinite(coords.y);
+  }
+
+  function syncParentGestureFlags() {
+     window.isDragging = isDragging;
+     window.isResizing = isResizing;
+     if (iframeWin) {
+       try {
+         iframeWin.parent.isDragging = isDragging;
+         iframeWin.parent.isResizing = isResizing;
+       } catch (_) {}
+     }
+  }
+
+  function setDragCollisionMode(mode) {
+     dragCollisionMode = mode === 'push' || mode === 'jump' ? mode : 'free';
+     const handle = document.getElementById('dragHandle');
+     if (handle) {
+       const label = dragCollisionMode === 'push' ? 'Push' : (dragCollisionMode === 'jump' ? 'Jump' : 'Free');
+       handle.textContent = label;
+       handle.title = '1 Push, 2 Jump, 3 Free';
+     }
+     if (iframeDoc && iframeDoc.documentElement) {
+       iframeDoc.documentElement.setAttribute('data-smart-collision-mode', 'free');
+     }
+  }
+
+  function getSnapRectFromState(el, state, xVar, yVar, opts = {}) {
+     const gridSize = getGridSize();
+     const width = state.width || 0;
+     const height = state.height || 0;
+     const forceFullWidth = !!opts.forceFullWidth;
+     const rectWidth = forceFullWidth ? Math.max(width, state.parentWidth || 0) : width;
+     const left = forceFullWidth ? 0 : xVar * gridSize;
+     const top = yVar * gridSize;
+     return {
+       left,
+       top,
+       right: left + rectWidth,
+       bottom: top + height,
+       width: rectWidth,
+       height
+     };
+   }
+
+  function rectsOverlapX(a, b) {
+     return a.left < b.right - 0.5 && a.right > b.left + 0.5;
+  }
+
+  function rectsOverlapY(a, b, gap = 0) {
+     return a.top < b.bottom + gap - 0.5 && a.bottom + gap > b.top + 0.5;
+  }
+
+  function applySnapY(el, yVar) {
+     if (!Number.isFinite(yVar)) return;
+     setSnapCoord(el, 'y', yVar);
+     if (el === selectedEl) document.getElementById('propGridY').value = yVar;
+  }
+
+  function applySnapX(el, xVar) {
+     if (!Number.isFinite(xVar)) return;
+     setSnapCoord(el, 'x', xVar);
+     if (el === selectedEl) document.getElementById('propGridX').value = xVar;
+  }
+
+  function isMobileFlowSnap(el) {
+     return !!(
+       el &&
+       iframeWin &&
+       getCurrentBreakpoint().key === 'mobile' &&
+       el.classList.contains('snap') &&
+       el.closest('.visual-section__work') &&
+       (el.classList.contains('mobile-free-placement') || iframeWin.getComputedStyle(el).position === 'static')
+     );
+  }
+
+  function beginFloatingDrag(el) {
+     if (!isMobileFlowSnap(el)) return;
+     const rect = el.getBoundingClientRect();
+     const left = parseFloat(el.style.getPropertyValue('--mobile-free-left')) || 0;
+     const top = parseFloat(el.style.getPropertyValue('--mobile-free-top')) || 0;
+     const flowOrder = el.style.getPropertyValue('--mobile-flow-order').trim() || String(getSnapCoord(el, 'y'));
+     dragFloatingStates.set(el, { left, top, flowOrder });
+     el.classList.add('editor-drag-floating');
+     el.style.setProperty('--editor-drag-left', left + 'px');
+     el.style.setProperty('--editor-drag-top', top + 'px');
+     el.style.setProperty('--editor-drag-width', rect.width + 'px');
+     el.style.setProperty('--editor-drag-order', flowOrder);
+  }
+
+  function updateFloatingDrag(el, dGridX, dGridY, gridSize) {
+     const state = dragFloatingStates.get(el);
+     if (!state) return;
+     el.style.setProperty('--editor-drag-left', (state.left + dGridX * gridSize) + 'px');
+     el.style.setProperty('--editor-drag-top', (state.top + dGridY * gridSize) + 'px');
+  }
+
+  function cleanupFloatingDrag() {
+     dragFloatingStates.forEach((_, el) => {
+       if (!el || !el.isConnected) return;
+       el.classList.remove('editor-drag-floating');
+       el.style.removeProperty('--editor-drag-left');
+       el.style.removeProperty('--editor-drag-top');
+       el.style.removeProperty('--editor-drag-width');
+       el.style.removeProperty('--editor-drag-order');
+     });
+     dragFloatingStates.clear();
+  }
+
+  function commitMobileFreeDrag() {
+     dragFloatingStates.forEach((state, el) => {
+       if (!el || !el.isConnected) return;
+       const left = el.style.getPropertyValue('--editor-drag-left').trim() || (state.left + 'px');
+       const top = el.style.getPropertyValue('--editor-drag-top').trim() || (state.top + 'px');
+       el.classList.add('mobile-free-placement');
+       el.style.setProperty('--mobile-free-left', left);
+       el.style.setProperty('--mobile-free-top', top);
+       el.style.setProperty('--mobile-flow-order', state.flowOrder);
+     });
+  }
+
+  function clearMobileFreeDrag() {
+     dragFloatingStates.forEach((_, el) => {
+       if (!el || !el.isConnected) return;
+       el.classList.remove('mobile-free-placement');
+       el.style.removeProperty('--mobile-free-left');
+       el.style.removeProperty('--mobile-free-top');
+       el.style.removeProperty('--mobile-flow-order');
+     });
+  }
+
+  function pushMobileFlowSiblings(el, dGridY, draggedEls) {
+     if (!dGridY || !el || !el.parentElement) return;
+     const state = dragStartStates.get(el);
+     if (!state) return;
+     const draggedSet = new Set(draggedEls);
+     const startY = state.yVar;
+     const endY = startY + dGridY;
+     el.parentElement.querySelectorAll(':scope > .snap').forEach(sibling => {
+       if (draggedSet.has(sibling) || sibling.classList.contains('editor-locked')) return;
+       const siblingState = dragStartStates.get(sibling);
+       if (!siblingState) return;
+       const siblingY = siblingState.yVar;
+       const shouldPush = dGridY > 0
+         ? siblingY > startY && siblingY <= endY
+         : siblingY < startY && siblingY >= endY;
+       if (!shouldPush) return;
+       applySnapY(sibling, Math.max(0, siblingY + dGridY));
+       dragAffectedEls.add(sibling);
+     });
+  }
+
+  function getPushCandidates(draggedEls) {
+     const draggedSet = new Set(draggedEls);
+     const parents = new Set(draggedEls.map(el => el.parentElement).filter(Boolean));
+     const candidates = [];
+     parents.forEach(parent => {
+       parent.querySelectorAll(':scope > .snap').forEach(el => {
+         if (draggedSet.has(el) || el.classList.contains('editor-locked')) return;
+         const state = dragStartStates.get(el);
+         if (!state) return;
+         candidates.push(el);
+       });
+     });
+     return candidates;
+  }
+
+  function resetPushCandidateYs(draggedEls) {
+     getPushCandidates(draggedEls).forEach(candidate => {
+       const state = dragStartStates.get(candidate);
+       if (!state) return;
+       if (getSnapCoord(candidate, 'y') !== state.yVar) {
+         applySnapY(candidate, state.yVar);
+         dragAffectedEls.add(candidate);
+       }
+     });
+   }
+
+  function pushChainForDraggedSnap(el, proposedX, proposedY, direction, draggedEls, movedEls) {
+     const state = dragStartStates.get(el);
+     if (!state) return;
+
+     const shiftY = proposedY - state.yVar;
+     if (!shiftY || direction === 0) return;
+
+     const parent = el.parentElement;
+     if (!parent) return;
+
+     const flowPush = isMobileFlowSnap(el);
+     const rectOptions = { forceFullWidth: flowPush };
+     const startRect = getSnapRectFromState(el, state, state.xVar, state.yVar, rectOptions);
+     const startCenterY = startRect.top + startRect.height / 2;
+     const draggedSet = new Set(draggedEls);
+
+     getPushCandidates(draggedEls)
+       .filter(candidate => candidate.parentElement === parent)
+       .map(candidate => {
+         const candidateState = dragStartStates.get(candidate);
+         const rect = getSnapRectFromState(candidate, candidateState, candidateState.xVar, candidateState.yVar, rectOptions);
+         return { el: candidate, state: candidateState, rect, centerY: rect.top + rect.height / 2 };
+       })
+       .filter(item => item.state && !draggedSet.has(item.el))
+       .forEach(item => {
+         const shouldShift = direction > 0
+           ? item.centerY > startCenterY + 0.5
+           : item.centerY < startCenterY - 0.5;
+         if (!shouldShift) return;
+
+         const nextY = item.state.yVar + shiftY;
+         if (!Number.isFinite(nextY)) return;
+         applySnapY(item.el, nextY);
+         movedEls.add(item.el);
+         dragAffectedEls.add(item.el);
+       });
+   }
+
+  function jumpSnapPastCollisions(el, proposedX, proposedY, direction, draggedEls) {
+     if (direction === 0) return proposedY;
+     const state = dragStartStates.get(el);
+     if (!state) return proposedY;
+     const candidates = getPushCandidates(draggedEls);
+     let nextY = proposedY;
+     let changed = true;
+     let guard = 0;
+
+     while (changed && guard++ < 24) {
+       changed = false;
+       const draggedRect = getSnapRectFromState(el, state, proposedX, nextY);
+       for (const candidate of candidates) {
+         if (candidate.parentElement !== el.parentElement) continue;
+         const candidateState = dragStartStates.get(candidate);
+         const candidateRect = getSnapRectFromState(candidate, candidateState, candidateState.xVar, candidateState.yVar);
+         if (!rectsOverlapX(draggedRect, candidateRect) || !rectsOverlapY(draggedRect, candidateRect, 0)) continue;
+         const draggedHeightCells = Math.max(1, Math.ceil(draggedRect.height / getGridSize()));
+         const nextYRaw = direction > 0
+           ? Math.ceil(candidateRect.bottom / getGridSize()) + 1
+           : Math.floor(candidateRect.top / getGridSize()) - draggedHeightCells - 1;
+         nextY = Math.max(0, nextYRaw);
+         changed = true;
+         break;
+       }
+     }
+     return nextY;
   }
 
   function getSelectedDocOrigin() {
@@ -2426,28 +3079,40 @@
      return changed;
   }
   
-  document.getElementById('dragHandle').onmousedown = e => {
+  function beginDrag(e) {
     if(!selectedEl) return;
+    if (e.button !== undefined && e.button !== 0) return;
+    const coords = getCanvasCoords(e);
+    if (!isUsableDragCoord(coords)) return;
+    cleanupFloatingDrag();
     isDragging = true;
+    isResizing = false;
     dragShield.style.display = 'block';
     dragShield.style.cursor = 'move';
-    
-    const coords = getCanvasCoords(e);
+
     const selectedOrigin = getSelectedDocOrigin();
     dragStartX = selectedOrigin.x;
     dragStartY = selectedOrigin.y;
-    dragPointerOffsetX = coords.x - selectedOrigin.x;
-    dragPointerOffsetY = coords.y - selectedOrigin.y;
+     dragPointerOffsetX = coords.x - selectedOrigin.x;
+     dragPointerOffsetY = coords.y - selectedOrigin.y;
     
     dragStartStates.clear();
-    selectedEls.forEach(el => {
+    dragAffectedEls = new Set(selectedEls);
+    const activeDragEls = (selectedEls && selectedEls.length ? selectedEls : [selectedEl]).filter(el => el && el.isConnected);
+    const trackedEls = new Set(activeDragEls);
+    activeDragEls.forEach(el => {
+       if (!el.parentElement) return;
+       el.parentElement.querySelectorAll(':scope > .snap').forEach(sibling => trackedEls.add(sibling));
+    });
+
+    trackedEls.forEach(el => {
        const cs = iframeWin.getComputedStyle(el);
-       const bp = getCurrentBreakpoint();
        const isSnap = el.classList.contains('snap');
        let xVar = isSnap ? getSnapCoord(el, 'x') : 0;
        let yVar = isSnap ? getSnapCoord(el, 'y') : 0;
        let left = parseInt(cs.left) || 0;
        let top = parseInt(cs.top) || 0;
+       const rect = el.getBoundingClientRect();
        
        if (!el.classList.contains('snap')) {
          if (cs.position !== 'absolute' && cs.position !== 'fixed' && cs.position !== 'relative') {
@@ -2456,27 +3121,49 @@
          }
        }
        
-       dragStartStates.set(el, { xVar, yVar, left, top });
+       dragStartStates.set(el, {
+         xVar,
+         yVar,
+         left,
+         top,
+         width: rect.width,
+         height: rect.height,
+         parentWidth: el.parentElement ? el.parentElement.getBoundingClientRect().width : rect.width
+       });
     });
+    activeDragEls.forEach(beginFloatingDrag);
+    syncParentGestureFlags();
     
     e.preventDefault();
-  };
+    e.stopPropagation();
+  }
+
+  const dragHandle = document.getElementById('dragHandle');
+  dragHandle.onmousedown = beginDrag;
+  dragHandle.ontouchstart = beginDrag;
+  setDragCollisionMode('free');
 
   function initResize(id, dir) {
-    document.getElementById(id).onmousedown = e => {
+    const handle = document.getElementById(id);
+    const beginResize = e => {
       if(!selectedEl) return;
+      if (e.button !== undefined && e.button !== 0) return;
+      const coords = getCanvasCoords(e);
+      if (!isUsableDragCoord(coords)) return;
       isResizing = true;
+      isDragging = false;
       resizeWasMoved = false;
       resizeDir = dir;
       dragShield.style.display = 'block';
       dragShield.style.cursor = dir + '-resize';
+      syncParentGestureFlags();
       
-      const coords = getCanvasCoords(e);
       dragStartX = coords.x;
       dragStartY = coords.y;
       
       resizeStartStates.clear();
       selectedEls.forEach(el => {
+         ensureExplicitSizeApplies(el);
          const cs = iframeWin.getComputedStyle(el);
          resizeStartStates.set(el, {
             w: parseFloat(cs.width) || 0,
@@ -2487,6 +3174,8 @@
       e.preventDefault();
       e.stopPropagation();
     };
+    handle.onmousedown = beginResize;
+    handle.ontouchstart = beginResize;
   }
   
   initResize('resizeE', 'e');
@@ -2504,11 +3193,14 @@
 
     if(!isDragging && !isResizing) return;
     if(selectedEls.length === 0) return;
+    e.preventDefault();
     clearNativeSelection();
     
     const coords = getCanvasCoords(e);
+    if (!isUsableDragCoord(coords)) return;
     const dx = isDragging ? (coords.x - dragPointerOffsetX - dragStartX) : (coords.x - dragStartX);
     const dy = isDragging ? (coords.y - dragPointerOffsetY - dragStartY) : (coords.y - dragStartY);
+    if (!Number.isFinite(dx) || !Number.isFinite(dy)) return;
     
     const gridSize = getGridSize();
 
@@ -2520,14 +3212,21 @@
          const snapToGrid = e.ctrlKey || e.metaKey;
          const nextW = normalizeFrameSize(state.w + dx, snapToGrid);
          const nextH = normalizeFrameSize(state.h + dy, snapToGrid);
-         if (resizeDir.includes('e')) setResponsivePropValue(el, 'width', nextW + 'px');
-         if (resizeDir.includes('s')) setResponsivePropValue(el, 'height', nextH + 'px');
+         if (resizeDir.includes('e')) setExplicitSizeProp(el, 'width', nextW + 'px');
+         if (resizeDir.includes('s')) setExplicitSizeProp(el, 'height', nextH + 'px');
       });
       updateOverlay();
       syncSelectedPropsRealtime();
       return;
     }
     
+    const activeDraggedSnaps = selectedEls.filter(el => el && el.isConnected && el.classList.contains('snap'));
+    const pushMovedEls = new Set(activeDraggedSnaps);
+    const direction = Math.abs(dy) >= Math.max(2, gridSize * 0.25) ? Math.sign(dy) : 0;
+    if (dragCollisionMode === 'push') {
+      resetPushCandidateYs(activeDraggedSnaps);
+    }
+
     selectedEls.forEach(el => {
        const state = dragStartStates.get(el);
        if (!state) return;
@@ -2536,9 +3235,24 @@
           const dGridX = Math.round(dx / gridSize);
           const dGridY = Math.round(dy / gridSize);
           const newX = state.xVar + dGridX;
-          const newY = state.yVar + dGridY;
-          setSnapCoord(el, 'x', newX);
-          setSnapCoord(el, 'y', newY);
+          let newY = state.yVar + dGridY;
+          const isFlowDrag = dragFloatingStates.has(el);
+          if (isFlowDrag && dragCollisionMode === 'free') {
+            updateFloatingDrag(el, dGridX, dGridY, gridSize);
+            dragAffectedEls.add(el);
+            return;
+          }
+          if (!isFlowDrag && dragCollisionMode === 'jump') {
+            newY = jumpSnapPastCollisions(el, newX, newY, direction, activeDraggedSnaps);
+          }
+          if (!Number.isFinite(newX) || !Number.isFinite(newY)) return;
+          updateFloatingDrag(el, dGridX, dGridY, gridSize);
+          applySnapX(el, newX);
+          applySnapY(el, newY);
+          dragAffectedEls.add(el);
+          if (dragCollisionMode === 'push') {
+            pushChainForDraggedSnap(el, newX, newY, direction, activeDraggedSnaps, pushMovedEls);
+          }
           
           if (el === selectedEl) {
              document.getElementById('propGridX').value = newX;
@@ -2547,13 +3261,16 @@
        } else {
          const dGridX = Math.round(dx / gridSize) * gridSize;
          const dGridY = Math.round(dy / gridSize) * gridSize;
+         if (!Number.isFinite(dGridX) || !Number.isFinite(dGridY)) return;
          setResponsivePropValue(el, 'left', (state.left + dGridX) + 'px');
          setResponsivePropValue(el, 'top', (state.top + dGridY) + 'px');
+         dragAffectedEls.add(el);
        }
     });
     
     updateOverlay();
     syncSelectedPropsRealtime();
+    syncEditorFrameShields();
     if (hoveredEl) updateHoverOverlay(hoveredEl);
   }
 
@@ -2597,15 +3314,40 @@
       const dir = resizeDir;
       isDragging = false;
       isResizing = false;
+      syncParentGestureFlags();
       dragShield.style.display = 'none';
       if (wasResizing && !resizeWasMoved) fitSelectedFramesToChildren(dir);
+      if (!wasResizing && dragCollisionMode === 'free') commitMobileFreeDrag();
+      else if (!wasResizing) clearMobileFreeDrag();
+      cleanupFloatingDrag();
+      dragAffectedEls.clear();
+      updateOverlay();
+      syncEditorFrameShields();
       saveHistoryState();
       resizeWasMoved = false;
     }
   }
 
+  function cancelEditorDragSession() {
+    if (!isDragging && !isResizing) return;
+    isDragging = false;
+    isResizing = false;
+    syncParentGestureFlags();
+    resizeWasMoved = false;
+    resizeDir = '';
+    cleanupFloatingDrag();
+    dragAffectedEls.clear();
+    dragShield.style.display = 'none';
+    updateOverlay();
+    syncEditorFrameShields();
+  }
+
   document.addEventListener('mousemove', handleEditorMouseMove);
   document.addEventListener('mouseup', handleEditorMouseUp);
+  document.addEventListener('touchmove', handleEditorMouseMove, { passive: false });
+  document.addEventListener('touchend', handleEditorMouseUp);
+  document.addEventListener('touchcancel', handleEditorMouseUp);
+  window.addEventListener('blur', cancelEditorDragSession);
 
   // Layers Tree
   function buildLayers() {
@@ -2879,7 +3621,7 @@
 
   function generateIndexPageTemplate(title = 'Новая страница') {
     return `<!doctype html>
-<html lang="ru">
+<html lang="ru" class="smart-collisions-pending" data-smart-collisions-enabled="true">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -2907,17 +3649,28 @@
     <div class="page-transition__panel"></div><div class="page-transition__panel"></div><div class="page-transition__panel"></div><div class="page-transition__panel"></div>
     <span class="page-transition__label">УниВенд</span>
   </div>
+  <script src="smart-collisions.js" data-smart-collisions-runtime="true" defer><\/script>
   <script>
     (function () {
       let grid = document.getElementById('grid-32-underlay');
       if (!grid) { grid = document.createElement('div'); grid.id = 'grid-32-underlay'; document.body.insertBefore(grid, document.body.firstChild); }
       function updateGridHeight() {
         const allRecords = document.getElementById('allrecords');
-        const contentBottom = allRecords ? allRecords.getBoundingClientRect().bottom + window.pageYOffset : document.documentElement.clientHeight;
+        let contentBottom = allRecords ? allRecords.getBoundingClientRect().bottom + window.pageYOffset : document.documentElement.clientHeight;
+        const workSections = document.querySelectorAll('.visual-section__work, .hero__work');
+        workSections.forEach(function (sec) {
+          const secBottom = sec.getBoundingClientRect().bottom + window.pageYOffset;
+          if (secBottom > contentBottom) contentBottom = secBottom;
+        });
         grid.style.height = Math.ceil(Math.max(contentBottom, window.innerHeight)) + 'px';
       }
       function updateGrid() { document.body.style.setProperty('padding-top', '0', 'important'); document.body.style.setProperty('overflow-x', 'hidden', 'important'); grid.style.setProperty('display', 'block', 'important'); updateGridHeight(); }
       window.addEventListener('load', updateGrid); window.addEventListener('resize', updateGrid); setTimeout(updateGrid, 200); setTimeout(updateGrid, 800);
+      if (typeof ResizeObserver !== 'undefined') {
+        const observer = new ResizeObserver(function () { updateGridHeight(); });
+        observer.observe(document.body);
+        document.querySelectorAll('.visual-section__work, .hero__work').forEach(function (work) { observer.observe(work); });
+      }
     })();
   <\/script>
 </body>
@@ -3033,6 +3786,7 @@
     setPlacementMode(null);
     buildLayers();
     selectElement(newEl);
+    syncEditorFrameShields();
     saveHistoryState();
   }
 
@@ -3068,6 +3822,7 @@
     forceEditorRevealVisible();
     applyResponsivePreview();
     syncEditorPlacedElements();
+    syncEditorFrameShields();
     selectElement(null);
     buildLayers();
     updateScalerDimensions();
@@ -3100,6 +3855,23 @@
         saveHistoryState();
       }
     }
+  }
+
+  function handleDragModeHotkey(e) {
+    const isFormField = e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT';
+    if (isFormField || e.ctrlKey || e.metaKey || e.altKey) return false;
+    if (e.key === '1') {
+      setDragCollisionMode('push');
+    } else if (e.key === '2') {
+      setDragCollisionMode('jump');
+    } else if (e.key === '3') {
+      setDragCollisionMode('free');
+    } else {
+      return false;
+    }
+    e.preventDefault();
+    e.stopPropagation();
+    return true;
   }
 
   let groupCounter = 1;
@@ -3171,6 +3943,7 @@
 
   function onIframeKeyDown(e) {
     const isFormField = e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT';
+    if (handleDragModeHotkey(e)) return;
     if ((e.ctrlKey || e.metaKey) && (e.code === 'KeyZ' || e.code === 'KeyY')) {
       e.preventDefault();
       e.stopPropagation();
@@ -3219,41 +3992,15 @@
   // Save changes via API
   document.getElementById('btnSave').onclick = async () => {
     if (!iframeDoc) return;
-    
-    // Ensure inline styles are stable before serialization.
-    // Work-area preview inline styles are editor-only and must not be saved,
-    // otherwise Mobile values can become Desktop inline styles and vice versa.
-    applyResponsivePreview('desktop');
-    cleanupWorkAreaPreviewInlineStyles();
 
-    const responsiveCss = generateResponsiveStyleBlock();
-    iframeDoc.querySelectorAll('[data-editor-responsive="true"]').forEach(s => s.remove());
-    if (responsiveCss) {
-      const styleEl = iframeDoc.createElement('style');
-      styleEl.setAttribute('data-editor-responsive', 'true');
-      styleEl.textContent = responsiveCss;
-      iframeDoc.head.appendChild(styleEl);
-    }
-
-    // Clean up editor specific attributes and classes before serialization
     document.querySelectorAll('.layer-item').forEach(i => {
-      if(i.elRef) delete i.elRef._layerItem;
+      if (i.elRef) delete i.elRef._layerItem;
     });
-    iframeDoc.body.classList.remove('editor-editing', 'editor-bp-desktop', 'editor-bp-laptop', 'editor-bp-tablet-l', 'editor-bp-tablet-p', 'editor-bp-mobile');
-    iframeDoc.querySelectorAll('.editor-selected').forEach(el => el.classList.remove('editor-selected'));
-    iframeDoc.querySelectorAll('.editor-hover').forEach(el => el.classList.remove('editor-hover'));
-    iframeDoc.querySelectorAll('.editor-bp-placed').forEach(el => el.classList.remove('editor-bp-placed'));
-    iframeDoc.querySelectorAll('.editor-bp-has-placed').forEach(el => el.classList.remove('editor-bp-has-placed'));
-    iframeDoc.querySelectorAll('[data-editor-style="true"]').forEach(style => style.remove());
-    // Keep data-editor-layout-original-style out of saved HTML
-    iframeDoc.querySelectorAll('[data-editor-layout-original-style]').forEach(el => el.removeAttribute('data-editor-layout-original-style'));
-    
-    const htmlContent = '<!DOCTYPE html>\n' + iframeDoc.documentElement.outerHTML;
 
-    // Keep generated responsive CSS only in the saved HTML, not in the live editor preview.
-    iframeDoc.querySelectorAll('[data-editor-responsive="true"]').forEach(s => s.remove());
-
-    // Revert inline styles to the currently active breakpoint preview
+    // Build saved HTML from a clean clone, not from the live editor iframe.
+    // This keeps preview-only inline styles and runtime-generated DOM out of the real site.
+    applyResponsivePreview('desktop');
+    const htmlContent = buildSerializableDocumentHtml();
     applyResponsivePreview();
     
     try {

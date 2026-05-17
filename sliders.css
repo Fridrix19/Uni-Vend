@@ -1,0 +1,303 @@
+/* ------------------------------------------------------------------
+   Dot/tab navigation for the horizontal "row" sliders.
+   Works together with the existing rules in visual.css that turn
+   selected blocks into flex rows below 1934px.
+   ------------------------------------------------------------------ */
+
+/* Defeat the legacy @media rule in visual.css that turns these blocks
+   into flex/scroll rows — our shell handles that via its own viewport. */
+.slider-shell.examples-row,
+.slider-shell.hierarchy-block__photo,
+.slider-shell.hierarchy-block__devices,
+.slider-shell.weights-examples,
+.slider-shell.weights-block,
+.slider-shell.sticker-rules,
+.slider-shell.font-block,
+.slider-shell.tech-specs,
+.slider-shell.intervals-block,
+.slider-shell.hierarchy-row {
+  display: block !important;
+  overflow: visible !important;
+  scroll-snap-type: none !important;
+  padding-bottom: 0 !important;
+  gap: 0 !important;
+}
+
+.slider-shell {
+  --slider-dot-size: 16px;
+  --slider-dot-active: #FF6700;
+  --slider-dot-idle: rgba(60, 55, 68, 0.22);
+  --slider-tab-size: 32px;
+
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+}
+
+.slider-shell__viewport {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap !important;
+  align-items: flex-start;
+  overflow-x: auto;
+  overflow-y: clip;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  scroll-behavior: smooth;
+  gap: var(--site-grid-size);
+  width: 100%;
+  max-width: 100%;
+  min-height: max-content;
+  height: auto !important;
+  max-height: none !important;
+  padding-bottom: 0 !important;
+}
+
+.slider-shell__viewport::-webkit-scrollbar { display: none; height: 0; width: 0; }
+.slider-shell__viewport > * {
+  scroll-snap-align: start;
+  flex: 0 0 auto;
+  height: auto !important;
+  max-height: none !important;
+}
+
+/* The dot strip below the slider */
+.slider-shell__dots {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: calc(var(--site-grid-size) * 0.5);
+  padding: var(--site-grid-size) 0 0;
+  width: 100%;
+  min-height: var(--site-grid-size);
+  list-style: none;
+  margin: 0;
+}
+
+.slider-shell__dot {
+  width: var(--slider-dot-size);
+  height: var(--slider-dot-size);
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  background: var(--slider-dot-idle);
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease, width 0.25s ease;
+  appearance: none;
+}
+
+.slider-shell__dot:hover { background: rgba(60,55,68,0.45); }
+
+.slider-shell__dot.is-active {
+  background: var(--slider-dot-active);
+  width: var(--slider-dot-size);
+  border-radius: 0;
+}
+
+/* Saved editor nudges are invalid after a block becomes a slider: slides use
+   normal flow height, otherwise labels/headings overlap after wrapping. */
+.slider-shell .font-sample__title,
+.slider-shell .font-sample__caption,
+.slider-shell .font-sample__big,
+.slider-shell .font-sample__alphabet,
+.slider-shell .font-sample__digits,
+.slider-shell .intervals-col__label,
+.slider-shell .weight-sample__title,
+.slider-shell .weight-sample__alphabet,
+.slider-shell .weight-sample__digits,
+.slider-shell .sticker-rule__text {
+  transform: none !important;
+  translate: none !important;
+}
+
+/* "Square" tab variant — used for typography weight slider */
+.slider-shell--tabs .slider-shell__dots { gap: 12px; }
+
+/* Editor/runtime can leave fixed block heights after dragging. Sliders must grow
+   to the full content height so vertical scrolling never becomes necessary. */
+.slider-shell,
+.slider-shell.examples-row,
+.slider-shell.hierarchy-block__photo,
+.slider-shell.hierarchy-block__devices,
+.slider-shell.weights-examples,
+.slider-shell.weights-block,
+.slider-shell.sticker-rules,
+.slider-shell.font-block,
+.slider-shell.tech-specs,
+.slider-shell.intervals-block,
+.slider-shell.hierarchy-row {
+  height: auto !important;
+  max-height: none !important;
+  min-height: max-content;
+}
+
+.hierarchy-block__devices,
+.slider-shell.hierarchy-block__devices {
+  display: flex !important;
+  flex-direction: column !important;
+  flex-wrap: nowrap !important;
+  align-items: stretch !important;
+  gap: var(--site-grid-size) !important;
+  width: 100% !important;
+  height: auto !important;
+  max-height: none !important;
+  overflow: visible !important;
+  scroll-snap-type: none !important;
+}
+
+.hierarchy-block__device {
+  flex: 0 0 auto !important;
+  width: 100% !important;
+  max-width: none !important;
+}
+
+.slider-shell--tabs .slider-shell__dot {
+  width: var(--slider-tab-size);
+  height: var(--slider-tab-size);
+  border-radius: 6px;
+  background: transparent;
+  border: 2px solid var(--slider-dot-idle);
+  color: var(--ink, #3C3744);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.slider-shell--tabs .slider-shell__dot:hover {
+  border-color: var(--slider-dot-active);
+  color: var(--slider-dot-active);
+  background: transparent;
+}
+
+.slider-shell--tabs .slider-shell__dot.is-active {
+  width: var(--slider-tab-size);
+  border-radius: 6px;
+  border-color: var(--slider-dot-active);
+  background: var(--slider-dot-active);
+  color: #fff;
+}
+
+/* Typography font-block: each page lays one explanatory copy and the matching
+   font sample (Aa + alphabets + digits) side by side. */
+.font-block.slider-shell .slider-shell__viewport {
+  gap: calc(var(--site-grid-size) * 3);
+}
+
+.font-block.slider-shell .slider-shell__dots {
+  justify-content: center;
+  gap: calc(var(--site-grid-size) * 0.5);
+}
+
+.font-block.slider-shell .slider-shell__dot {
+  width: var(--slider-dot-size);
+  height: var(--slider-dot-size);
+  border-radius: 0;
+}
+
+.font-block.slider-shell .slider-shell__dot.is-active {
+  width: var(--slider-dot-size);
+  border-radius: 0;
+}
+
+.font-block__slide {
+  flex: 0 0 100%;
+  width: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: calc(var(--site-grid-size) * 3);
+  align-items: start;
+  box-sizing: border-box;
+}
+
+@media (max-width: 900px) {
+  .font-block__slide { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* Weights slider: each page holds two weight samples side by side. */
+.weights-block.slider-shell .slider-shell__viewport {
+  gap: calc(var(--site-grid-size) * 3);
+}
+
+.weights-block__slide {
+  flex: 0 0 100%;
+  width: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: calc(var(--site-grid-size) * 3);
+  box-sizing: border-box;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .weights-block__slide { grid-template-columns: minmax(0, 1fr); }
+}
+
+@media screen and (max-width: 833px) {
+  .slider-shell {
+    --slider-dot-size: var(--site-grid-size);
+    --slider-tab-size: calc(var(--site-grid-size) * 2);
+  }
+
+  .slider-shell .slider-shell__viewport {
+    min-height: max-content;
+    height: auto !important;
+    max-height: none !important;
+  }
+
+  .font-block.slider-shell,
+  .weights-block.slider-shell,
+  .tech-specs.slider-shell,
+  .intervals-block.slider-shell,
+  .sticker-rules.slider-shell,
+  .weights-examples.slider-shell,
+  .examples-row.slider-shell,
+  .hierarchy-block__photo.slider-shell {
+    min-height: max-content;
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+
+  .font-block__slide,
+  .weights-block__slide {
+    min-height: max-content;
+  }
+}
+
+/* Hide the scrollbar on rows still rendered as horizontal scroll
+   (legacy fallback for any block we haven't shell-wrapped). */
+@media screen and (max-width: 1933.98px) {
+  .examples-row,
+  .hierarchy-block__photo,
+  .hierarchy-block__devices,
+  .weights-examples,
+  .weights-block,
+  .sticker-rules,
+  .font-block,
+  .tech-specs,
+  .intervals-block,
+  .hierarchy-row {
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+  }
+  .examples-row::-webkit-scrollbar,
+  .hierarchy-block__photo::-webkit-scrollbar,
+  .hierarchy-block__devices::-webkit-scrollbar,
+  .weights-examples::-webkit-scrollbar,
+  .weights-block::-webkit-scrollbar,
+  .sticker-rules::-webkit-scrollbar,
+  .font-block::-webkit-scrollbar,
+  .tech-specs::-webkit-scrollbar,
+  .intervals-block::-webkit-scrollbar,
+  .hierarchy-row::-webkit-scrollbar {
+    display: none !important;
+    height: 0 !important;
+    width: 0 !important;
+  }
+}
