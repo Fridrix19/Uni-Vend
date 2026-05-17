@@ -1,0 +1,808 @@
+<!doctype html>
+<html lang="ru">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Типы контента — УниВенд</title>
+  <link rel="stylesheet" href="hero.css">
+  <link rel="stylesheet" href="visual.css">
+  <link rel="stylesheet" href="types.css">
+</head>
+
+<body>
+  <button class="visual-section__burger" id="types-burger" type="button" aria-label="Открыть меню" aria-expanded="false" aria-controls="types-nav">
+    <span></span><span></span><span></span>
+  </button>
+  <div id="allrecords" class="site-page">
+    <main class="visual-section types-section" aria-label="Типы контента">
+      <nav class="visual-section__nav" id="types-nav" aria-label="Навигация типов контента">
+        <ul class="hero__ticks visual-section__dots snap">
+          <li>
+            <a class="hero__nav-dot" href="index.html#content-system">
+              <span class="hero__tooltip">Система контента</span>
+            </a>
+          </li>
+          <li>
+            <a class="hero__nav-dot is-active" href="types.html" aria-current="page">
+              <span class="hero__tooltip">Типы контента</span>
+            </a>
+          </li>
+          <li>
+            <a class="hero__nav-dot" href="index.html#text-content">
+              <span class="hero__tooltip">Текстовый контент</span>
+            </a>
+          </li>
+          <li>
+            <a class="hero__nav-dot" href="visual.html">
+              <span class="hero__tooltip">Графический контент</span>
+            </a>
+          </li>
+          <li>
+            <a class="hero__nav-dot" href="index.html#video-content">
+              <span class="hero__tooltip">Видео-контент</span>
+            </a>
+          </li>
+          <li>
+            <a class="hero__nav-dot" href="index.html#music-content">
+              <span class="hero__tooltip">Музыкальный контент</span>
+            </a>
+          </li>
+          <li>
+            <a class="hero__nav-dot" href="index.html#universal-rules">
+              <span class="hero__tooltip">Универсальные правила</span>
+            </a>
+          </li>
+          <li>
+            <a class="hero__nav-dot" href="index.html#templates-checklists">
+              <span class="hero__tooltip">Шаблоны и чек-листы</span>
+            </a>
+          </li>
+        </ul>
+
+        <ul class="visual-section__subnav snap" style="--y: 8;">
+          <li class="is-current" data-target="section-text-content">Текстовый <br> контент</li>
+          <li data-target="section-graphic-content">Графический <br> контент</li>
+          <li data-target="section-video-content">Видео-контент</li>
+          <li data-target="section-music-content">Музыкальный <br> контент</li>
+          <li data-target="section-formats-link">Связь <br> форматов</li>
+        </ul>
+      </nav>
+
+      <section class="visual-section__work" aria-label="Рабочая зона">
+        <h1 class="visual-section__title snap" style="--x: 0; --y: 3;">Типы контента</h1>
+
+        <p class="visual-section__lead snap" style="--x: 0; --y: 6;">Система контента строится вокруг четырёх самостоятельных типов: текстового, графического, видео‑ и музыкального контента. Каждый тип решает свою задачу, но в готовых материалах они почти всегда работают 
+          в связке — текст опирается на графику, видео — на звук и титры, а музыка усиливает восприятие образа бренда</p>
+
+        <label class="hero__search visual-section__search snap" style="--y: 3;">
+          <img class="hero__search-icon" src="heropage/img/sertch.svg" alt="" aria-hidden="true">
+          <input type="search" placeholder="Найдите раздел, канал, шаблон, шрифт">
+        </label>
+
+        <h2 id="section-text-content" class="visual-section__block-title types-block-title snap" style="--x: 0; --y: 13;">Текстовый контент</h2>
+
+        <div class="types-intro snap" style="--x: 0; --y: 16">
+          <div class="types-intro__item">
+            <span class="types-intro__bullet" aria-hidden="true"></span>
+            <p class="types-intro__text">Все словесные элементы коммуникации бренда: посты и описания, заголовки, подписи к&nbsp;фото, сценарии и&nbsp;раскадровки, субтитры, текст в&nbsp;плашках и&nbsp;интерфейсе сайта.</p>
+          </div>
+          <div class="types-intro__item">
+            <span class="types-intro__bullet" aria-hidden="true"></span>
+            <p class="types-intro__text">Текст формулирует смысл: объясняет, что делает сервис, как купить футболку, чем отличаются коллекции, и&nbsp;почему бренду можно доверять. Он&nbsp;переводит визуальные и&nbsp;звуковые образы в&nbsp;понятные пользователю инструкции, выгоды и&nbsp;эмоции.</p>
+          </div>
+        </div>
+
+        <div class="types-tabs snap" style="--x: 0; --y: 23;" role="tablist" aria-label="Каналы текстового контента">
+          <button class="hero__button hero__button--primary types-tab is-active" type="button" role="tab" aria-selected="true" data-target="tab-video">Видео</button>
+          <button class="hero__button types-tab" type="button" role="tab" aria-selected="false" data-target="tab-social">Соц. сети</button>
+        </div>
+
+        <div class="types-tab-content snap" style="--x: 0; --y: 27;" data-target="tab-social" role="tabpanel" hidden>
+          <div class="types-formula">
+            <img class="types-formula__text" src="type/img/text1.svg" alt="При использовании машинки: стирай при температуре не выше 30–40°C; выворачивай вещь наизнанку перед стиркой; используй мягкие средства без агрессивной химии; не используй отбеливатель, максимум кондиционер; избегай сильного отжима и сушки в машине">
+            <img class="types-formula__op" src="type/img/plus.svg" alt="плюс" aria-hidden="true">
+            <img class="types-formula__text" src="type/img/text2.svg" alt="При использовании утюга: гладь вещь только с изнаночной стороны; не ставь утюг напрямую на принт или его части; используй среднюю температуру (без перегрева); при необходимости можно проложить ткань сверху; не используй пар прямо на принте, особенно на мокром">
+            <img class="types-formula__op" src="type/img/equals.svg" alt="равно" aria-hidden="true">
+            <div class="types-formula__slot">
+              <button class="types-formula__btn" type="button" data-result-btn>Показать результат</button>
+            </div>
+          </div>
+        </div>
+        <div class="types-tab-content snap" style="--x: 0; --y: 27;" data-target="tab-video" role="tabpanel">
+          <div class="types-video">
+            <div class="types-video__player">
+              <video class="types-video__el" data-video="notext" src="type/video/text.mp4" autoplay muted loop playsinline preload="auto"></video>
+              <video class="types-video__el is-hidden" data-video="text" src="type/video/notext.mp4" autoplay muted loop playsinline preload="auto"></video>
+            </div>
+            <div class="types-video__side">
+              <div class="types-video__intro">
+                <span class="types-video__bullet" aria-hidden="true"></span>
+                <p class="types-video__text">Все словесные элементы коммуникации бренда: посты и&nbsp;описания, заголовки, подписи к&nbsp;фото, сценарии и&nbsp;раскадровки, субтитры, текст в&nbsp;плашках и&nbsp;интерфейсе сайта.</p>
+              </div>
+              <button class="types-formula__btn types-video__btn" type="button" data-video-btn data-state="notext">Добавить текст в видео</button>
+            </div>
+          </div>
+        </div>
+
+        <p class="types-detail-text snap" style="--x: 0; --y: 41;">Текст формулирует <span class="types-detail-text__accent">смысл:</span> объясняет, что делает сервис, как купить футболку, чем отличаются коллекции, и&nbsp;почему бренду можно доверять. Он&nbsp;переводит визуальные и&nbsp;звуковые образы в&nbsp;понятные пользователю инструкции, выгоды и&nbsp;эмоции.</p>
+
+        <button class="types-detail-btn snap" type="button" style="--x: 0; --y: 46;">Подробнее</button>
+
+        <h2 id="section-graphic-content" class="visual-section__block-title types-block-title snap" style="--x: 0; --y: 52;">Графический контент</h2>
+
+        <div class="types-intro snap" style="--x: 0; --y: 55;">
+          <div class="types-intro__item">
+            <span class="types-intro__bullet" aria-hidden="true"></span>
+            <p class="types-intro__text">Графика отвечает за&nbsp;узнаваемость и&nbsp;визуальный характер бренда: создаёт ощущение порядка и&nbsp;простоты, показывает продукт «вживую» и&nbsp;связывает все форматы между собой через единую систему шрифтов, цветов и&nbsp;композиции.</p>
+          </div>
+          <div class="types-intro__item">
+            <span class="types-intro__bullet" aria-hidden="true"></span>
+            <p class="types-intro__text">Графический контент включает в&nbsp;себя логотип, фирменную сетку, плашки, стикеры, а&nbsp;также фотоконтент с&nbsp;продуктом и&nbsp;людьми.</p>
+          </div>
+        </div>
+
+        <div class="types-cards snap" style="--x: 0; --y: 63;">
+          <div class="types-cards__col">
+            <h3 class="types-cards__title">Плашки</h3>
+            <div class="types-cards__plates">
+              <img class="plate plate--1" src="type/img/plask/plashka1.svg" alt="Плашка: распаковка новой партии футболок асмр">
+              <img class="plate plate--2" src="type/img/plask/plashka3.svg" alt="Плашка: стрём норм или">
+              <img class="plate plate--3" src="type/img/plask/plashka2.svg" alt="Плашка с цитатой Павла">
+            </div>
+          </div>
+
+          <div class="types-cards__col">
+            <h3 class="types-cards__title">Фотоконтент</h3>
+            <div class="types-cards__photo">
+              <img src="type/img/photocont/photo.png" alt="Фотоконтент: белая и чёрная футболки">
+            </div>
+          </div>
+
+          <div class="types-cards__col">
+            <h3 class="types-cards__title">Стикеры</h3>
+            <div class="types-cards__stickers">
+              <img src="type/img/stic/stic1.png" alt="">
+              <img src="type/img/stic/stic2.png" alt="">
+              <img src="type/img/stic/stic3.png" alt="">
+              <img src="type/img/stic/stic4.png" alt="">
+              <img src="type/img/stic/stic5.png" alt="" aria-hidden="true">
+            </div>
+          </div>
+        </div>
+
+        <p class="types-detail-text snap" style="--x: 0; --y: 76;">Графика отвечает за&nbsp;узнаваемость и&nbsp;визуальный характер бренда: создаёт ощущение порядка и&nbsp;простоты, показывает продукт <span class="types-detail-text__accent">«вживую»</span> и&nbsp;связывает все форматы между собой через единую систему шрифтов, цветов и&nbsp;композиции.</p>
+
+        <a class="types-detail-btn snap" href="visual.html" style="--x: 0; --y: 81;">Подробнее</a>
+
+        <h2 id="section-video-content" class="visual-section__block-title types-block-title snap" style="--x: 0; --y: 87;">Видео-контент</h2>
+
+        <div class="types-intro snap" style="--x: 0; --y: 90;">
+          <div class="types-intro__item">
+            <span class="types-intro__bullet" aria-hidden="true"></span>
+            <p class="types-intro__text">Видео-контент&nbsp;— это все форматы движущегося изображения: вертикальные ролики 9:16, горизонтальные видео 16:9 для&nbsp;RuTube, анимации без живой съёмки, мемные форматы.</p>
+          </div>
+          <div class="types-intro__item">
+            <span class="types-intro__bullet" aria-hidden="true"></span>
+            <p class="types-intro__text">Все словесные элементы коммуникации бренда: посты и&nbsp;описания, заголовки, подписи к&nbsp;фото, сценарии и&nbsp;раскадровки, субтитры, текст в&nbsp;плашках и&nbsp;интерфейсе сайта.</p>
+          </div>
+        </div>
+
+        <div class="types-channels snap" style="--x: 0; --y: 99;">
+          <div class="types-channel">
+            <h3 class="types-channels__title">Telegram</h3>
+            <div class="types-channel__media types-channel__media--phone">
+              <video src="type/video/videocont/tg.MP4" autoplay muted loop playsinline preload="auto"></video>
+            </div>
+          </div>
+
+          <div class="types-channel">
+            <h3 class="types-channels__title">Вконтакте</h3>
+            <div class="types-channel__media types-channel__media--phone">
+              <video src="type/video/videocont/vk.MP4" autoplay muted loop playsinline preload="auto"></video>
+            </div>
+          </div>
+
+          <div class="types-channel types-channel--wide">
+            <h3 class="types-channels__title">RuTube</h3>
+            <div class="types-channel__media types-channel__media--laptop">
+              <video src="type/video/videocont/vid.webm" autoplay muted loop playsinline preload="auto"></video>
+              <img class="types-channel__frame" src="type/video/videocont/pc.png" alt="" aria-hidden="true">
+            </div>
+          </div>
+
+          <p class="types-channels__caption types-channels__caption--vertical">VK, Telegram, RuTube Shorts&nbsp;— вертикальные ролики развлекательного, образовательного, ASMR и&nbsp;мемного форматов.</p>
+          <p class="types-channels__caption types-channels__caption--horizontal">RuTube&nbsp;— горизонтальные ролики с&nbsp;развёрнутым сюжетом и&nbsp;полным донесением информации.</p>
+        </div>
+
+        <p class="types-detail-text snap" style="--x: 0; --y: 125;">Видео выполняет роль основного канала внимания: через короткие ролики бренд <span class="types-detail-text__accent">знакомит аудиторию</span> с&nbsp;форматом сервиса, показывает процесс покупки и&nbsp;работу автомата, развлекает, обучает и&nbsp;вовлекает зрителя в&nbsp;коммуникацию</p>
+
+        <button class="types-detail-btn snap" type="button" style="--x: 0; --y: 130;">Подробнее</button>
+
+        <h2 id="section-music-content" class="visual-section__block-title types-block-title snap" style="--x: 0; --y: 136;">Музыкальный контент</h2>
+
+        <div class="types-intro snap" style="--x: 0; --y: 139;">
+          <div class="types-intro__item">
+            <span class="types-intro__bullet" aria-hidden="true"></span>
+            <p class="types-intro__text">Контент включает авторские музыкальные треки, звуковое оформление роликов, мемные звук-тренды.</p>
+          </div>
+          <div class="types-intro__item">
+            <span class="types-intro__bullet" aria-hidden="true"></span>
+            <p class="types-intro__text">Музыка и&nbsp;звук задают эмоциональный тон: поддерживают темп ролика, усиливают моменты «хука», создают узнаваемый звуковой образ бренда и&nbsp;позволяют использовать его как часть развлекательного контента.</p>
+          </div>
+        </div>
+
+        <div class="types-music snap" style="--x: 0; --y: 145;">
+          <div class="types-music__col">
+            <h3 class="types-music__title">Музыкальное сопровождение</h3>
+            <div class="audio-player" data-audio>
+              <button class="audio-player__btn" type="button" aria-label="Воспроизвести">
+                <svg class="audio-player__icon audio-player__icon--play" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4l14 8-14 8z" fill="currentColor"/></svg>
+                <svg class="audio-player__icon audio-player__icon--pause" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="4" width="4" height="16" fill="currentColor"/><rect x="14" y="4" width="4" height="16" fill="currentColor"/></svg>
+              </button>
+              <div class="audio-player__body">
+                <div class="audio-player__head">
+                  <span class="audio-player__title">FRIDRIX - KILLARAGE</span>
+                  <span class="audio-player__time">0:00</span>
+                </div>
+                <div class="audio-player__wave" aria-hidden="true"></div>
+              </div>
+              <audio src="type/music/KILLARAGE.mp3" preload="metadata"></audio>
+            </div>
+            <div class="audio-player" data-audio>
+              <button class="audio-player__btn" type="button" aria-label="Воспроизвести">
+                <svg class="audio-player__icon audio-player__icon--play" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4l14 8-14 8z" fill="currentColor"/></svg>
+                <svg class="audio-player__icon audio-player__icon--pause" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="4" width="4" height="16" fill="currentColor"/><rect x="14" y="4" width="4" height="16" fill="currentColor"/></svg>
+              </button>
+              <div class="audio-player__body">
+                <div class="audio-player__head">
+                  <span class="audio-player__title">FRIDRIX - PHONKOREBOOT</span>
+                  <span class="audio-player__time">0:00</span>
+                </div>
+                <div class="audio-player__wave" aria-hidden="true"></div>
+              </div>
+              <audio src="type/music/PHONKAREBOOT.mp3" preload="metadata"></audio>
+            </div>
+            <a class="types-music__artist-btn" href="https://music.yandex.com/artist/17061829" target="_blank" rel="noopener noreferrer">Перейти на карточку артиста</a>
+          </div>
+
+          <div class="types-music__col">
+            <h3 class="types-music__title">Мемные звуки</h3>
+            <div class="audio-player" data-audio>
+              <button class="audio-player__btn" type="button" aria-label="Воспроизвести">
+                <svg class="audio-player__icon audio-player__icon--play" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4l14 8-14 8z" fill="currentColor"/></svg>
+                <svg class="audio-player__icon audio-player__icon--pause" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="4" width="4" height="16" fill="currentColor"/><rect x="14" y="4" width="4" height="16" fill="currentColor"/></svg>
+              </button>
+              <div class="audio-player__body">
+                <div class="audio-player__head">
+                  <span class="audio-player__title">Наталья морская пехота</span>
+                  <span class="audio-player__time">0:00</span>
+                </div>
+                <div class="audio-player__wave" aria-hidden="true"></div>
+              </div>
+              <audio src="type/music/natalia_morskaya.mp3" preload="metadata"></audio>
+            </div>
+            <div class="audio-player" data-audio>
+              <button class="audio-player__btn" type="button" aria-label="Воспроизвести">
+                <svg class="audio-player__icon audio-player__icon--play" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4l14 8-14 8z" fill="currentColor"/></svg>
+                <svg class="audio-player__icon audio-player__icon--pause" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="4" width="4" height="16" fill="currentColor"/><rect x="14" y="4" width="4" height="16" fill="currentColor"/></svg>
+              </button>
+              <div class="audio-player__body">
+                <div class="audio-player__head">
+                  <span class="audio-player__title">Зубенко Михаил Петрович</span>
+                  <span class="audio-player__time">0:00</span>
+                </div>
+                <div class="audio-player__wave" aria-hidden="true"></div>
+              </div>
+              <audio src="type/music/zubenko_mihail.mp3" preload="metadata"></audio>
+            </div>
+          </div>
+        </div>
+
+        <p class="types-detail-text snap" style="--x: 0; --y: 160;">Музыка и&nbsp;звук задают эмоциональный тон: поддерживают темп ролика, усиливают моменты <span class="types-detail-text__accent">«хука»</span>, создают узнаваемый звуковой образ бренда и&nbsp;позволяют использовать его как часть развлекательного контента.</p>
+
+        <button class="types-detail-btn snap" type="button" style="--x: 0; --y: 165;">Подробнее</button>
+
+        <h2 id="section-formats-link" class="visual-section__block-title types-block-title snap" style="--x: 0; --y: 171;">Связь форматов</h2>
+
+        <div class="formats snap" style="--x: 0; --y: 176;">
+          <div class="formats__row" style="--row-delay: 0ms; --slides: 3;">
+            <div class="formats__track">
+              <span class="formats__corner formats__corner--top-start">Фото</span>
+              <span class="formats__corner formats__corner--top-end">Текст</span>
+              <span class="formats__endpoint formats__endpoint--start" aria-hidden="true"></span>
+              <span class="formats__endpoint formats__endpoint--end" aria-hidden="true"></span>
+              <div class="formats__line"></div>
+
+              <div class="formats__station" style="--pos: 22%; --pos-m: 16.67%; --delay: 330ms;">
+                <img class="formats__station-img formats__station-img--phone" src="type/formaty/posty.png" alt="Посты">
+                <span class="formats__station-dot" aria-hidden="true"></span>
+                <span class="formats__station-caption">Посты</span>
+              </div>
+              <div class="formats__station" style="--pos: 49%; --pos-m: 50%; --delay: 750ms;">
+                <img class="formats__station-img formats__station-img--laptop" src="type/formaty/site.png" alt="Сайт">
+                <span class="formats__station-dot" aria-hidden="true"></span>
+                <span class="formats__station-caption">Сайт</span>
+              </div>
+              <div class="formats__station" style="--pos: 78%; --pos-m: 83.33%; --delay: 1170ms;">
+                <img class="formats__station-img formats__station-img--phone" src="type/formaty/storis_photo.png" alt="Сторис">
+                <span class="formats__station-dot" aria-hidden="true"></span>
+                <span class="formats__station-caption">Сторис</span>
+              </div>
+
+              <span class="formats__corner formats__corner--bottom-start">Графика</span>
+            </div>
+          </div>
+
+          <div class="formats__row" style="--row-delay: 1700ms; --slides: 2;">
+            <div class="formats__track">
+              <span class="formats__corner formats__corner--top-start">Видео</span>
+              <span class="formats__corner formats__corner--top-end">Текст</span>
+              <span class="formats__endpoint formats__endpoint--start" aria-hidden="true"></span>
+              <span class="formats__endpoint formats__endpoint--end" aria-hidden="true"></span>
+              <div class="formats__line"></div>
+
+              <div class="formats__station" style="--pos: 30.2%; --pos-m: 25%; --delay: 450ms;">
+                <img class="formats__station-img formats__station-img--phone" src="type/formaty/storis_video.png" alt="Сторис">
+                <span class="formats__station-dot" aria-hidden="true"></span>
+                <span class="formats__station-caption">Сторис</span>
+              </div>
+              <div class="formats__station" style="--pos: 61.5%; --pos-m: 75%; --delay: 930ms;">
+                <img class="formats__station-img formats__station-img--laptop" src="type/formaty/rutube.png" alt="Рутуб">
+                <span class="formats__station-dot" aria-hidden="true"></span>
+                <span class="formats__station-caption">Рутуб</span>
+              </div>
+
+              <span class="formats__corner formats__corner--bottom-start">Графика</span>
+              <span class="formats__corner formats__corner--bottom-end">Музыка</span>
+            </div>
+          </div>
+        </div>
+
+        <p class="types-summary snap" style="--x: 0; --y: 209;">Видео, текст, графика и музыка дополняют друг друга: ролики опираются на фирменную графику и звук, посты используют те же формулировки и визуальные элементы, сайт закрепляет общую структуру и правила взаимодействия</p>
+
+        <p class="types-detail-text snap" style="--x: 0; --y: 217;">Благодаря этим принципам контент-система <span class="types-detail-text__accent">УниВенд</span> остаётся цельной: пользователь узнаёт бренд по визуалу, звуку и характеру текста, даже если сталкивается с&nbsp;ним впервые — через мем, ролик или инструкцию к&nbsp;покупке</p>
+
+      </section>
+    </main>
+  </div>
+
+  <div class="page-transition" id="page-transition" aria-hidden="true">
+    <div class="page-transition__panel"></div>
+    <div class="page-transition__panel"></div>
+    <div class="page-transition__panel"></div>
+    <div class="page-transition__panel"></div>
+    <div class="page-transition__panel"></div>
+    <div class="page-transition__panel"></div>
+    <div class="page-transition__panel"></div>
+    <div class="page-transition__panel"></div>
+    <span class="page-transition__label">УниВенд</span>
+  </div>
+
+  <script>
+    (function () {
+      const overlay = document.getElementById('page-transition');
+      if (!overlay) return;
+
+      function navigateWith(href) {
+        try { sessionStorage.setItem('univend:page-transition', '1'); } catch (e) {}
+        overlay.classList.add('is-covering');
+        setTimeout(function () { window.location.href = href; }, 750);
+      }
+
+      document.querySelectorAll('a[href]').forEach(function (a) {
+        const href = a.getAttribute('href');
+        if (!href || href.startsWith('#') || href.startsWith('mailto:') || href.startsWith('tel:')) return;
+        if (a.target && a.target !== '' && a.target !== '_self') return;
+        try {
+          const url = new URL(href, window.location.href);
+          if (url.origin !== window.location.origin) return;
+          if (url.pathname === window.location.pathname) return;
+        } catch (e) { return; }
+
+        a.addEventListener('click', function (e) {
+          if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+          e.preventDefault();
+          navigateWith(href);
+        });
+      });
+
+      let revealed = false;
+      try {
+        if (sessionStorage.getItem('univend:page-transition')) {
+          sessionStorage.removeItem('univend:page-transition');
+          overlay.classList.add('no-anim', 'is-covering');
+          requestAnimationFrame(function () {
+            overlay.offsetHeight;
+            overlay.classList.remove('no-anim');
+            requestAnimationFrame(function () {
+              overlay.classList.remove('is-covering');
+              overlay.classList.add('is-revealing');
+              revealed = true;
+              setTimeout(function () {
+                overlay.classList.remove('is-revealing');
+              }, 1100);
+            });
+          });
+        }
+      } catch (e) {}
+
+      window.addEventListener('pageshow', function (e) {
+        if (e.persisted && !revealed) {
+          overlay.classList.remove('is-covering', 'is-revealing');
+        }
+      });
+    })();
+  </script>
+
+  <script>
+    (function () {
+      let grid = document.getElementById('grid-32-underlay');
+
+      if (!grid) {
+        grid = document.createElement('div');
+        grid.id = 'grid-32-underlay';
+        document.body.insertBefore(grid, document.body.firstChild);
+      }
+
+      function updateGridHeight() {
+        const allRecords = document.getElementById('allrecords');
+        const contentBottom = allRecords
+          ? allRecords.getBoundingClientRect().bottom + window.pageYOffset
+          : document.documentElement.clientHeight;
+
+        const fullHeight = Math.max(contentBottom, window.innerHeight);
+        const nextHeight = Math.ceil(fullHeight) + 'px';
+
+        if (grid.style.height !== nextHeight) {
+          grid.style.height = nextHeight;
+        }
+      }
+
+      function updateGrid() {
+        document.body.style.setProperty('padding-top', '0', 'important');
+        document.body.style.setProperty('overflow-x', 'hidden', 'important');
+        grid.style.setProperty('display', 'block', 'important');
+        updateGridHeight();
+      }
+
+      window.addEventListener('load', updateGrid);
+      window.addEventListener('resize', updateGrid);
+
+      setTimeout(updateGrid, 200);
+      setTimeout(updateGrid, 800);
+      setTimeout(updateGrid, 1500);
+      setTimeout(updateGrid, 3000);
+
+      const observer = new MutationObserver(function (mutations) {
+        const shouldUpdate = mutations.some(function (mutation) {
+          return mutation.target !== grid;
+        });
+        if (shouldUpdate) {
+          updateGrid();
+        }
+      });
+
+      observer.observe(document.body, {
+        attributes: true,
+        attributeFilter: ['class', 'style'],
+        childList: true,
+        subtree: true
+      });
+    })();
+
+    (function () {
+      const burger = document.getElementById('types-burger');
+      const nav = document.getElementById('types-nav');
+      if (!burger || !nav) return;
+      function setOpen(open) {
+        document.body.classList.toggle('is-nav-open', open);
+        burger.setAttribute('aria-expanded', open ? 'true' : 'false');
+      }
+      burger.addEventListener('click', function () {
+        setOpen(!document.body.classList.contains('is-nav-open'));
+      });
+      nav.addEventListener('click', function (e) {
+        if (e.target.closest('li[data-target], a[href]')) setOpen(false);
+      });
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') setOpen(false);
+      });
+    })();
+
+    (function () {
+      const items = Array.from(document.querySelectorAll('.visual-section__subnav li[data-target]'));
+      if (!items.length) return;
+      const targets = items.map(function (li) {
+        return { li: li, el: document.getElementById(li.dataset.target) };
+      }).filter(function (t) { return t.el; });
+
+      function setActive(id) {
+        items.forEach(function (li) {
+          li.classList.toggle('is-current', li.dataset.target === id);
+        });
+      }
+
+      items.forEach(function (li) {
+        li.addEventListener('click', function () {
+          const t = document.getElementById(li.dataset.target);
+          if (!t) return;
+          const top = t.getBoundingClientRect().top + window.pageYOffset - 40;
+          window.scrollTo({ top: top, behavior: 'smooth' });
+          setActive(li.dataset.target);
+        });
+      });
+
+      let ticking = false;
+      function onScroll() {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(function () {
+          ticking = false;
+          const probe = window.innerHeight * 0.35;
+          let active = targets[0];
+          for (const t of targets) {
+            const top = t.el.getBoundingClientRect().top;
+            if (top - probe <= 0) active = t;
+          }
+          setActive(active.li.dataset.target);
+        });
+      }
+      window.addEventListener('scroll', onScroll, { passive: true });
+      onScroll();
+    })();
+
+    (function () {
+      const targets = document.querySelectorAll('.visual-section__work .snap');
+      if (!targets.length || !('IntersectionObserver' in window)) return;
+      targets.forEach(function (el) { el.classList.add('reveal'); });
+
+      const obs = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) {
+            e.target.classList.add('is-visible');
+            e.target.classList.remove('is-passed');
+          } else {
+            e.target.classList.remove('is-visible');
+            if (e.boundingClientRect.top < 0) {
+              e.target.classList.add('is-passed');
+            } else {
+              e.target.classList.remove('is-passed');
+            }
+          }
+        });
+      }, { threshold: 0, rootMargin: '-8% 0px -12% 0px' });
+
+      targets.forEach(function (el) { obs.observe(el); });
+    })();
+
+    (function () {
+      var tabs = document.querySelectorAll('.types-tab');
+      var panels = document.querySelectorAll('.types-tab-content');
+      if (!tabs.length || !panels.length) return;
+
+      tabs.forEach(function (tab) {
+        tab.addEventListener('click', function () {
+          var target = tab.getAttribute('data-target');
+          tabs.forEach(function (t) {
+            var isActive = t === tab;
+            t.classList.toggle('is-active', isActive);
+            t.classList.toggle('hero__button--primary', isActive);
+            t.setAttribute('aria-selected', isActive ? 'true' : 'false');
+          });
+          panels.forEach(function (p) {
+            var match = p.getAttribute('data-target') === target;
+            if (match) p.removeAttribute('hidden');
+            else p.setAttribute('hidden', '');
+          });
+        });
+      });
+    })();
+
+    (function () {
+      function createButton() {
+        var btn = document.createElement('button');
+        btn.className = 'types-formula__btn';
+        btn.type = 'button';
+        btn.setAttribute('data-result-btn', '');
+        btn.textContent = 'Показать результат';
+        return btn;
+      }
+
+      function createResult() {
+        var wrap = document.createElement('div');
+        wrap.className = 'types-formula__result-wrap';
+
+        var img = document.createElement('img');
+        img.className = 'types-formula__result';
+        img.src = 'type/img/result.png';
+        img.alt = 'Результат: правильный уход за вещью';
+        wrap.appendChild(img);
+
+        var timer = document.createElement('div');
+        timer.className = 'types-formula__timer';
+        timer.setAttribute('aria-hidden', 'true');
+        timer.innerHTML =
+          '<svg class="types-formula__timer-svg" viewBox="0 0 36 36">' +
+            '<circle class="types-formula__timer-track" cx="18" cy="18" r="16"></circle>' +
+            '<circle class="types-formula__timer-progress" cx="18" cy="18" r="16"></circle>' +
+          '</svg>' +
+          '<span class="types-formula__timer-num">10</span>';
+        wrap.appendChild(timer);
+
+        return wrap;
+      }
+
+      document.addEventListener('click', function (event) {
+        var btn = event.target.closest('[data-result-btn]');
+        if (!btn) return;
+        var slot = btn.parentElement;
+        if (!slot) return;
+
+        var wrap = createResult();
+        slot.replaceChildren(wrap);
+
+        var num = wrap.querySelector('.types-formula__timer-num');
+        var seconds = 10;
+        var interval = setInterval(function () {
+          seconds -= 1;
+          if (seconds <= 0) {
+            clearInterval(interval);
+            slot.replaceChildren(createButton());
+          } else if (num) {
+            num.textContent = seconds;
+          }
+        }, 1000);
+      });
+    })();
+
+    (function () {
+      var btn = document.querySelector('[data-video-btn]');
+      if (!btn) return;
+      var videos = document.querySelectorAll('.types-video__el');
+      if (!videos.length) return;
+
+      videos.forEach(function (v) {
+        v.muted = true;
+        var p = v.play();
+        if (p && typeof p.catch === 'function') p.catch(function () {});
+      });
+
+      btn.addEventListener('click', function () {
+        var state = btn.getAttribute('data-state') === 'text' ? 'notext' : 'text';
+        btn.setAttribute('data-state', state);
+        btn.textContent = state === 'text' ? 'Убрать текст' : 'Добавить текст в видео';
+        videos.forEach(function (v) {
+          var match = v.getAttribute('data-video') === state;
+          v.classList.toggle('is-hidden', !match);
+        });
+      });
+    })();
+
+    (function () {
+      var BAR_COUNT = 40;
+      var BASE_HEIGHT = 30;
+      var TICK_MS = 110;
+
+      function formatTime(seconds) {
+        if (!isFinite(seconds) || seconds < 0) return '0:00';
+        var m = Math.floor(seconds / 60);
+        var s = Math.floor(seconds % 60);
+        return m + ':' + (s < 10 ? '0' + s : s);
+      }
+
+      function buildBars(container) {
+        for (var i = 0; i < BAR_COUNT; i++) {
+          var bar = document.createElement('span');
+          bar.className = 'audio-player__wave-bar';
+          bar.style.height = BASE_HEIGHT + '%';
+          container.appendChild(bar);
+        }
+      }
+
+      function flatBars(bars) {
+        for (var i = 0; i < bars.length; i++) {
+          bars[i].style.height = BASE_HEIGHT + '%';
+        }
+      }
+
+      function tickBars(bars) {
+        for (var i = 0; i < bars.length; i++) {
+          var phase = (Date.now() / 200) + i * 0.45;
+          var pulse = (Math.sin(phase) + 1) / 2;
+          var noise = Math.random();
+          var h = 25 + pulse * 45 + noise * 30;
+          bars[i].style.height = Math.min(100, h) + '%';
+        }
+      }
+
+      var players = document.querySelectorAll('.audio-player');
+      var allAudios = [];
+
+      players.forEach(function (player) {
+        var btn = player.querySelector('.audio-player__btn');
+        var audio = player.querySelector('audio');
+        var time = player.querySelector('.audio-player__time');
+        var wave = player.querySelector('.audio-player__wave');
+        if (!btn || !audio || !time || !wave) return;
+
+        allAudios.push(audio);
+        buildBars(wave);
+        var bars = wave.querySelectorAll('.audio-player__wave-bar');
+        var visualizerId = null;
+
+        function startVisualizer() {
+          if (visualizerId) return;
+          visualizerId = setInterval(function () { tickBars(bars); }, TICK_MS);
+        }
+
+        function stopVisualizer() {
+          if (visualizerId) {
+            clearInterval(visualizerId);
+            visualizerId = null;
+          }
+          flatBars(bars);
+        }
+
+        function updateProgress() {
+          var dur = audio.duration;
+          var cur = audio.currentTime;
+          if (!isFinite(dur) || dur <= 0) {
+            time.textContent = formatTime(cur);
+            return;
+          }
+          var ratio = cur / dur;
+          var played = Math.floor(ratio * bars.length);
+          for (var i = 0; i < bars.length; i++) {
+            bars[i].classList.toggle('is-played', i < played);
+          }
+          time.textContent = formatTime(audio.paused ? dur : cur);
+        }
+
+        audio.addEventListener('loadedmetadata', function () {
+          time.textContent = formatTime(audio.duration);
+        });
+        audio.addEventListener('timeupdate', updateProgress);
+        audio.addEventListener('play', startVisualizer);
+        audio.addEventListener('pause', stopVisualizer);
+        audio.addEventListener('ended', function () {
+          player.classList.remove('is-playing');
+          btn.setAttribute('aria-label', 'Воспроизвести');
+          for (var i = 0; i < bars.length; i++) bars[i].classList.remove('is-played');
+          stopVisualizer();
+          time.textContent = formatTime(audio.duration);
+        });
+
+        btn.addEventListener('click', function () {
+          if (audio.paused) {
+            allAudios.forEach(function (a) {
+              if (a !== audio && !a.paused) {
+                a.pause();
+                var p = a.closest('.audio-player');
+                if (p) p.classList.remove('is-playing');
+              }
+            });
+            audio.play();
+            player.classList.add('is-playing');
+            btn.setAttribute('aria-label', 'Пауза');
+          } else {
+            audio.pause();
+            player.classList.remove('is-playing');
+            btn.setAttribute('aria-label', 'Воспроизвести');
+          }
+        });
+
+        wave.addEventListener('click', function (event) {
+          var rect = wave.getBoundingClientRect();
+          var ratio = (event.clientX - rect.left) / rect.width;
+          if (audio.duration && isFinite(audio.duration)) {
+            audio.currentTime = Math.max(0, Math.min(audio.duration, ratio * audio.duration));
+            updateProgress();
+          }
+        });
+      });
+    })();
+  </script>
+</body>
+
+</html>

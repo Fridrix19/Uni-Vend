@@ -102,6 +102,29 @@ input {
   min-height: 100vh;
 }
 
+/* Якори для hash-ссылок на главной (#content-types и т.д.); блоки добавятся позже */
+.snap-nav-anchors {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.snap-nav-anchors span[id] {
+  position: absolute;
+  left: 0;
+  width: 0;
+  height: 1px;
+  scroll-margin-top: calc(var(--site-grid-size) * 2);
+}
+
+.snap-nav-anchors span[id]:nth-child(1) { top: 14vh; }
+.snap-nav-anchors span[id]:nth-child(2) { top: 26vh; }
+.snap-nav-anchors span[id]:nth-child(3) { top: 38vh; }
+.snap-nav-anchors span[id]:nth-child(4) { top: 50vh; }
+.snap-nav-anchors span[id]:nth-child(5) { top: 62vh; }
+.snap-nav-anchors span[id]:nth-child(6) { top: 74vh; }
+
 .snap {
   position: absolute;
   left: calc(var(--site-grid-size) * var(--x, 0));
@@ -306,8 +329,14 @@ input {
 .hero__ticks {
   list-style: none;
   display: grid;
-  grid-template-rows: repeat(6, var(--site-grid-size));
+  grid-template-rows: repeat(8, var(--site-grid-size));
   gap: var(--site-grid-size);
+}
+
+.hero__nav .hero__ticks.snap,
+.visual-section__nav > ul.hero__ticks.snap {
+  top: 51.5%;
+  transform: translateY(-50%);
 }
 
 .hero__ticks li {
