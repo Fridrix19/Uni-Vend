@@ -272,6 +272,248 @@
 })();
 
 (function () {
+  const tabs = Array.from(document.querySelectorAll('[data-video-settings-tab]'));
+  const panels = Array.from(document.querySelectorAll('[data-video-settings-panel]'));
+  if (!tabs.length || !panels.length) return;
+
+  function setActive(name) {
+    tabs.forEach(function (tab) {
+      const active = tab.dataset.videoSettingsTab === name;
+      tab.classList.toggle('is-active', active);
+      tab.setAttribute('aria-selected', active ? 'true' : 'false');
+    });
+
+    panels.forEach(function (panel) {
+      const active = panel.dataset.videoSettingsPanel === name;
+      panel.classList.toggle('is-active', active);
+      panel.hidden = !active;
+    });
+  }
+
+  tabs.forEach(function (tab) {
+    tab.addEventListener('click', function () {
+      setActive(tab.dataset.videoSettingsTab);
+    });
+  });
+
+  const initial = tabs.find(function (tab) { return tab.classList.contains('is-active'); }) || tabs[0];
+  setActive(initial.dataset.videoSettingsTab);
+})();
+
+(function () {
+  const root = document.querySelector('.video-checklist');
+  if (!root) return;
+
+  const video = root.querySelector('[data-video-checklist-video]');
+  const message = root.querySelector('[data-video-checklist-message]');
+  const submit = root.querySelector('[data-video-checklist-submit]');
+  const mute = root.querySelector('[data-video-checklist-mute]');
+  const timer = root.querySelector('[data-video-checklist-timer]');
+  const timerNum = root.querySelector('[data-video-checklist-timer-num]');
+  const timerProgress = timer && timer.querySelector('.video-checklist__timer-progress');
+  const items = Array.from(root.querySelectorAll('[data-video-checklist-item]'));
+  const checks = Array.from(root.querySelectorAll('[data-video-checklist-check]'));
+  if (!video || !message || !submit || !mute || !timer || !timerNum || !timerProgress || !items.length || !checks.length) return;
+
+  const steps = ['format', 'plaque', 'logo', 'subtitles', 'sound'];
+  const labels = {
+    format: 'Формат и соотношение сторон',
+    plaque: 'Плашка',
+    logo: 'Логотип',
+    subtitles: 'Субтитры',
+    sound: 'Звуковое сопровождение'
+  };
+  const videoByStep = {
+    plaque: 'video-content/swap/nologo-notitle.mp4',
+    logo: 'video-content/swap/notitle.mp4',
+    subtitles: 'video-content/swap/done.mp4',
+    sound: 'video-content/swap/done_sound.mp4'
+  };
+  var currentIndex = 0;
+  var messageTimer = null;
+  var scanTimer = null;
+  var lastKnownTime = 0;
+  var isSoundClip = false;
+  var resetTimer = null;
+  var resetInterval = null;
+
+  function stopResetTimer() {
+    window.clearTimeout(resetTimer);
+    window.clearInterval(resetInterval);
+    timer.hidden = true;
+    timerNum.textContent = '10';
+    timerProgress.style.strokeDashoffset = '0';
+  }
+
+  function updateMuteButton() {
+    mute.hidden = !isSoundClip;
+    mute.classList.toggle('is-muted', video.muted);
+    mute.textContent = video.muted ? 'Вкл' : 'Звук';
+    mute.setAttribute('aria-label', video.muted ? 'Включить звук' : 'Выключить звук');
+  }
+
+  function showMessage(text, duration) {
+    window.clearTimeout(messageTimer);
+    message.textContent = text;
+    message.classList.add('is-visible');
+    if (duration) {
+      messageTimer = window.setTimeout(function () {
+        message.classList.remove('is-visible');
+      }, duration);
+    }
+  }
+
+  function readChecklistTime() {
+    if (isFinite(video.currentTime)) {
+      lastKnownTime = video.currentTime;
+    }
+    return lastKnownTime;
+  }
+
+  function setVideo(src, withSound) {
+    var syncTime = readChecklistTime();
+    root.classList.add('is-switching-video');
+    video.src = src;
+    isSoundClip = withSound;
+    video.muted = !withSound;
+    video.loop = true;
+    video.playsInline = true;
+    video.load();
+
+    function applyTimeAndPlay() {
+      if (isFinite(syncTime)) {
+        try {
+          var duration = isFinite(video.duration) && video.duration > 0 ? video.duration : 0;
+          video.currentTime = duration ? Math.min(syncTime, Math.max(duration - 0.1, 0)) : syncTime;
+        } catch (e) {}
+      }
+      var playPromise = video.play();
+      if (playPromise && typeof playPromise.catch === 'function') {
+        playPromise.catch(function () {});
+      }
+      updateMuteButton();
+      window.setTimeout(function () {
+        root.classList.remove('is-switching-video');
+      }, 260);
+    }
+
+    if (video.readyState >= 1) {
+      applyTimeAndPlay();
+    } else {
+      video.addEventListener('loadedmetadata', applyTimeAndPlay, { once: true });
+    }
+  }
+
+  function syncChecklist(changedName) {
+    items.forEach(function (item) {
+      const name = item.dataset.videoChecklistItem;
+      const index = steps.indexOf(name);
+      const enabled = index <= currentIndex;
+      const checked = index < currentIndex;
+      const check = item.querySelector('[data-video-checklist-check]');
+
+      item.classList.toggle('is-enabled', enabled);
+      item.classList.toggle('is-checked', checked);
+      item.classList.toggle('is-just-checked', name === changedName && checked);
+      item.classList.toggle('is-just-enabled', name === steps[currentIndex] && enabled && name !== changedName);
+      if (check) check.disabled = !enabled;
+      if (name === changedName || name === steps[currentIndex]) {
+        window.setTimeout(function () {
+          item.classList.remove('is-just-checked', 'is-just-enabled');
+        }, 520);
+      }
+    });
+  }
+
+  function resetChecklist() {
+    window.clearTimeout(scanTimer);
+    root.classList.remove('is-scanning', 'is-switching-video');
+    stopResetTimer();
+    currentIndex = 0;
+    lastKnownTime = 0;
+    isSoundClip = false;
+    message.classList.remove('is-visible');
+    setVideo('video-content/swap/nologo-notitle-notablet.mp4', false);
+    syncChecklist();
+  }
+
+  function startResetTimer() {
+    var seconds = 10;
+    stopResetTimer();
+    timer.hidden = false;
+    timerNum.textContent = String(seconds);
+    timerProgress.style.strokeDashoffset = '0';
+    resetInterval = window.setInterval(function () {
+      seconds -= 1;
+      timerNum.textContent = String(Math.max(seconds, 0));
+      timerProgress.style.strokeDashoffset = String((10 - seconds) * 10);
+      if (seconds <= 0) {
+        stopResetTimer();
+        resetChecklist();
+      }
+    }, 1000);
+  }
+
+  function advance(name) {
+    const index = steps.indexOf(name);
+    if (index === -1 || index !== currentIndex) return;
+
+    stopResetTimer();
+    currentIndex = Math.min(currentIndex + 1, steps.length);
+    if (videoByStep[name]) {
+      setVideo(videoByStep[name], name === 'sound');
+    }
+    message.classList.remove('is-visible');
+    syncChecklist(name);
+  }
+
+  mute.addEventListener('click', function () {
+    if (!isSoundClip) return;
+    video.muted = !video.muted;
+    updateMuteButton();
+    var playPromise = video.play();
+    if (playPromise && typeof playPromise.catch === 'function') {
+      playPromise.catch(function () {});
+    }
+  });
+
+  checks.forEach(function (check) {
+    check.addEventListener('click', function () {
+      advance(check.dataset.videoChecklistCheck);
+    });
+  });
+
+  submit.addEventListener('click', function () {
+    window.clearTimeout(scanTimer);
+    root.classList.remove('is-scanning');
+
+    if (currentIndex < steps.length) {
+      showMessage('Вы не добавили «' + labels[steps[currentIndex]] + '»', 2200);
+      return;
+    }
+
+    message.classList.remove('is-visible');
+    window.requestAnimationFrame(function () {
+      root.classList.add('is-scanning');
+    });
+    scanTimer = window.setTimeout(function () {
+      root.classList.remove('is-scanning');
+      showMessage('Видео соответствует требованиям', 0);
+      startResetTimer();
+    }, 1900);
+  });
+
+  video.addEventListener('timeupdate', readChecklistTime);
+  video.addEventListener('loadedmetadata', function () {
+    if (isFinite(video.currentTime)) lastKnownTime = video.currentTime;
+  });
+
+  updateMuteButton();
+  stopResetTimer();
+  syncChecklist();
+})();
+
+(function () {
   const root =
     document.querySelector('section.video-structure[data-structure-tab]') ||
     document.querySelector('section.video-structure');
@@ -284,9 +526,6 @@
   var progressRoot = document.getElementById('video-structure-progress');
   var progressLabel = progressRoot && progressRoot.querySelector('.video-structure__progress-label');
   var progressBar = progressRoot && progressRoot.querySelector('.video-structure__progress-bar');
-
-  var hintEl = document.getElementById('video-structure-preview-hint');
-  var hintTextEl = hintEl && hintEl.querySelector('.video-structure__preview-hint-text');
 
   function updateStructureProgress() {
     if (!progressRoot || !progressLabel || !progressBar) return;
@@ -323,23 +562,6 @@
       tab.classList.toggle('is-locked', locked);
       tab.setAttribute('aria-disabled', locked ? 'true' : 'false');
     });
-  }
-
-  function updatePreviewHint() {
-    if (!hintEl || !hintTextEl) return;
-    var name = root.getAttribute('data-structure-tab') || 'plaque';
-    var msg = '';
-    if (name === 'plaque' && flowStep < 1) msg = 'Вы не добавили плашку';
-    else if (name === 'logo' && flowStep < 2) msg = 'Вы не добавили логотип';
-    else if (name === 'subtitles' && flowStep < 3) msg = 'Вы не добавили субтитры';
-
-    if (msg) {
-      hintTextEl.textContent = msg;
-      hintEl.hidden = false;
-    } else {
-      hintEl.hidden = true;
-      hintTextEl.textContent = '';
-    }
   }
 
   previewVideos.forEach(function (v) {
@@ -389,7 +611,6 @@
     });
     updateStructureProgress();
     syncStructureTabs();
-    updatePreviewHint();
   }
 
   const nextAfterAction = { plaque: 'logo', logo: 'subtitles' };
@@ -518,4 +739,68 @@
       return tab.classList.contains('is-active');
     }) || tabs[0];
   setActive(initial.dataset.videoStructureTab);
+})();
+
+(function () {
+  const root = document.querySelector('.video-faq');
+  if (!root) return;
+
+  const items = Array.from(root.querySelectorAll('.video-faq__item'));
+  const questions = Array.from(root.querySelectorAll('.video-faq__question'));
+
+  function closeAll(except) {
+    items.forEach(function (item) {
+      if (item === except) return;
+      const question = item.querySelector('.video-faq__question');
+      const answer = item.querySelector('.video-faq__answer');
+      if (question) question.setAttribute('aria-expanded', 'false');
+      if (answer) answer.hidden = true;
+      item.classList.remove('is-open');
+    });
+  }
+
+  questions.forEach(function (question) {
+    question.addEventListener('click', function () {
+      const item = question.closest('.video-faq__item');
+      const answer = item ? item.querySelector('.video-faq__answer') : null;
+      if (!item || !answer) return;
+      const willOpen = answer.hidden;
+      closeAll(item);
+      question.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+      answer.hidden = !willOpen;
+      item.classList.toggle('is-open', willOpen);
+    });
+  });
+})();
+
+(function () {
+  const root = document.querySelector('.video-realized');
+  if (!root) return;
+
+  const pages = Array.from(root.querySelectorAll('[data-video-realized-page]'));
+  if (!pages.length) return;
+
+  const slider = root.querySelector('.video-realized__grid');
+  const items = Array.from(root.querySelectorAll('.video-realized__item'));
+
+  function setPage(page) {
+    var index = Number(page);
+    var item = items[index];
+    pages.forEach(function (button) {
+      const isActive = button.dataset.videoRealizedPage === String(page);
+      button.classList.toggle('is-active', isActive);
+      button.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+    });
+    if (slider && item) {
+      slider.scrollTo({ left: item.offsetLeft - slider.offsetLeft, behavior: 'smooth' });
+    }
+  }
+
+  pages.forEach(function (button) {
+    button.addEventListener('click', function () {
+      setPage(button.dataset.videoRealizedPage);
+    });
+  });
+
+  setPage(0);
 })();
