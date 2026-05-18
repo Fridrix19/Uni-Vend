@@ -1061,7 +1061,14 @@
         document.body.insertBefore(grid, document.body.firstChild);
       }
 
+      const mobileGridQuery = window.matchMedia('(max-width: 833px)');
+
       function updateGridHeight() {
+        if (mobileGridQuery.matches) {
+          grid.style.setProperty('height', '0px', 'important');
+          return;
+        }
+
         const allRecords = document.getElementById('allrecords');
         const contentBottom = allRecords
           ? allRecords.getBoundingClientRect().bottom + window.pageYOffset
@@ -1078,9 +1085,19 @@
       function updateGrid() {
         document.body.style.setProperty('padding-top', '0', 'important');
         document.body.style.setProperty('overflow-x', 'hidden', 'important');
+
+        if (mobileGridQuery.matches) {
+          grid.style.setProperty('display', 'none', 'important');
+          grid.style.setProperty('height', '0px', 'important');
+          return;
+        }
+
         grid.style.setProperty('display', 'block', 'important');
         updateGridHeight();
       }
+
+      if (mobileGridQuery.addEventListener) mobileGridQuery.addEventListener('change', updateGrid);
+      else mobileGridQuery.addListener(updateGrid);
 
       window.addEventListener('load', updateGrid);
       window.addEventListener('resize', updateGrid);
@@ -1331,9 +1348,10 @@
         const cols = Math.ceil(Math.sqrt(stickers.length * (stageW / stageH)));
         const rows = Math.ceil(stickers.length / cols);
         items.length = 0;
-        const isMobile = window.innerWidth <= 833;
-        const scale = isMobile ? 0.5 : 1;
+        const scale = 1;
         stickers.forEach((el, i) => {
+          el.hidden = false;
+          el.style.display = '';
           el.style.transform = 'translate3d(0,0,0) rotate(0deg)';
           const w = (el.naturalWidth || el.offsetWidth || 160) * scale;
           const h = (el.naturalHeight || el.offsetHeight || 160) * scale;
@@ -1555,6 +1573,74 @@
       go(0);
 
       (function () {
+        const mobileQuery = window.matchMedia('(max-width: 833px)');
+        let enhanced = false;
+
+        function buildPaletteSlider() {
+          const title = document.getElementById('section-colors');
+          if (!title || document.querySelector('.visual-mobile-palette-slider')) return;
+
+          const nodes = [];
+          let node = title.nextElementSibling;
+          while (node && node.id !== 'section-typography') {
+            const isExamplesLabel = node.classList && node.classList.contains('palette-label') && node.textContent.trim() === 'Примеры применения';
+            if (isExamplesLabel) break;
+            if (node.matches && (node.matches('.palette-label') || node.matches('.swatch'))) nodes.push(node);
+            node = node.nextElementSibling;
+          }
+
+          const labels = nodes.filter(function (el) { return el.classList.contains('palette-label'); });
+          const swatches = nodes.filter(function (el) { return el.classList.contains('swatch'); });
+          if (!swatches.length) return;
+
+          const slider = document.createElement('div');
+          slider.className = 'visual-mobile-palette-slider';
+          slider.setAttribute('aria-label', 'Палитра цветов');
+          title.insertAdjacentElement('afterend', slider);
+
+          let labelIndex = 0;
+          for (let i = 0; i < swatches.length; i += 3) {
+            const col = document.createElement('div');
+            col.className = 'visual-mobile-palette-col';
+            if (labels[labelIndex]) col.appendChild(labels[labelIndex++]);
+            swatches.slice(i, i + 3).forEach(function (swatch) { col.appendChild(swatch); });
+            slider.appendChild(col);
+          }
+        }
+
+        function buildIntervalsSlider() {
+          const block = document.querySelector('.intervals-block');
+          if (!block || block.querySelector('.intervals-slide')) return;
+          const labels = Array.from(block.querySelectorAll('.intervals-col__label'));
+          const rows = Array.from(block.querySelectorAll('.intervals-row')).filter(function (row) {
+            return !row.hasAttribute('aria-hidden');
+          });
+          if (!labels.length || !rows.length) return;
+
+          labels.forEach(function (label, colIndex) {
+            const slide = document.createElement('div');
+            slide.className = 'intervals-slide';
+            slide.appendChild(label);
+            rows.forEach(function (row, rowIndex) {
+              if (rowIndex % labels.length === colIndex) slide.appendChild(row);
+            });
+            block.appendChild(slide);
+          });
+        }
+
+        function enhanceMobileSliders() {
+          if (enhanced || !mobileQuery.matches) return;
+          enhanced = true;
+          buildPaletteSlider();
+          buildIntervalsSlider();
+        }
+
+        enhanceMobileSliders();
+        if (mobileQuery.addEventListener) mobileQuery.addEventListener('change', enhanceMobileSliders);
+        else mobileQuery.addListener(enhanceMobileSliders);
+      })();
+
+      (function () {
         const targets = document.querySelectorAll('.visual-section__work .snap');
         if (!targets.length || !('IntersectionObserver' in window)) return;
         targets.forEach(function (el) { el.classList.add('reveal'); });
@@ -1713,6 +1799,7 @@
       }
     })();
   </script>
+  <script src="search.js"></script>
 </body>
 
 </html>
