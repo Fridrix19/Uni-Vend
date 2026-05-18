@@ -272,6 +272,48 @@
 })();
 
 (function () {
+  const tabs = Array.from(document.querySelectorAll('[data-music-use-tab]'));
+  const panels = Array.from(document.querySelectorAll('[data-music-use-panel]'));
+  if (!tabs.length || !panels.length) return;
+
+  function syncVideo(panel, active) {
+    panel.querySelectorAll('video').forEach(function (video) {
+      if (active) {
+        var p = video.play();
+        if (p && typeof p.catch === 'function') p.catch(function () {});
+      } else {
+        video.pause();
+      }
+    });
+  }
+
+  function setActive(name) {
+    tabs.forEach(function (tab) {
+      const active = tab.dataset.musicUseTab === name;
+      tab.classList.toggle('is-active', active);
+      tab.classList.toggle('hero__button--primary', active);
+      tab.setAttribute('aria-selected', active ? 'true' : 'false');
+    });
+
+    panels.forEach(function (panel) {
+      const active = panel.dataset.musicUsePanel === name;
+      panel.classList.toggle('is-active', active);
+      panel.hidden = !active;
+      syncVideo(panel, active);
+    });
+  }
+
+  tabs.forEach(function (tab) {
+    tab.addEventListener('click', function () {
+      setActive(tab.dataset.musicUseTab);
+    });
+  });
+
+  const initial = tabs.find(function (tab) { return tab.classList.contains('is-active'); }) || tabs[0];
+  setActive(initial.dataset.musicUseTab);
+})();
+
+(function () {
   const tabs = Array.from(document.querySelectorAll('[data-video-settings-tab]'));
   const panels = Array.from(document.querySelectorAll('[data-video-settings-panel]'));
   if (!tabs.length || !panels.length) return;
@@ -742,33 +784,160 @@
 })();
 
 (function () {
-  const root = document.querySelector('.video-faq');
-  if (!root) return;
+  var BAR_COUNT = 40;
+  var BASE_HEIGHT = 30;
+  var TICK_MS = 110;
 
-  const items = Array.from(root.querySelectorAll('.video-faq__item'));
-  const questions = Array.from(root.querySelectorAll('.video-faq__question'));
-
-  function closeAll(except) {
-    items.forEach(function (item) {
-      if (item === except) return;
-      const question = item.querySelector('.video-faq__question');
-      const answer = item.querySelector('.video-faq__answer');
-      if (question) question.setAttribute('aria-expanded', 'false');
-      if (answer) answer.hidden = true;
-      item.classList.remove('is-open');
-    });
+  function formatTime(seconds) {
+    if (!isFinite(seconds) || seconds < 0) return '0:00';
+    var m = Math.floor(seconds / 60);
+    var s = Math.floor(seconds % 60);
+    return m + ':' + (s < 10 ? '0' + s : s);
   }
 
-  questions.forEach(function (question) {
-    question.addEventListener('click', function () {
-      const item = question.closest('.video-faq__item');
-      const answer = item ? item.querySelector('.video-faq__answer') : null;
-      if (!item || !answer) return;
-      const willOpen = answer.hidden;
-      closeAll(item);
-      question.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
-      answer.hidden = !willOpen;
-      item.classList.toggle('is-open', willOpen);
+  function buildBars(container) {
+    if (container.querySelector('.audio-player__wave-bar')) return;
+    for (var i = 0; i < BAR_COUNT; i++) {
+      var bar = document.createElement('span');
+      bar.className = 'audio-player__wave-bar';
+      bar.style.height = BASE_HEIGHT + '%';
+      container.appendChild(bar);
+    }
+  }
+
+  function flatBars(bars) {
+    for (var i = 0; i < bars.length; i++) {
+      bars[i].style.height = BASE_HEIGHT + '%';
+    }
+  }
+
+  function tickBars(bars) {
+    for (var i = 0; i < bars.length; i++) {
+      var phase = (Date.now() / 200) + i * 0.45;
+      var pulse = (Math.sin(phase) + 1) / 2;
+      var noise = Math.random();
+      var h = 25 + pulse * 45 + noise * 30;
+      bars[i].style.height = Math.min(100, h) + '%';
+    }
+  }
+
+  var players = document.querySelectorAll('.audio-player');
+  var allAudios = [];
+
+  players.forEach(function (player) {
+    var btn = player.querySelector('.audio-player__btn');
+    var audio = player.querySelector('audio');
+    var time = player.querySelector('.audio-player__time');
+    var wave = player.querySelector('.audio-player__wave');
+    if (!btn || !audio || !time || !wave) return;
+
+    allAudios.push(audio);
+    buildBars(wave);
+    var bars = wave.querySelectorAll('.audio-player__wave-bar');
+    var visualizerId = null;
+
+    function startVisualizer() {
+      if (visualizerId) return;
+      visualizerId = setInterval(function () { tickBars(bars); }, TICK_MS);
+    }
+
+    function stopVisualizer() {
+      if (visualizerId) {
+        clearInterval(visualizerId);
+        visualizerId = null;
+      }
+      flatBars(bars);
+    }
+
+    function updateProgress() {
+      var dur = audio.duration;
+      var cur = audio.currentTime;
+      if (!isFinite(dur) || dur <= 0) {
+        time.textContent = formatTime(cur);
+        return;
+      }
+      var ratio = cur / dur;
+      var played = Math.floor(ratio * bars.length);
+      for (var i = 0; i < bars.length; i++) {
+        bars[i].classList.toggle('is-played', i < played);
+      }
+      time.textContent = formatTime(audio.paused ? dur : cur);
+    }
+
+    audio.addEventListener('loadedmetadata', function () {
+      time.textContent = formatTime(audio.duration);
+    });
+    audio.addEventListener('timeupdate', updateProgress);
+    audio.addEventListener('play', startVisualizer);
+    audio.addEventListener('pause', stopVisualizer);
+    audio.addEventListener('ended', function () {
+      player.classList.remove('is-playing');
+      btn.setAttribute('aria-label', 'Воспроизвести');
+      for (var i = 0; i < bars.length; i++) bars[i].classList.remove('is-played');
+      stopVisualizer();
+      time.textContent = formatTime(audio.duration);
+    });
+
+    btn.addEventListener('click', function () {
+      if (audio.paused) {
+        allAudios.forEach(function (a) {
+          if (a !== audio && !a.paused) {
+            a.pause();
+            var p = a.closest('.audio-player');
+            if (p) p.classList.remove('is-playing');
+          }
+        });
+        audio.play();
+        player.classList.add('is-playing');
+        btn.setAttribute('aria-label', 'Пауза');
+      } else {
+        audio.pause();
+        player.classList.remove('is-playing');
+        btn.setAttribute('aria-label', 'Воспроизвести');
+      }
+    });
+
+    wave.addEventListener('click', function (event) {
+      var rect = wave.getBoundingClientRect();
+      var ratio = (event.clientX - rect.left) / rect.width;
+      if (audio.duration && isFinite(audio.duration)) {
+        audio.currentTime = Math.max(0, Math.min(audio.duration, ratio * audio.duration));
+        updateProgress();
+      }
+    });
+  });
+})();
+
+(function () {
+  const roots = Array.from(document.querySelectorAll('.video-faq, .music-faq'));
+  if (!roots.length) return;
+
+  roots.forEach(function (root) {
+    const items = Array.from(root.querySelectorAll('.video-faq__item, .music-faq__item'));
+    const questions = Array.from(root.querySelectorAll('.video-faq__question, .music-faq__question'));
+
+    function closeAll(except) {
+      items.forEach(function (item) {
+        if (item === except) return;
+        const question = item.querySelector('.video-faq__question, .music-faq__question');
+        const answer = item.querySelector('.video-faq__answer, .music-faq__answer');
+        if (question) question.setAttribute('aria-expanded', 'false');
+        if (answer) answer.hidden = true;
+        item.classList.remove('is-open');
+      });
+    }
+
+    questions.forEach(function (question) {
+      question.addEventListener('click', function () {
+        const item = question.closest('.video-faq__item, .music-faq__item');
+        const answer = item ? item.querySelector('.video-faq__answer, .music-faq__answer') : null;
+        if (!item || !answer) return;
+        const willOpen = answer.hidden;
+        closeAll(item);
+        question.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+        answer.hidden = !willOpen;
+        item.classList.toggle('is-open', willOpen);
+      });
     });
   });
 })();

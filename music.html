@@ -58,27 +58,305 @@
         </ul>
 
         <ul class="visual-section__subnav snap" style="--y: 8;">
-          <li class="is-current" data-target="block-1">Блок 1</li>
-          <li data-target="block-2">Блок 2</li>
-          <li data-target="block-3">Блок 3</li>
-          <li data-target="block-4">Блок 4</li>
+          <li class="is-current" data-target="block-1">Использование</li>
+          <li data-target="block-2">Форматы <br>муз. контента</li>
+          <li data-target="block-3">Роль музыки</li>
+          <li data-target="block-4">Аудиоидентика <br> бренда</li>
+          <li data-target="block-5">Лицензирование</li>
         </ul>
       </nav>
 
       <section class="visual-section__work" aria-label="Рабочая зона">
         <h1 class="visual-section__title snap" style="--x: 0; --y: 3;">Музыкальный контент</h1>
 
-        <p class="visual-section__lead snap" style="--x: 0; --y: 6;">Музыкальный контент — звуковая палитра бренда: треки, джинглы и оформление роликов, которые задают темп, усиливают моменты и формируют узнаваемый аудио-образ УниВенда.</p>
+        <p class="visual-section__lead snap" style="--x: 0; --y: 6;">Музыкальный контент бренда «УниВенд» — это авторские треки, фоновые подложки, джинглы и аудиозаставки, которые создаются специально под формат бренда одним из создателей проекта, Хавалиц Фёдором  (известным на площадках как FRIDRIX). Музыка разрабатывается параллельно с видеопродакшном и монтируется в связке с визуальной структурой роликов, а не подбирается из внешних библиотек случайным образом</p>
 
         <label class="hero__search visual-section__search">
           <img class="hero__search-icon" src="heropage/img/sertch.svg" alt="" aria-hidden="true">
-          <input type="search" placeholder="...шаблон">
+          <input type="search" placeholder="Найдите раздел, канал, шаблон">
         </label>
 
-        <h2 id="block-1" class="visual-section__block-title types-block-title snap" style="--x: 0; --y: 13;">Блок 1</h2>
-        <h2 id="block-2" class="visual-section__block-title types-block-title snap" style="--x: 0; --y: 40;">Блок 2</h2>
-        <h2 id="block-3" class="visual-section__block-title types-block-title snap" style="--x: 0; --y: 67;">Блок 3</h2>
-        <h2 id="block-4" class="visual-section__block-title types-block-title snap" style="--x: 0; --y: 94;">Блок 4</h2>
+        <h2 id="block-1" class="visual-section__block-title types-block-title snap" style="--x: 0; --y: 13;">Использование</h2>
+
+        <div class="music-use snap" style="--x: 7; --y: 16;">
+          <div class="music-use__tabs" role="tablist" aria-label="Форматы музыкального контента">
+            <button class="hero__button hero__button--primary music-use__tab is-active" type="button" role="tab" aria-selected="true" data-music-use-tab="horizontal">Горизонтальные ролики</button>
+            <button class="hero__button music-use__tab" type="button" role="tab" aria-selected="false" data-music-use-tab="vertical">Вертикальные ролики</button>
+          </div>
+
+          <div class="music-use__content music-use__content--horizontal" data-music-use-panel="horizontal">
+            <div class="types-channel__media types-channel__media--laptop">
+              <video src="type/video/videocont/vid.webm" autoplay muted loop playsinline preload="auto"></video>
+              <img class="types-channel__frame" src="type/video/videocont/pc.png" alt="" aria-hidden="true">
+            </div>
+
+            <div class="music-use__side">
+              <div class="music-use__text-row">
+                <span class="music-use__bullet" aria-hidden="true"></span>
+                <p class="music-use__text">Горизонтальные ролики для RuTube&nbsp;— более развёрнутые музыкальные подложки с логичной структурой: вход, развитие, финальный акцент либо монотонность</p>
+              </div>
+
+              <p class="music-use__player-title">Фон написан<br><span>экселюзивно</span> для УниВенд</p>
+
+              <div class="audio-player music-use__player" data-audio>
+                <button class="audio-player__btn" type="button" aria-label="Воспроизвести">
+                  <svg class="audio-player__icon audio-player__icon--play" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4l14 8-14 8z" fill="currentColor"></path></svg>
+                  <svg class="audio-player__icon audio-player__icon--pause" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="4" width="4" height="16" fill="currentColor"></rect><rect x="14" y="4" width="4" height="16" fill="currentColor"></rect></svg>
+                </button>
+                <div class="audio-player__body">
+                  <div class="audio-player__head">
+                    <span class="audio-player__title">FRIDRIX - BGmusic (для УниВенд)</span>
+                    <span class="audio-player__time">0:00</span>
+                  </div>
+                  <div class="audio-player__wave" aria-hidden="true"></div>
+                </div>
+                <audio src="music/FRIDRIX - BGmusic (для УниВенд).MP3" preload="metadata"></audio>
+              </div>
+
+              <a class="music-use__track-btn" href="https://music.yandex.com/artist/17061829" target="_blank" rel="noopener noreferrer">Перейти к треку</a>
+            </div>
+          </div>
+
+          <div class="music-use__content" data-music-use-panel="vertical" hidden>
+            <div class="types-channel__media types-channel__media--phone">
+              <video src="music/vertical.MP4" autoplay muted loop playsinline preload="auto"></video>
+            </div>
+
+            <div class="music-use__side">
+              <div class="music-use__text-row">
+                <span class="music-use__bullet" aria-hidden="true"></span>
+                <p class="music-use__text">Вертикальные ролики для VK, Telegram и RuTube Shorts&nbsp;— фоновые треки и акцентные музыкальные моменты, поддерживающие темп и настроение</p>
+              </div>
+
+              <p class="music-use__player-title">Видео попадает<br><span>ровно</span> в бит трека</p>
+
+              <div class="audio-player music-use__player" data-audio>
+                <button class="audio-player__btn" type="button" aria-label="Воспроизвести">
+                  <svg class="audio-player__icon audio-player__icon--play" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4l14 8-14 8z" fill="currentColor"></path></svg>
+                  <svg class="audio-player__icon audio-player__icon--pause" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="4" width="4" height="16" fill="currentColor"></rect><rect x="14" y="4" width="4" height="16" fill="currentColor"></rect></svg>
+                </button>
+                <div class="audio-player__body">
+                  <div class="audio-player__head">
+                    <span class="audio-player__title">FRIDRIX - KILLARAGE</span>
+                    <span class="audio-player__time">0:00</span>
+                  </div>
+                  <div class="audio-player__wave" aria-hidden="true"></div>
+                </div>
+                <audio src="type/music/KILLARAGE.mp3" preload="metadata"></audio>
+              </div>
+
+              <a class="music-use__track-btn" href="https://music.yandex.com/artist/17061829" target="_blank" rel="noopener noreferrer">Перейти к треку</a>
+            </div>
+          </div>
+        </div>
+
+        <h2 id="block-2" class="visual-section__block-title types-block-title snap" style="--x: 0; --y: 40;">Форматы музыкального контента</h2>
+
+        <div class="music-formats snap" style="--x: 0; --y: 44;">
+          <article class="music-format">
+            <h3 class="music-format__title">Фоновая музыка</h3>
+            <div class="music-format__row">
+              <div class="audio-player music-format__player" data-audio>
+                <button class="audio-player__btn" type="button" aria-label="Воспроизвести">
+                  <svg class="audio-player__icon audio-player__icon--play" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4l14 8-14 8z" fill="currentColor"></path></svg>
+                  <svg class="audio-player__icon audio-player__icon--pause" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="4" width="4" height="16" fill="currentColor"></rect><rect x="14" y="4" width="4" height="16" fill="currentColor"></rect></svg>
+                </button>
+                <div class="audio-player__body">
+                  <div class="audio-player__head">
+                    <span class="audio-player__title">FRIDRIX - KILLARAGE</span>
+                    <span class="audio-player__time">0:00</span>
+                  </div>
+                  <div class="audio-player__wave" aria-hidden="true"></div>
+                </div>
+                <audio src="music/format/KILLARAGE.mp3" preload="metadata"></audio>
+              </div>
+              <p class="music-format__text">Авторская аудио дорожка состоящая из сэмпла, аранжировки, мастеринга, имеющая ритмику</p>
+            </div>
+          </article>
+
+          <article class="music-format">
+            <h3 class="music-format__title">Аудио дорожка (голос)</h3>
+            <div class="music-format__row">
+              <div class="audio-player music-format__player" data-audio>
+                <button class="audio-player__btn" type="button" aria-label="Воспроизвести">
+                  <svg class="audio-player__icon audio-player__icon--play" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4l14 8-14 8z" fill="currentColor"></path></svg>
+                  <svg class="audio-player__icon audio-player__icon--pause" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="4" width="4" height="16" fill="currentColor"></rect><rect x="14" y="4" width="4" height="16" fill="currentColor"></rect></svg>
+                </button>
+                <div class="audio-player__body">
+                  <div class="audio-player__head">
+                    <span class="audio-player__title">Как заказать у нас футболку?</span>
+                    <span class="audio-player__time">0:00</span>
+                  </div>
+                  <div class="audio-player__wave" aria-hidden="true"></div>
+                </div>
+                <audio src="music/format/kak_zakazat_futbolky.mp3" preload="metadata"></audio>
+              </div>
+              <p class="music-format__text">Записанный отдельно голос на продакшне для качественного звука и восприятия информации</p>
+            </div>
+          </article>
+
+          <article class="music-format">
+            <h3 class="music-format__title">Мемные звуки</h3>
+            <div class="music-format__row">
+              <div class="audio-player music-format__player" data-audio>
+                <button class="audio-player__btn" type="button" aria-label="Воспроизвести">
+                  <svg class="audio-player__icon audio-player__icon--play" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4l14 8-14 8z" fill="currentColor"></path></svg>
+                  <svg class="audio-player__icon audio-player__icon--pause" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="4" width="4" height="16" fill="currentColor"></rect><rect x="14" y="4" width="4" height="16" fill="currentColor"></rect></svg>
+                </button>
+                <div class="audio-player__body">
+                  <div class="audio-player__head">
+                    <span class="audio-player__title">Наталья морская пехота</span>
+                    <span class="audio-player__time">0:00</span>
+                  </div>
+                  <div class="audio-player__wave" aria-hidden="true"></div>
+                </div>
+                <audio src="music/format/natalia_morskaya_pehota.mp3" preload="metadata"></audio>
+              </div>
+              <p class="music-format__text">Популярный звук интернет персонажа для создания комичных моментов</p>
+            </div>
+          </article>
+
+          <article class="music-format">
+            <h3 class="music-format__title">Хуки, джинглы</h3>
+            <div class="music-format__row">
+              <div class="audio-player music-format__player" data-audio>
+                <button class="audio-player__btn" type="button" aria-label="Воспроизвести">
+                  <svg class="audio-player__icon audio-player__icon--play" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4l14 8-14 8z" fill="currentColor"></path></svg>
+                  <svg class="audio-player__icon audio-player__icon--pause" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="4" width="4" height="16" fill="currentColor"></rect><rect x="14" y="4" width="4" height="16" fill="currentColor"></rect></svg>
+                </button>
+                <div class="audio-player__body">
+                  <div class="audio-player__head">
+                    <span class="audio-player__title">Открытие двери Майнкрафт</span>
+                    <span class="audio-player__time">0:00</span>
+                  </div>
+                  <div class="audio-player__wave" aria-hidden="true"></div>
+                </div>
+                <audio src="music/format/minecraft-door.mp3" preload="metadata"></audio>
+              </div>
+              <p class="music-format__text">Короткий, узнаваемый музыкальный либо звуковой фрагмент</p>
+            </div>
+          </article>
+        </div>
+
+        <h2 id="block-3" class="visual-section__block-title types-block-title snap" style="--x: 0; --y: 73;">Роль музыки в коммуникации бренда</h2>
+
+        <div class="music-role snap" style="--x: 0; --y: 77;">
+          <div class="music-role__item">
+            <span class="music-role__bullet" aria-hidden="true"></span>
+            <p class="music-role__text">Поддерживает характер бренда: современный, живой, ориентированный на студенческую аудиторию</p>
+          </div>
+          <div class="music-role__item">
+            <span class="music-role__bullet" aria-hidden="true"></span>
+            <p class="music-role__text">Усиливает восприятие видеоконтента: помогает выстроить динамику, выделить ключевые моменты и сделать ролики более запоминаемыми</p>
+          </div>
+          <div class="music-role__item">
+            <span class="music-role__bullet" aria-hidden="true"></span>
+            <p class="music-role__text">Различает форматы: более энергичные треки&nbsp;— для развлекательных и мемных роликов, спокойные и прозрачные&nbsp;— для образовательных и «процессных» видео</p>
+          </div>
+        </div>
+
+        <h2 id="block-4" class="visual-section__block-title types-block-title snap" style="--x: 0; --y: 86;">Аудиоидентика бренда</h2>
+
+        <div class="music-identity snap" style="--x: 0; --y: 90;">
+          <div class="music-identity__author">
+            <h3 class="music-identity__caption">Авторство</h3>
+            <img class="music-identity__photo" src="music/audentic/fridrix-x2.png" alt="FRIDRIX">
+            <p class="music-identity__text">Музыку для видеоконтента пишет один из создателей бренда, что обеспечивает единый подход к звучанию и прямую связку музыки с визуальной концепцией проекта</p>
+          </div>
+
+          <div class="music-identity__style">
+            <h3 class="music-identity__caption">Единый музыкальный стиль</h3>
+            <div class="music-identity__players">
+              <div class="audio-player music-identity__player" data-audio>
+                <button class="audio-player__btn" type="button" aria-label="Воспроизвести">
+                  <svg class="audio-player__icon audio-player__icon--play" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4l14 8-14 8z" fill="currentColor"></path></svg>
+                  <svg class="audio-player__icon audio-player__icon--pause" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="4" width="4" height="16" fill="currentColor"></rect><rect x="14" y="4" width="4" height="16" fill="currentColor"></rect></svg>
+                </button>
+                <div class="audio-player__body">
+                  <div class="audio-player__head">
+                    <span class="audio-player__title">FRIDRIX - DARKORS</span>
+                    <span class="audio-player__time">0:00</span>
+                  </div>
+                  <div class="audio-player__wave" aria-hidden="true"></div>
+                </div>
+                <audio src="music/audentic/FRIDRIX-DARKORS.mp3" preload="metadata"></audio>
+              </div>
+
+              <div class="audio-player music-identity__player" data-audio>
+                <button class="audio-player__btn" type="button" aria-label="Воспроизвести">
+                  <svg class="audio-player__icon audio-player__icon--play" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4l14 8-14 8z" fill="currentColor"></path></svg>
+                  <svg class="audio-player__icon audio-player__icon--pause" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="4" width="4" height="16" fill="currentColor"></rect><rect x="14" y="4" width="4" height="16" fill="currentColor"></rect></svg>
+                </button>
+                <div class="audio-player__body">
+                  <div class="audio-player__head">
+                    <span class="audio-player__title">FRIDRIX - PHONKAREBOOT</span>
+                    <span class="audio-player__time">0:00</span>
+                  </div>
+                  <div class="audio-player__wave" aria-hidden="true"></div>
+                </div>
+                <audio src="music/audentic/FriDrix PHONKAREBOOT.mp3" preload="metadata"></audio>
+              </div>
+
+              <div class="audio-player music-identity__player" data-audio>
+                <button class="audio-player__btn" type="button" aria-label="Воспроизвести">
+                  <svg class="audio-player__icon audio-player__icon--play" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4l14 8-14 8z" fill="currentColor"></path></svg>
+                  <svg class="audio-player__icon audio-player__icon--pause" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="4" width="4" height="16" fill="currentColor"></rect><rect x="14" y="4" width="4" height="16" fill="currentColor"></rect></svg>
+                </button>
+                <div class="audio-player__body">
+                  <div class="audio-player__head">
+                    <span class="audio-player__title">FRIDRIX - EMPEROR</span>
+                    <span class="audio-player__time">0:00</span>
+                  </div>
+                  <div class="audio-player__wave" aria-hidden="true"></div>
+                </div>
+                <audio src="music/audentic/FRIDRIX-EMPEROR.mp3" preload="metadata"></audio>
+              </div>
+            </div>
+            <p class="music-identity__text">В рамках бренда используется ограниченный набор приёмов: повторяющиеся тембры, характерные гармонии и ритмические паттерны, благодаря чему зритель постепенно начинает узнавать бренд по звуку</p>
+          </div>
+        </div>
+
+        <h2 id="block-5" class="visual-section__block-title types-block-title snap" style="--x: 0; --y: 113;">Лицензирование</h2>
+
+        <div class="music-license snap" style="--x: 0; --y: 117;">
+          <div class="music-license__item">
+            <span class="music-license__bullet" aria-hidden="true"></span>
+            <p class="music-license__text">Все авторские треки, написанные Хавалицом Фёдором Витальевичем (FRIDRIX) специально для проекта УниВенд, принадлежат бренду и могут свободно использоваться во всех материалах УниВенд в рамках договорённостей с автором</p>
+          </div>
+          <div class="music-license__item">
+            <span class="music-license__bullet" aria-hidden="true"></span>
+            <p class="music-license__text">При использовании внешней музыки (если такое решение принимается) обязательно соблюдаются условия лицензий (royalty free, Creative Commons и т.п.), источники фиксируются в рабочей документации и не противоречат требованиям</p>
+          </div>
+          <div class="music-license__item">
+            <span class="music-license__bullet" aria-hidden="true"></span>
+            <p class="music-license__text">Запрещается использовать популярные треки без прав: такие решения не входят в бренд-гайд и не могут считаться частью официальной системы контента<br><br><strong>Исключения:</strong> мемные звуки, slowed ремиксы и народное творчество</p>
+          </div>
+        </div>
+
+        <h2 id="block-6" class="visual-section__block-title types-block-title snap" style="--x: 0; --y: 128;">Часто задаваемые вопросы</h2>
+
+        <section class="music-faq snap" style="--x: 0; --y: 132;" aria-label="Часто задаваемые вопросы">
+          <div class="music-faq__item">
+            <button class="music-faq__question" type="button" aria-expanded="false">Кто отвечает за музыку бренда UniVend?</button>
+            <div class="music-faq__answer" hidden>Музыку для видеоконтента пишет один из создателей проекта&nbsp;— Хавалиц Фёдор Витальевич, известный как FRIDRIX. Треки создаются специально под форматы бренда и принадлежат UniVend.</div>
+          </div>
+          <div class="music-faq__item">
+            <button class="music-faq__question" type="button" aria-expanded="false">Можно ли использовать популярные треки из стримингов или TikTok?</button>
+            <div class="music-faq__answer" hidden>Нет. В бренд‑гайде и ВКР допускается только авторская музыка или треки с корректными лицензиями; использование популярных треков без прав не входит в официальную систему контента.</div>
+          </div>
+          <div class="music-faq__item">
+            <button class="music-faq__question" type="button" aria-expanded="false">Как выбирать музыку для ролика с речью?</button>
+            <div class="music-faq__answer" hidden>Трек должен работать как фоновая подложка: громкость ниже голоса, умеренный темп, отсутствие элементов, которые «перетягивают» внимание с речи и субтитров.</div>
+          </div>
+          <div class="music-faq__item">
+            <button class="music-faq__question" type="button" aria-expanded="false">Чем музыкальное оформление развлекательных роликов отличается от образовательных?</button>
+            <div class="music-faq__answer" hidden>В развлекательных и мем‑роликах используется более динамичный темп и акцент на монтаже по биту, а в образовательных&nbsp;— спокойные, прозрачные треки, которые не мешают восприятию инструкции.</div>
+          </div>
+          <div class="music-faq__item">
+            <button class="music-faq__question" type="button" aria-expanded="false">Зачем нужен музыкальный бриф, если музыку пишет один и тот же автор?</button>
+            <div class="music-faq__answer" hidden>Бриф фиксирует задачу ролика, длительность, формат, темп и характер музыки. Это снижает количество правок и помогает автору (FRIDRIX) делать трек сразу под структуру конкретного ролика, а не перерабатывать готовую музыку под монтаж.</div>
+          </div>
+        </section>
       </section>
     </main>
   </div>

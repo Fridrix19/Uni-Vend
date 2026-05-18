@@ -7,9 +7,13 @@
   <link rel="stylesheet" href="hero.css">
 </head>
 <body>
+  <button class="visual-section__burger" id="page-burger" type="button" aria-label="Открыть меню" aria-expanded="false" aria-controls="page-nav">
+    <span></span><span></span><span></span>
+  </button>
+
   <div id="allrecords" class="site-page">
     <main class="hero" id="content-system" aria-label="Первый экран">
-      <nav class="hero__nav" aria-label="Навигация">
+      <nav class="hero__nav" id="page-nav" aria-label="Навигация">
         <ul class="hero__ticks snap">
           <li>
             <a class="hero__nav-dot hero__nav-dot--home is-active" href="index.html" aria-current="page">
@@ -53,14 +57,14 @@
       <section class="hero__work" aria-label="Рабочая зона">
         <h1 class="hero__title snap" style="--x: 0; --y: 3;">Руководство<br>по оформлению<br>цифрового<br>контента</h1>
 
-        <p class="hero__lead snap snap-bottom" style="--x: 0; --y: 17;">Единая система для текстов, графики, видео и музыки бренда.<br>Здесь собраны правила, форматы и шаблоны для цифрового контента.</p>
+        <p class="hero__lead snap snap-bottom" style="--x: 0; --y: 17;">Единая система для текстов, графики, видео и музыки<br>для команды УниВенд и партнёров, которые создают контент для бренда</p>
 
         <div class="hero__button-row snap" style="--x: 0; --y: 19;">
-          <a class="hero__button hero__button--primary" href="system.html">Погрузиться <span class="hero__button-arrow" aria-hidden="true"></span></a>
-          <a class="hero__button" href="rules.html">Правила</a>
+          <a class="hero__button hero__button--primary" href="system.html">Система контента<span class="hero__button-arrow" aria-hidden="true"></span></a>
+          <a class="hero__button" href="rules.html">Универсальные правила</a>
         </div>
 
-        <label class="hero__search snap" style="--x: 0; --y: 23;">
+        <label class="hero__search visual-section__search snap" style="--x: 0; --y: 23;">
           <img class="hero__search-icon" src="heropage/img/sertch.svg" alt="" aria-hidden="true">
           <input type="search" placeholder="Найдите раздел, канал, шаблон, шрифт">
         </label>
@@ -87,6 +91,27 @@
     <div class="page-transition__panel"></div>
     <span class="page-transition__label">УниВенд</span>
   </div>
+
+  <script>
+    (function () {
+      const burger = document.getElementById('page-burger');
+      const nav = document.getElementById('page-nav');
+      if (!burger || !nav) return;
+      function setOpen(open) {
+        document.body.classList.toggle('is-nav-open', open);
+        burger.setAttribute('aria-expanded', open ? 'true' : 'false');
+      }
+      burger.addEventListener('click', function () {
+        setOpen(!document.body.classList.contains('is-nav-open'));
+      });
+      nav.addEventListener('click', function (e) {
+        if (e.target.closest('a[href]')) setOpen(false);
+      });
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') setOpen(false);
+      });
+    })();
+  </script>
 
   <script>
     (function () {
