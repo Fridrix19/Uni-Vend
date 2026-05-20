@@ -75,7 +75,33 @@
   white-space: nowrap;
 }
 
-@media screen and (min-width: 1200px) and (max-width: 1440px) {
+@media screen and (min-width: 1729px) {
+  body {
+    background-image: none;
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background-image:
+      linear-gradient(to right, var(--line) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--line) 1px, transparent 1px);
+    background-size: var(--site-grid-size) var(--site-grid-size);
+    background-position:
+      var(--site-grid-offset-x) 0,
+      var(--site-grid-offset-x) 0;
+    background-repeat: repeat;
+  }
+
+  #grid-32-underlay {
+    display: none !important;
+  }
+}
+
+@media screen and (min-width: 834px) and (max-width: 1728px) {
   html,
   body {
     overflow-x: hidden;
@@ -83,10 +109,10 @@
   }
 
   body {
-    --site-grid-size: 32px;
+    --site-grid-size: calc(100vw / 54);
     --layout-nav-padding-left: var(--site-grid-size);
     --layout-nav-gap: calc(var(--site-grid-size) * 2);
-    --layout-right-gap: var(--site-grid-size);
+    --layout-right-gap: 0px;
     --site-grid-offset-x: 0;
     background-image: none;
   }
@@ -111,10 +137,9 @@
 
   .rules-section.visual-section {
     --layout-nav-width: calc(var(--site-grid-size) * 4);
-    --layout-right-gap: var(--site-grid-size);
     --work-left: calc(var(--site-grid-size) * 6);
     --work-width: calc(var(--site-grid-size) * 48);
-    min-height: max(100vh, calc(var(--site-grid-size) * 50));
+    min-height: max(100vh, calc(var(--site-grid-size) * 66));
     overflow-x: clip;
     overflow-y: visible;
   }
@@ -133,7 +158,7 @@
   }
 
   .rules-section .visual-section__nav .visual-section__subnav {
-    top: calc(var(--site-grid-size) * 6) !important;
+    top: calc(var(--site-grid-size) * 8) !important;
     left: calc(var(--site-grid-size) * 2);
     gap: 0;
     grid-auto-rows: var(--site-grid-size);
@@ -145,7 +170,7 @@
     align-items: center;
     height: var(--site-grid-size);
     padding-left: calc(var(--site-grid-size) / 2);
-    font-size: 12px;
+    font-size: clamp(11px, calc(var(--site-grid-size) * 0.375), 12px);
     line-height: 1;
   }
 
@@ -154,18 +179,28 @@
     display: none;
   }
 
-  @media screen and (min-width: 1400px) and (max-width: 1440px) {
-    .rules-section .visual-section__nav .visual-section__subnav {
-      top: calc(var(--site-grid-size) * 9) !important;
-    }
-  }
-
   .rules-section .visual-section__work {
     left: var(--work-left);
     width: var(--work-width);
     overflow: visible;
-    transform: scale(0.75);
-    transform-origin: left top;
+    transform: none;
+  }
+
+  .rules-section .visual-section__title {
+    font-size: clamp(43px, calc(var(--site-grid-size) * 2.8125), 90px);
+  }
+
+  .rules-section .visual-section__lead,
+  .rules-section .rules-card__text {
+    font-size: clamp(14px, calc(var(--site-grid-size) * 0.5625), 18px);
+  }
+
+  .rules-section .rules-card__title {
+    font-size: clamp(17px, calc(var(--site-grid-size) * 0.6875), 22px);
+  }
+
+  .rules-section .rules-card__example {
+    font-size: clamp(12px, calc(var(--site-grid-size) * 0.5), 16px);
   }
 
   .rules-section .visual-section__work > .visual-section__search.hero__search,
@@ -203,14 +238,7 @@
   body {
     --site-grid-offset-x: calc(var(--site-grid-size) / 2);
     --rules-mobile-grid-inset: calc(var(--site-grid-offset-x) + var(--site-grid-size));
-    background-image:
-      linear-gradient(to right, var(--line) 1px, transparent 1px),
-      linear-gradient(to bottom, var(--line) 1px, transparent 1px);
-    background-size: var(--site-grid-size) var(--site-grid-size);
-    background-position:
-      var(--site-grid-offset-x) 0,
-      var(--site-grid-offset-x) 0;
-    background-repeat: repeat;
+    background-image: none;
   }
 
   #grid-32-underlay {
