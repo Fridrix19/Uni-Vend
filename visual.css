@@ -1115,17 +1115,12 @@
     overscroll-behavior-x: none;
   }
 
-  html {
-    overflow-y: auto;
-  }
-
   body {
     --site-grid-size: calc(100vw / 54);
     --layout-nav-padding-left: var(--site-grid-size);
     --layout-nav-gap: calc(var(--site-grid-size) * 2);
     --layout-right-gap: var(--site-grid-size);
     --site-grid-offset-x: 0;
-    overflow-y: visible;
     background-image: none;
     touch-action: pan-y;
   }

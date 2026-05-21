@@ -81,16 +81,24 @@
     }
   }
 
+  function resetGridInlineBox() {
+    grid.style.removeProperty('display');
+    grid.style.removeProperty('height');
+    grid.style.removeProperty('min-height');
+  }
+
   function updateGrid() {
     document.body.style.setProperty('padding-top', '0', 'important');
     document.body.style.setProperty('overflow-x', 'hidden', 'important');
 
-    if (window.matchMedia('(max-width: 833px)').matches) {
+    if (window.matchMedia('(max-width: 1728px)').matches) {
       grid.style.setProperty('display', 'none', 'important');
+      grid.style.setProperty('height', '0px', 'important');
+      grid.style.setProperty('min-height', '0px', 'important');
       return;
     }
 
-    grid.style.setProperty('display', 'block', 'important');
+    resetGridInlineBox();
     updateGridHeight();
   }
 
