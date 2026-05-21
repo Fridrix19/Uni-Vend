@@ -82,19 +82,35 @@
   }
 
   function resetGridInlineBox() {
-    grid.style.removeProperty('display');
-    grid.style.removeProperty('height');
-    grid.style.removeProperty('min-height');
+    removeInlineStyle(grid, 'display');
+    removeInlineStyle(grid, 'height');
+    removeInlineStyle(grid, 'min-height');
+  }
+
+  function setImportantStyle(element, property, value) {
+    if (
+      element.style.getPropertyValue(property) === value &&
+      element.style.getPropertyPriority(property) === 'important'
+    ) {
+      return;
+    }
+
+    element.style.setProperty(property, value, 'important');
+  }
+
+  function removeInlineStyle(element, property) {
+    if (!element.style.getPropertyValue(property)) return;
+    element.style.removeProperty(property);
   }
 
   function updateGrid() {
-    document.body.style.setProperty('padding-top', '0', 'important');
-    document.body.style.setProperty('overflow-x', 'hidden', 'important');
+    setImportantStyle(document.body, 'padding-top', '0px');
+    setImportantStyle(document.body, 'overflow-x', 'hidden');
 
     if (window.matchMedia('(max-width: 1728px)').matches) {
-      grid.style.setProperty('display', 'none', 'important');
-      grid.style.setProperty('height', '0px', 'important');
-      grid.style.setProperty('min-height', '0px', 'important');
+      setImportantStyle(grid, 'display', 'none');
+      setImportantStyle(grid, 'height', '0px');
+      setImportantStyle(grid, 'min-height', '0px');
       return;
     }
 

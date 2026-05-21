@@ -1062,14 +1062,25 @@
         document.body.insertBefore(grid, document.body.firstChild);
       }
 
-      const mobileGridQuery = window.matchMedia('(max-width: 833px)');
+      const gridBoxQuery = window.matchMedia('(max-width: 1728px)');
 
-      function updateGridHeight() {
-        if (mobileGridQuery.matches) {
-          grid.style.setProperty('height', '0px', 'important');
+      function setImportantStyle(element, property, value) {
+        if (
+          element.style.getPropertyValue(property) === value &&
+          element.style.getPropertyPriority(property) === 'important'
+        ) {
           return;
         }
 
+        element.style.setProperty(property, value, 'important');
+      }
+
+      function removeInlineStyle(element, property) {
+        if (!element.style.getPropertyValue(property)) return;
+        element.style.removeProperty(property);
+      }
+
+      function updateGridHeight() {
         const allRecords = document.getElementById('allrecords');
         const contentBottom = allRecords
           ? allRecords.getBoundingClientRect().bottom + window.pageYOffset
@@ -1083,22 +1094,29 @@
         }
       }
 
-      function updateGrid() {
-        document.body.style.setProperty('padding-top', '0', 'important');
-        document.body.style.setProperty('overflow-x', 'hidden', 'important');
+      function resetGridInlineBox() {
+        removeInlineStyle(grid, 'display');
+        removeInlineStyle(grid, 'height');
+        removeInlineStyle(grid, 'min-height');
+      }
 
-        if (mobileGridQuery.matches) {
-          grid.style.setProperty('display', 'none', 'important');
-          grid.style.setProperty('height', '0px', 'important');
+      function updateGrid() {
+        setImportantStyle(document.body, 'padding-top', '0px');
+        setImportantStyle(document.body, 'overflow-x', 'hidden');
+
+        if (gridBoxQuery.matches) {
+          setImportantStyle(grid, 'display', 'none');
+          setImportantStyle(grid, 'height', '0px');
+          setImportantStyle(grid, 'min-height', '0px');
           return;
         }
 
-        grid.style.setProperty('display', 'block', 'important');
+        resetGridInlineBox();
         updateGridHeight();
       }
 
-      if (mobileGridQuery.addEventListener) mobileGridQuery.addEventListener('change', updateGrid);
-      else mobileGridQuery.addListener(updateGrid);
+      if (gridBoxQuery.addEventListener) gridBoxQuery.addEventListener('change', updateGrid);
+      else gridBoxQuery.addListener(updateGrid);
 
       window.addEventListener('load', updateGrid);
       window.addEventListener('resize', updateGrid);

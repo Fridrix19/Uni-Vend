@@ -90,7 +90,6 @@
     --layout-right-gap: var(--site-grid-size);
     --site-grid-offset-x: 0;
     background-image: none;
-    touch-action: pan-y;
   }
 
   .rules-section.visual-section {
