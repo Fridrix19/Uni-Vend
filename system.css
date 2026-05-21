@@ -382,6 +382,34 @@
   line-height: var(--site-grid-size);
 }
 
+@media screen and (min-width: 834px) and (max-width: 1728px) {
+  .system-section.subpage-section {
+    min-height: max(100vh, calc(var(--site-grid-size) * 85));
+  }
+
+  .system-section .visual-section__subnav {
+    top: calc(var(--site-grid-size) * 8) !important;
+  }
+
+  .system-tasks__heading,
+  .system-audiences__title,
+  .system-brand-principles__title {
+    font-size: clamp(24px, calc(var(--site-grid-size) * 1.125), 36px);
+  }
+
+  .system-tasks__text,
+  .system-audiences__text,
+  .system-ca-slider__body,
+  .system-brand-principles__subtitle,
+  .system-brand-principles__text {
+    font-size: clamp(14px, calc(var(--site-grid-size) * 0.625), 20px);
+  }
+
+  .system-ca-slider__hdr {
+    font-size: clamp(14px, calc(var(--site-grid-size) * 0.75), 24px);
+  }
+}
+
 @media screen and (max-width: 833px) {
   body {
     --site-grid-offset-x: calc(var(--site-grid-size) / 2);

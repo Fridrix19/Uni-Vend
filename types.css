@@ -23,6 +23,39 @@
   top: calc(var(--site-grid-size) * 10);
 }
 
+@media screen and (min-width: 834px) and (max-width: 1728px) {
+  .types-section.visual-section {
+    min-height: max(100vh, calc(var(--site-grid-size) * 232));
+  }
+
+  .types-section .visual-section__subnav {
+    top: calc(var(--site-grid-size) * 8) !important;
+  }
+
+  .types-block-title {
+    font-size: clamp(24px, calc(var(--site-grid-size) * 1.125), 36px);
+  }
+
+  .types-intro__text,
+  .types-detail-text,
+  .types-summary,
+  .types-video__text,
+  .types-channels__caption,
+  .types-music__title,
+  .audio-player__title,
+  .formats__corner {
+    font-size: clamp(14px, calc(var(--site-grid-size) * 0.625), 20px);
+  }
+
+  .types-tab,
+  .types-formula__btn,
+  .types-detail-btn,
+  .types-video__btn,
+  .types-music__artist-btn {
+    font-size: clamp(14px, calc(var(--site-grid-size) * 0.75), 24px);
+  }
+}
+
 @media screen and (max-width: 833px) {
   body {
     --site-grid-offset-x: calc(var(--site-grid-size) / 2);

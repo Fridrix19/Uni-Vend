@@ -449,6 +449,65 @@
   transform: translateY(1px);
 }
 
+@media screen and (min-width: 834px) and (max-width: 1728px) {
+  .music-section.subpage-section {
+    min-height: max(100vh, calc(var(--site-grid-size) * 154));
+  }
+
+  .music-section .visual-section__subnav {
+    top: calc(var(--site-grid-size) * 8) !important;
+  }
+
+  .music-section .visual-section__work > .visual-section__search.hero__search,
+  .music-section .visual-section__work > .visual-section__search.hero__search:hover,
+  .music-section .visual-section__work > .visual-section__search.hero__search:focus-within {
+    position: fixed !important;
+    top: calc(var(--site-grid-size) * 3);
+    left: auto !important;
+    right: var(--layout-right-gap);
+  }
+
+  .music-section .visual-section__work > .visual-section__search.hero__search:hover,
+  .music-section .visual-section__work > .visual-section__search.hero__search:focus-within {
+    left: auto !important;
+    right: var(--layout-right-gap);
+    width: calc(var(--site-grid-size) * 18);
+  }
+
+  .music-section .visual-section__work .reveal {
+    opacity: 0;
+    transform: none !important;
+    transition: opacity 500ms ease !important;
+    will-change: opacity;
+  }
+
+  .music-section .visual-section__work .reveal.is-visible {
+    opacity: 1;
+    transform: none !important;
+  }
+
+  .music-section .visual-section__work .reveal.is-passed {
+    opacity: 0;
+    transform: none !important;
+  }
+
+  .music-use__tab,
+  .music-use__track-btn,
+  .music-faq__question {
+    font-size: clamp(14px, calc(var(--site-grid-size) * 0.75), 24px);
+  }
+
+  .music-use__text,
+  .music-format__text,
+  .music-role__text,
+  .music-identity__text,
+  .music-license__text,
+  .music-faq__answer,
+  .audio-player__title {
+    font-size: clamp(14px, calc(var(--site-grid-size) * 0.625), 20px);
+  }
+}
+
 @media screen and (max-width: 833px) {
   body {
     --site-grid-offset-x: calc(var(--site-grid-size) / 2);
