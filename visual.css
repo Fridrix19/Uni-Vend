@@ -24,21 +24,19 @@
 
 .reveal {
   opacity: 0;
-  transform: scale(0.9) translateY(40px);
-  transition:
-    opacity 700ms cubic-bezier(0.22, 0.61, 0.36, 1),
-    transform 700ms cubic-bezier(0.22, 0.61, 0.36, 1);
-  will-change: opacity, transform;
+  transform: none !important;
+  transition: opacity 500ms ease !important;
+  will-change: opacity;
 }
 
 .reveal.is-visible {
   opacity: 1;
-  transform: scale(1) translateY(0);
+  transform: none !important;
 }
 
 .reveal.is-passed {
   opacity: 0;
-  transform: scale(0.9) translateY(-40px);
+  transform: none !important;
 }
 
 .visual-section__nav {
@@ -1117,14 +1115,24 @@
     overscroll-behavior-x: none;
   }
 
+  html {
+    overflow-y: auto;
+  }
+
   body {
     --site-grid-size: calc(100vw / 54);
     --layout-nav-padding-left: var(--site-grid-size);
     --layout-nav-gap: calc(var(--site-grid-size) * 2);
     --layout-right-gap: var(--site-grid-size);
     --site-grid-offset-x: 0;
+    overflow-y: visible;
     background-image: none;
     touch-action: pan-y;
+  }
+
+  .site-page,
+  #allrecords {
+    overflow: visible;
   }
 
   .visual-section {
